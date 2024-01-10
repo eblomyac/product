@@ -1,0 +1,135 @@
+<div>
+
+  <div class="mt-3" style="display:flex; justify-content: space-between">
+    <mat-form-field>
+      <mat-label>
+        Номер заказа
+      </mat-label>
+      <input matInput type="number" [(ngModel)]="orderId" [disabled]="isLoading" (keyup.enter)="Prepare()">
+    </mat-form-field>
+
+    <div>
+      <button style="margin-left: 20px"mat-raised-button color="primary" (click)="Prepare()" [disabled]="isLoading" >Загрузить</button>
+      <button style="margin-left: 20px"mat-raised-button color="primary"  (click)="clear()" [disabled]="isLoading" >Очистить</button>
+      <button style="margin-left: 20px" mat-raised-button color="primary" (click)="Create()" [disabled]="isLoading" >Создать работы</button>
+    </div>
+
+
+
+  </div>
+  <div class="mt-1" style="display: flex; justify-content: end"  *ngIf="preparedWorks.length>0">
+    <mat-checkbox  color="primary" [(ngModel)]="editMode">Редактировать</mat-checkbox>
+  </div>
+
+
+  <div class="mt-2">
+    <div style="display: flex;justify-content: center" *ngIf="isLoading">
+      <mat-spinner diameter="25"></mat-spinner>
+
+    </div>
+    <table class="w-100" *ngIf="preparedWorks.length>0">
+      <colgroup>
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 10%;">
+        <col  *ngIf="editMode" span="1" style="width: 5%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 12%;">
+        <col span="1" style="width: 12%;">
+        <col span="1" style="width: 12%;">
+        <col span="1" style="width: 12%;">
+        <col span="1" style="width: 24%;">
+
+
+      </colgroup>
+      <tr>
+        <th class="work-prepare-header">
+          Номер заказа
+        </th>
+        <th class="work-prepare-header">
+          Артикул
+        </th>
+        <th *ngIf="editMode"></th>
+        <th class="work-prepare-header">
+          Количество
+        </th>
+        <th class="text-center">
+          Участок
+
+        </th>
+        <th class="work-prepare-header">
+          Норматив (штука)
+        </th>
+        <th class="work-prepare-header">
+          Норматив партия
+        </th>
+        <th class="text-center">
+          Линия
+        </th>
+        <th class="text-end">
+          Описание
+        </th>
+
+      </tr>
+
+
+      <tr *ngFor="let w of this.preparedWorks; let i = index" class="work-prepare-row">
+        <td>
+          {{w.structure.orderNumber}}
+        </td>
+        <td>
+          {{w.structure.article}}
+        </td>
+        <td *ngIf="editMode">
+          <button mat-icon-button color="primary" (click)="remove(i)">
+            <mat-icon>remove</mat-icon>
+          </button>
+        </td>
+        <td class="text-center">
+          <ng-container *ngIf="editMode; then editCount; else nonEditCount"></ng-container>
+          <ng-template #editCount>
+            <input matInput type="number" [(ngModel)]="w.structure.count">
+          </ng-template>
+          <ng-template #nonEditCount>
+            {{w.structure.count}}
+          </ng-template>
+
+        </td>
+        <td [ngClass]="{error:w.structure.postId.length<1}" class="text-center">
+          <ng-container *ngIf="editMode; then editPost; else nonEditPost">
+
+          </ng-container>
+          <ng-template #editPost>
+
+            <mat-select [(ngModel)]="w.structure.postId">
+              <mat-option [value]="''">Не указан</mat-option>
+              <mat-option *ngFor="let p of this.posts" [value]="p.name">{{p.name}}</mat-option>
+            </mat-select>
+
+          </ng-template>
+          <ng-template #nonEditPost>
+            <div style="display: flex; justify-content: start">
+            <div style="margin-top: 2px">
+              {{w.structure.postId}}
+            </div>
+            <div style="margin-left: 2px">
+              <mat-icon style="color: #8f8f8f;" *ngIf="w.structure.comments.length>0" [matTooltip]="w.structure.comments.join('\n')" matTooltipClass="tooltip-work">info</mat-icon>
+            </div>
+            </div>
+
+
+
+          </ng-template>
+
+        </td>
+        <td class="text-end">
+          {{w.structure.singleCost | number}}
+        </td>
+        <td class="text-end">{{(w.structure.singleCost * w.structure.count)|number}}</td>
+        <td class="text-center">{{w.structure.productLine}}</td>
+        <td class="text-end">{{w.structure.description}}</td>
+
+      </tr>
+    </table>
+  </div>
+
+</div>

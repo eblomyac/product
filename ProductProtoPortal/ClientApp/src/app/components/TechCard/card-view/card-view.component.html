@@ -1,0 +1,25 @@
+<div class="container" >
+  <div class="row" *ngIf="card">
+    <div class="col-12" mat-dialog-title>
+      {{card.article}}
+    </div>
+    <div class="col-4">
+      <app-image-set-view [ImageSet]="card.imageSet"></app-image-set-view>
+    </div>
+    <div class="col-8" >
+
+        <mat-tab-group>
+          <mat-tab [label]="p.postId" *ngFor="let p of this.card.postParts"  style="overflow-x: hidden" >
+            <div mat-dialog-content style="max-width: 100%">
+              <div *ngFor="let o of p.lines" >
+                {{o.device}} => {{o.operation}} ({{o.equipment}} {{o.equipmentInfo}})
+              </div>
+            </div>
+
+          </mat-tab>
+        </mat-tab-group>
+
+  </div>
+
+</div>
+

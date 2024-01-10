@@ -1,0 +1,158 @@
+<div>
+  <div class="mt-3 mb-3">
+    <button style="margin-left: 3px" mat-raised-button color="primary" (click)="loadOrderStatistic(order)"
+            [disabled]="isLoading" *ngFor="let order of this.orders">{{order}}</button>
+  </div>
+  <div *ngIf="isLoading" style="display: flex; justify-content: center">
+    <mat-spinner [diameter]="35"></mat-spinner>
+  </div>
+  <div *ngIf="stat">
+    <div style="display: flex;justify-content: space-between">
+      <div>
+        <div style="font-size: 18px">
+          <div>
+            Заказ № {{stat.Order}} - {{stat.Line}}
+          </div>
+          <div>
+            Суммарный норматив: {{stat.TotalCost | number}}
+          </div>
+          <div>
+            Выполненный норматив: {{stat.CompletedCost | number}}
+            ({{((stat.CompletedCost / stat.TotalCost) * 100)|number}}%)
+          </div>
+          <div>
+            Количество работ: {{stat.TotalWorks | number}}
+          </div>
+          <div>
+            Выполнено работ: {{stat.CompletedWorks | number}}
+            ({{((stat.CompletedWorks / stat.TotalWorks) * 100)|number}}%)
+          </div>
+          <div>
+            Всего артикулов: {{stat.TotalArticles | number}}
+          </div>
+          <div>
+
+            <div style="display: flex; justify-content: start">
+              <div style="margin-top: 2px">Активных проблем: {{stat.Issues | number}}</div>
+              <div style="margin-left: 2px" >
+                <mat-icon style="color: #beb41c"   *ngIf="stat.Issues>0" [matTooltip]="stat.IssuesText" matTooltipClass="tooltip">highlight_off</mat-icon>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div style="width: 60%">
+        <mat-button-toggle-group #chartSelect="matButtonToggleGroup" value="plan-complete">
+          <mat-button-toggle value="plan-complete">Норматив/выполнено</mat-button-toggle>
+          <mat-button-toggle value="by-posts">Состояние на участках</mat-button-toggle>
+        </mat-button-toggle-group>
+        <div *ngIf="chartSelect.value == 'plan-complete'">
+          <apx-chart [series]="orderChartOptions.series" [xaxis]="orderChartOptions.xaxis" [plotOptions]="orderChartOptions.plot"
+                     [dataLabels]="orderChartOptions.dataLabels"
+                     [chart]="orderChartOptions.chart" [theme]="orderChartOptions.theme" [title]="orderChartOptions.title">
+          </apx-chart>
+        </div>
+        <div *ngIf="chartSelect.value=='by-posts'">
+
+          <apx-chart [dataLabels]="postsChartOptions.dataLabels" [series]="postsChartOptions.series"
+                     [xaxis]="postsChartOptions.xaxis" [plotOptions]="postsChartOptions.plot"
+                     [chart]="postsChartOptions.chart" [theme]="postsChartOptions.theme" [title]="postsChartOptions.title">
+          </apx-chart>
+
+        </div>
+
+
+      </div>
+      <!--
+      <canvas style="width: 53%; height: 300px;
+       background-color: rgba(65,65,65,0.81)"
+              baseChart
+              class="chart"
+
+              [data]="orderStatData"
+              [options]="orderStatChartOptions"
+              [type]="'bar'"
+      >
+      </canvas> !-->
+    </div>
+    <div>
+      <div>
+        <table class="w-100">
+
+          <tbody>
+          <tr class="order-stat-table-header">
+            <th rowspan="2">Артикул</th>
+            <th colspan="2" class="text-center" style="width: 16%">Количество</th>
+            <th colspan="2" class="text-center" style="width: 16%">Норматив</th>
+            <th rowspan="2" class="text-end" style="width: 8%">Выполнено</th>
+            <th rowspan="2" class="text-center" *ngFor="let postColumn of stat.PostStatus">{{postColumn.Name}}</th>
+          </tr>
+          <tr>
+            <td>Заказ</td>
+            <td>Работ</td>
+            <td>Всего</td>
+            <td>Выполнено</td>
+          </tr>
+          <ng-container *ngFor="let article of stat.ArticleStat">
+            <tr class="order-stat-table-row">
+              <td >{{article.Article}}</td>
+              <td style="width: 8%">
+                {{article.Count}}
+              </td>
+
+              <td style="width: 8%">
+                {{article.WorkCount}}
+              </td>
+              <td style="width: 8%">
+                {{article.TotalCost|number}}
+              </td>
+              <td style="width: 8%">
+                {{article.CompletedCost|number}}
+              </td>
+              <td class="text-end" style="width: 8%">
+                {{((article.CompletedCost / article.TotalCost) * 100)|number}}%
+              </td>
+
+              <td *ngFor="let articlePost of article.ByPosts" class="text-center">
+                <ng-container *ngIf="articlePost.IsEmpty; then empty; else notEmpty">
+
+                </ng-container>
+                <ng-template #notEmpty>
+                  <ng-container *ngIf="articlePost.Percentage>=100; then ok;else perc">
+
+                  </ng-container>
+                  <ng-template #ok>
+                    <mat-icon style="color: #008100">task_alt</mat-icon>
+                  </ng-template>
+                  <ng-template #perc>
+                    <div style="display: flex; justify-content: center">
+                      <div style="margin-top: 2px">{{articlePost.Percentage|number}}%</div>
+                      <div style="margin-left: 2px" >
+                        <mat-icon style="color: #beb41c"  *ngIf="articlePost.Issues>0" [matTooltip]="articlePost.IssuesText" matTooltipClass="tooltip">highlight_off</mat-icon>
+                      </div>
+
+                    </div>
+
+                  </ng-template>
+
+                </ng-template>
+                <ng-template #empty>
+                  <mat-icon style="color: #008100">chevron_right</mat-icon>
+                </ng-template>
+
+              </td>
+            </tr>
+
+          </ng-container>
+
+
+          </tbody>
+        </table>
+      </div>
+
+
+    </div>
+  </div>
+</div>

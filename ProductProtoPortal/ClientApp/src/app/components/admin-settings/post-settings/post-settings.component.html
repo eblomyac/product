@@ -1,0 +1,74 @@
+<div>
+  <div class="mt-3" style="display: flex;justify-content: flex-end">
+
+    <button mat-raised-button color="primary" (click)="loadPosts()">Отменить</button>
+    <button style="margin-left: 20px" mat-raised-button color="primary" (click)="savePosts()">Сохранить</button>
+  </div>
+
+  <table class="mt-4 w-100">
+    <colgroup>
+      <col span="1" style="width: 15%;">
+      <col span="1" style="width: 30%;">
+      <col span="1" style="width: 15%;">
+      <col span="1" style="width: 15%;">
+
+    </colgroup>
+    <tbody>
+    <tr>
+      <th>Название участка</th>
+      <th>Сокращения в CRP</th>
+      <th class="text-center">Деактивирован</th>
+      <th class="text-end">Этап производства</th>
+    </tr>
+    <tr *ngFor="let p of this.posts">
+      <td>
+        {{p.name}}
+      </td>
+      <td>
+        <mat-form-field class="w-100">
+          <mat-label></mat-label>
+          <input matInput type = text [(ngModel)]="p.keys">
+        </mat-form-field>
+      </td>
+      <td class="text-center">
+        <mat-checkbox [(ngModel)]="p.disabled" color="primary"></mat-checkbox>
+      </td>
+      <td class="text-end">{{p.productOrder}}</td>
+    </tr>
+    <tr>
+
+      <td colspan="4" style="background-color: rgba(84,84,84,0.85)">Создание</td>
+      </tr>
+    <tr>
+      <td>
+        <mat-form-field>
+          <mat-label>Имя</mat-label>
+          <input #name matInput type="text">
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field  class="w-100">
+          <mat-label>Ключи CRP</mat-label>
+          <input #keys matInput type="text">
+        </mat-form-field>
+      </td>
+      <td></td>
+      <td class="text-end">
+        <mat-form-field class="w-50">
+          <mat-label>
+            Этап
+          </mat-label>
+          <input #productOrder type="number" matInput>
+        </mat-form-field>
+      </td>
+
+    </tr>
+    <tr>
+      <td colspan="4" class="text-end" >
+        <button mat-raised-button color="primary" (click)="addPost(name.value, keys.value, (productOrder.value));name.value='';keys.value=''">Создать</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>

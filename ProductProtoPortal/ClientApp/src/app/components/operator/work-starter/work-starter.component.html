@@ -1,0 +1,41 @@
+<div>
+  <div>
+    <div class="mt-3" style="display: flex; justify-content: flex-end">
+      <button style="margin-left: 20px" mat-raised-button color="primary" (click)="loadSuggestions()" [disabled]="isLoading" >Загрузить работы</button>
+      <button style="margin-left: 20px" mat-raised-button color="primary" (click)="makeDefault()" [disabled]="isLoading" >Выбрать согласно порядку</button>
+      <button style="margin-left: 20px" mat-raised-button color="primary" (click)="startWorks()" [disabled]="isLoading" >Отправить в работу</button>
+    </div>
+  <div class="mt-3">
+    <div style="display: flex;justify-content: center" *ngIf="isLoading">
+      <mat-spinner diameter="25"></mat-spinner>
+
+    </div>
+    <table class="w-100" *ngIf="suggestions.length>0">
+      <col span="1" style="width: 20%;">
+      <col span="1" style="width: 20%;">
+      <col span="1" style="width: 60%;">
+
+      <tbody>
+      <tr class="work-prepare-header">
+        <th>Заказ</th>
+        <th>Артикул</th>
+        <th class="text-end">Начать на участках</th>
+      </tr>
+      <tr *ngFor="let s of this.suggestions" class="work-prepare-row">
+        <td>{{s.orderNumber}}</td>
+        <td>{{s.article}}</td>
+        <td class="text-end">
+          <mat-form-field class="w-100">
+            <mat-label>Доступные участки</mat-label>
+            <mat-select [disabled]="isLoading" multiple [(ngModel)]="s.selectedPosts">
+              <mat-option [value]="''">Не начинать</mat-option>
+              <mat-option *ngFor="let p of s.availablePosts" [value]="p">{{p}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</div>

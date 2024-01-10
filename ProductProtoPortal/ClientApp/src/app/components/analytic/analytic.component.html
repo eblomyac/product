@@ -1,0 +1,16 @@
+<div class="container">
+  <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="indexChanged($event)">
+    <mat-tab label="Заказ">
+      <app-order-statistic *ngIf="selectedIndex==0"></app-order-statistic>
+    </mat-tab>
+    <mat-tab label="Состояние участков">
+      <app-post-statistic *ngIf="selectedIndex==1"></app-post-statistic>
+    </mat-tab>
+    <mat-tab label="Срезы состояний участков">
+      <app-retro-post-statistic *ngIf="selectedIndex==2"></app-retro-post-statistic>
+    </mat-tab>
+    <mat-tab label="Таймлайн заказа">
+      <app-order-time-line *ngIf="selectedIndex==3"></app-order-time-line>
+    </mat-tab>
+  </mat-tab-group>
+</div>

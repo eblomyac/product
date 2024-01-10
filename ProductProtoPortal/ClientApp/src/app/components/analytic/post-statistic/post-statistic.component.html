@@ -1,0 +1,34 @@
+
+<div>
+  <mat-button-toggle-group [disabled]="isLoading||stat==null" #chartSelect="matButtonToggleGroup" value="load-by-status">
+    <mat-button-toggle  value="load-by-status">Нагрузка по статусам</mat-button-toggle>
+    <mat-button-toggle value="load-by-orders" >Нагрузка по заказам и статусам</mat-button-toggle>
+    <mat-button-toggle value="load-by-orders-total" >Нагрузка по заказам общая</mat-button-toggle>
+  </mat-button-toggle-group>
+  <div *ngIf="isLoading" style="display: flex; justify-content: center">
+    <mat-spinner [diameter]="35"></mat-spinner>
+  </div>
+  <div *ngIf="stat">
+    <div class="w-100" *ngIf="chartSelect.value=='load-by-status'">
+      <apx-chart [series]="byPostStatus.series" [xaxis]="byPostStatus.xaxis" [dataLabels]="byPostStatus.dataLabels"
+                 [chart]="byPostStatus.chart" [theme]="byPostStatus.theme" [title]="byPostStatus.title" [plotOptions]="byPostStatus.plot">
+      </apx-chart>
+    </div>
+    <div class="w-100" *ngIf="chartSelect.value=='load-by-orders'">
+      <apx-chart  [series]="byOrderStatus.series" [xaxis]="byOrderStatus.xaxis" [dataLabels]="byOrderStatus.dataLabels"
+                  [chart]="byOrderStatus.chart" [plotOptions]="byOrderStatus.plot" [theme]="byOrderStatus.theme" [title]="byOrderStatus.title"
+                  [tooltip]="byOrderStatus.tooltip">
+      </apx-chart>
+    </div>
+
+    <div class="w-100" *ngIf="chartSelect.value=='load-by-orders-total'">
+      <apx-chart  [series]="byOrderTotal.series" [xaxis]="byOrderTotal.xaxis" [dataLabels]="byOrderTotal.dataLabels"
+                  [chart]="byOrderTotal.chart" [plotOptions]="byOrderTotal.plot" [theme]="byOrderTotal.theme" [title]="byOrderTotal.title"
+                  [tooltip]="byOrderTotal.tooltip">
+      </apx-chart>
+    </div>
+
+  </div>
+
+</div>
+

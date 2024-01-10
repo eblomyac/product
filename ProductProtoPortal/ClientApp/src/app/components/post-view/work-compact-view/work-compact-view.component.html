@@ -1,0 +1,45 @@
+<div *ngIf="work" >
+
+  <div  *ngIf="work.isLoading" style="display: flex; justify-content: flex-end">
+
+    <span *ngIf="work.isSaving">Сохранение...</span>
+    <mat-spinner style="display: inline-block" color="primary" diameter="15"></mat-spinner>
+  </div>
+  <div ><a (click)="view()"> {{work.structure.article}} х {{work.structure.count}}</a></div>
+  <div>{{work.structure.orderNumber}} - {{work.structure.productLine}}</div>
+  <div>Норма: {{work.structure.totalCost|number}}</div>
+  <div>{{work.structure.description}}</div>
+
+
+  <div *ngIf="work.structure.status==10">
+    Поступление от: {{work.structure.movedFrom}}
+  </div>
+  <div *ngIf="work.structure.status == 40 && work.structure.movedTo && work.structure.movedTo.length>0">
+    Передано в: {{work.structure.movedTo}}
+  </div>
+
+  <div *ngIf="work.structure.issues && work.structure.issues.length>0">
+    <div>События:</div>
+    <div *ngFor="let iss of work.structure.issues" class="w-100">
+      <span class="mt-1">{{iss.description}}</span> <button mat-icon-button color="primary" (click)="work.resolveIssue(iss)"><mat-icon>check</mat-icon></button>
+    </div>
+  </div>
+  <div style="display: flex; justify-content: space-between; align-items: baseline" class="mt-1">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>Операции</mat-expansion-panel-header>
+      <ul>
+        <li *ngFor="let c of work.structure.comments">{{c}}</li>
+      </ul>
+
+    </mat-expansion-panel>
+    <div>
+      <button style="margin-right: 5px" [disabled]="work.getActions().length==0" mat-button [matMenuTriggerFor]="menu" color="primary">Действия</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let a of this.work.getActions()" (click)="work.runAction(a)">{{a}}</button>
+
+      </mat-menu>
+    </div>
+
+  </div>
+
+</div>
