@@ -77,6 +77,29 @@ namespace ProtoLib.Managers
                     x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber &&
                     (startOnPosts.Contains(x.PostId)||x.PostId==toPostId)).ToList();
 
+
+                if (nextWorks.Count == 0)
+                {
+                    bool? shared = c.Posts.FirstOrDefault(x => x.Name == toPostId)?.IsShared;
+                    if (shared.HasValue && shared.Value)
+                    {
+                        var sharedWork = new Work();
+                        sharedWork.Article = currentWork.Article;
+                        sharedWork.Status = WorkStatus.income;
+                        sharedWork.MovedTo = null;
+                        sharedWork.OrderNumber = currentWork.OrderNumber;
+                        sharedWork.Comments = new List<string>();
+                        sharedWork.Description = currentWork.Description;
+                        sharedWork.PostId = toPostId;
+                        sharedWork.ProductLine = currentWork.ProductLine;
+                        sharedWork.MovedFrom = currentWork.PostId;
+                        sharedWork.CreatedStamp = DateTime.Now;
+                        sharedWork.SingleCost = 1;
+                        sharedWork.Count = currentWork.Count;
+                        c.Works.Add(sharedWork);
+                        c.SaveChanges();
+                    }
+                }
                 
                 foreach (var nextWork in nextWorks)
                 {

@@ -1,10 +1,10 @@
 ﻿import {Inject, Injector, INJECTOR} from "@angular/core";
 import {DataService} from "../services/data.service";
-import {MMatLegacyDialog as MatDialog from "@@angular/material/legacy-dialog;
+
 import {PostDialogComponent} from "../dialogs/post-dialog/post-dialog.component";
 import {firstValueFrom} from "rxjs";
 import {WorkEventService} from "../services/work-event.service";
-import {Xliff} from "@angular/compiler";
+
 import {DialogHandlerService} from "../services/dialog-handler.service";
 import {NumberDialogComponent} from "../dialogs/number-dialog/number-dialog.component";
 import {Issue} from "./Issue";

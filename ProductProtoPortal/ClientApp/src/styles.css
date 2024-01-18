@@ -36,10 +36,28 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
-.mat-tab-body-content{
+.item-text:hover{
+  background-color: rgba(128,128,128,0);
+  color: rgba(128,128,128,0);
 
-  overflow-x: hidden;
-  overflow-y: auto;
+}
+.item-text{
+  transition: 0.5s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 3em auto 0;
+  width: 50%;
+  max-width: 500px;
+  padding: 20px 25px;
+  text-align: center;
+  letter-spacing: 1px;
+  filter: drop-shadow(0px 0px 2px rgba(0,0,0,.3));
+  background: rgba(255,255,255,.8509803922);
+  color: #000;
+  border-radius: 8px;
+
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

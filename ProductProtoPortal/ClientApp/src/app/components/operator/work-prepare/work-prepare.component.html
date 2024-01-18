@@ -87,7 +87,11 @@
         <td class="text-center">
           <ng-container *ngIf="editMode; then editCount; else nonEditCount"></ng-container>
           <ng-template #editCount>
-            <input matInput type="number" [(ngModel)]="w.structure.count">
+            <mat-form-field>
+
+              <input matInput type="number" [(ngModel)]="w.structure.count">
+            </mat-form-field>
+
           </ng-template>
           <ng-template #nonEditCount>
             {{w.structure.count}}

@@ -3,10 +3,10 @@
     <div class="col-12" mat-dialog-title>
       {{card.article}}
     </div>
-    <div class="col-4">
+    <div class="col-5">
       <app-image-set-view [ImageSet]="card.imageSet"></app-image-set-view>
     </div>
-    <div class="col-8" >
+    <div class="col-7" >
 
         <mat-tab-group>
           <mat-tab [label]="p.postId" *ngFor="let p of this.card.postParts"  style="overflow-x: hidden" >

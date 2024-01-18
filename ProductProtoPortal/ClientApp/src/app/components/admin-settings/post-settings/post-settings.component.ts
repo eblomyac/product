@@ -36,7 +36,7 @@ export class PostSettingsComponent implements OnInit {
     if(exist){
 
     }else{
-      let p :IPost = {name:name, keys:keys, disabled:true, productOrder:po};
+      let p :IPost = {name:name, keys:keys, disabled:true, productOrder:po, isShared:false};
       this.posts.push(p);
     }
   }

@@ -15,13 +15,13 @@
       <col span="1" style="width: 25%;">
     </colgroup>
     <tbody>
-    <tr>
+    <tr >
       <th>Имя</th>
       <th>Учетная запись</th>
       <th>email</th>
       <th>Админ</th>
       <th>Оператор</th>
-      <th>Мастер</th>
+      <th class="text-center">Мастер</th>
     </tr>
     <tr *ngFor="let user of this.userList">
       <td>{{user.name}}</td>
@@ -36,7 +36,7 @@
         </mat-checkbox>
       </td>
       <td>
-        <mat-form-field class="w-100">
+        <mat-form-field class="w-100" style="padding-top: 7px; padding-bottom: 3px;">
           <mat-label>Участок</mat-label>
           <mat-select [(ngModel)]="user.postIdMaster">
             <mat-option [value]="">Нет</mat-option>

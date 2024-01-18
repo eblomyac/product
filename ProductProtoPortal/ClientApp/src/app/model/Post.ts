@@ -3,4 +3,5 @@
   keys:string;
   disabled:boolean;
   productOrder:number;
+  isShared:boolean;
 }

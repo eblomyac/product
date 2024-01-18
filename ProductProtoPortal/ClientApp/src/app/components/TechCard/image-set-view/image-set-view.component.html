@@ -1,5 +1,5 @@
 <div>
-  <gallery gallerize  [items]="gData" thumbPosition="bottom" [loop]="true"  [thumbHeight]="(gData.length==1?0:90)"  >
+  <gallery gallerize [autoHeight]="true"  [items]="gData" thumbPosition="bottom" [loop]="true"  [thumbHeight]="(gData.length==1?0:90)"  >
     <ng-container *galleryImageDef="let index=index">
       <div  class="item-text">
         {{ getDescription(index) }}

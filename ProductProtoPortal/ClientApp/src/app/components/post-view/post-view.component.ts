@@ -4,9 +4,10 @@ import {SessionService} from "../../services/session.service";
 import {IWork, Work} from "../../model/Work";
 import {moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Observable, firstValueFrom} from "rxjs";
-import {MatLegacyDialog as MatDialog} from "@angular/material/legacy-dialog";
+
 import {PostDialogComponent} from "../../dialogs/post-dialog/post-dialog.component";
 import {WorkEventService} from "../../services/work-event.service";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-post-view',

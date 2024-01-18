@@ -1,25 +1,29 @@
-<div style="width: 300px;">
-  <div class="mt-2 mb-5 text-center"><h4>Выберите участки</h4></div>
+<div>
+  <div mat-dialog-title>Выберите участки</div>
+  <div style="width: 400px;" mat-dialog-content>
+    <div>
+      <mat-form-field>
+        <mat-label>Основной участок</mat-label>
+        <mat-select [(ngModel)]="mainPost" (ngModelChange)="filterPosts()">
+          <mat-option *ngFor="let p of this.data.posts" [value]="p">{{p}}</mat-option>
+        </mat-select>
 
-  <div>
-    <mat-form-field>
-      <mat-label>Основной участок</mat-label>
-      <mat-select [(ngModel)]="mainPost" (ngModelChange)="filterPosts()">
-        <mat-option *ngFor="let p of this.data.posts" [value]="p">{{p}}</mat-option>
-      </mat-select>
+      </mat-form-field>
+    </div>
+    <div *ngIf="!this.data.onlyMain && this.availablePost.length>0">
+      Доп. участки где начнется следующий этап пр-ва:
+      <div *ngFor="let p of this.availablePost" class="mt-2 ml-2">
 
-    </mat-form-field>
+        <mat-checkbox color="primary"  (change)="matCheckChange($event,p)">{{p}}</mat-checkbox>
+      </div>
+    </div>
+
   </div>
-<div *ngIf="!this.data.onlyMain && this.availablePost.length>0">
-  Доп. участки где начнется следующий этап пр-ва:
-  <div *ngFor="let p of this.availablePost" class="mt-2 ml-2">
+  <div mat-dialog-actions>
+    <div  style="display: flex;justify-content: space-between; width: 100%">
 
-    <mat-checkbox color="primary"  (change)="matCheckChange($event,p)">{{p}}</mat-checkbox>
-  </div>
-</div>
-  <div class="mt-5" style="display: flex;justify-content: space-between">
-
-    <button mat-raised-button color="primary" (click)="cancel()">Отмена</button>
-    <button mat-raised-button color="primary" (click)="ok()">Готово</button>
+      <button mat-raised-button color="primary" (click)="cancel()">Отмена</button>
+      <button mat-raised-button color="primary" (click)="ok()">Готово</button>
+    </div>
   </div>
 </div>

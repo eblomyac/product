@@ -1,33 +1,35 @@
 <div>
 
   <mat-form-field>
-    <input matInput [ngxMatDatetimePicker]="fromPicker"
+    <input matInput
            placeholder="От" [(ngModel)]="this.from"
            [max]="this.to"
            >
     <mat-datepicker-toggle matSuffix [for]="$any(fromPicker)">
     </mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #fromPicker
+    <mat-datepicker #fromPicker></mat-datepicker>
+  <!--  <ngx-mat-datetime-picker #fromPicker
 
                              [showSeconds]="false"
                              [stepHour]="1" [stepMinute]="1"
                              color="primary">
-    </ngx-mat-datetime-picker>
+    </ngx-mat-datetime-picker> -->
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput [ngxMatDatetimePicker]="toPicker"
+    <input matInput
            placeholder="По" [(ngModel)]="this.to"
            [min]="this.from"
     >
     <mat-datepicker-toggle matSuffix [for]="$any(toPicker)">
     </mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #toPicker
+    <mat-datepicker #toPicker></mat-datepicker>
+    <!--<ngx-mat-datetime-picker #toPicker
 
                              [showSeconds]="false"
                              [stepHour]="1" [stepMinute]="1"
                              color="primary">
-    </ngx-mat-datetime-picker>
+    </ngx-mat-datetime-picker> -->
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="load()">Загрузить</button>
 </div>

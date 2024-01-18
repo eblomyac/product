@@ -169,7 +169,8 @@ namespace ProtoLib.Managers
                     var backwardDirection = allWorks
                        .Where(x => (x.Status == WorkStatus.sended || x.Status == WorkStatus.ended) && x.MovedTo == work.PostId)
                        .Select(x=>x.PostId)
-                       .Where(x=>x!=user.PostIdMaster).Distinct().ToList();;
+                       .Where(x=>x!=user.PostIdMaster).Distinct().ToList();
+                    
                     var forwardDirection =
                         allWorks
                             .Where(x => x.Status == WorkStatus.hidden || x.Status == WorkStatus.unkown)
@@ -188,6 +189,8 @@ namespace ProtoLib.Managers
                         }
                         
                     }
+                    backwardDirection.AddRange(c.Posts.Where(x=>x.IsShared).Select(x=>x.Name).ToList());
+                    forwardDirection.AddRange(c.Posts.Where(x=>x.IsShared).Select(x=>x.Name).ToList());
                     var resultRecord = new
                         {Work = work, Forward = forwardDirection,
                             Backward = backwardDirection};

@@ -1,18 +1,26 @@
-<div style="width: 300px;">
+<div>
+  <div mat-dialog-title>Регистрация события</div>
 
-  <mat-form-field class="w-100">
-    <mat-label>Тип события</mat-label>
-    <mat-select [(ngModel)]="issue.templateId">
-      <mat-option *ngFor="let t of this.templates" [value]="t.id">{{t.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field class="w-100">
-    <mat-label>Комментарий</mat-label>
-    <textarea matInput [(ngModel)]="issue.description" rows="3"></textarea>
-  </mat-form-field>
-  <div class="mt-5" style="display: flex;justify-content: space-between">
+  <div style="width: 400px;" mat-dialog-content>
 
-    <button mat-raised-button color="primary" (click)="cancel()">Отмена</button>
-    <button mat-raised-button color="primary" (click)="ok()">Готово</button>
+    <mat-form-field class="w-100">
+      <mat-label>Тип события</mat-label>
+      <mat-select [(ngModel)]="issue.templateId">
+        <mat-option *ngFor="let t of this.templates" [value]="t.id">{{ t.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="w-100">
+      <mat-label>Комментарий</mat-label>
+      <textarea matInput [(ngModel)]="issue.description" rows="3"></textarea>
+    </mat-form-field>
+
   </div>
+  <div mat-dialog-actions>
+    <div  style="display: flex;justify-content: space-between; width: 100%">
+
+      <button mat-raised-button color="primary" (click)="cancel()">Отмена</button>
+      <button mat-raised-button color="primary" (click)="ok()">Готово</button>
+    </div>
+  </div>
+
 </div>

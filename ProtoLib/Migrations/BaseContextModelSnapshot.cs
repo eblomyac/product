@@ -45,6 +45,9 @@ namespace ProtoLib.Migrations
                     b.Property<bool>("Disabled")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsShared")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductOrder")
                         .HasColumnType("int");
 
@@ -148,6 +151,10 @@ namespace ProtoLib.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("ImageSetId")
                         .HasColumnType("uniqueidentifier");

@@ -25,7 +25,7 @@ export class ImageSetViewComponent implements OnInit {
       });
     }
   }
-  getDescription(i:number){
+  getDescription(i:any){
     return this.ImageSet?.images[i].description;
   }
 

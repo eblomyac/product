@@ -77,6 +77,7 @@ namespace ProtoLib.Managers
                             c.Posts.Add(dbPost);
                         }
 
+                        dbPost.IsShared = post.IsShared;
                         dbPost.ProductOrder = post.ProductOrder;
                         dbPost.Disabled = post.Disabled;
                         dbPost.Keys = post.Keys;

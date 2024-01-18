@@ -1,12 +1,21 @@
-<div style="width: 300px;">
-  <div class="mt-2 mb-5 text-center"><h5>{{data.caption}}</h5></div>
-  <mat-form-field>
-    <mat-label>Значение</mat-label>
-    <input matInput type="number" [(ngModel)]="value">
-  </mat-form-field>
-  <div class="mt-5" style="display: flex;justify-content: space-between">
+<div>
+  <div mat-dialog-title>
+    {{ data.caption }}
+  </div>
+  <div style="width: 400px; display: flex; justify-content: center" mat-dialog-content>
 
-    <button mat-raised-button color="primary" (click)="cancel()">Отмена</button>
-    <button mat-raised-button color="primary" (click)="ok()">Готово</button>
+    <mat-form-field>
+      <mat-label>Значение</mat-label>
+      <input matInput type="number" [(ngModel)]="value">
+    </mat-form-field>
+
+  </div>
+
+  <div mat-dialog-actions>
+    <div  style="display: flex;justify-content: space-between; width: 100%">
+
+      <button mat-raised-button color="primary" (click)="cancel()">Отмена</button>
+      <button mat-raised-button color="primary" (click)="ok()">Готово</button>
+    </div>
   </div>
 </div>

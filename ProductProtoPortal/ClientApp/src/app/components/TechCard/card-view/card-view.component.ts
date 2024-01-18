@@ -1,11 +1,11 @@
 import {Component, Inject, Injector, OnDestroy, OnInit} from '@angular/core';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from "@angular/material/legacy-dialog";
+
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
-import {OverlayRef} from "@angular/cdk/overlay";
-import {TransportService} from "../../../services/transport.service";
+
 import {DataService} from "../../../services/data.service";
 import {TechCard} from "../../../model/TechCard";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-card-view',

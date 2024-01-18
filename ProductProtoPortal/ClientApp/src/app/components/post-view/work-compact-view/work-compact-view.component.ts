@@ -1,8 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {IWork, Work} from "../../../model/Work";
-import {MatLegacyDialog as MatDialog} from "@angular/material/legacy-dialog";
-import {InfoViewComponent} from "../../../dialogs/info-view/info-view.component";
-import {Observable} from "rxjs";
+
 import {Router} from "@angular/router";
 
 @Component({

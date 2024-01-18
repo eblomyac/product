@@ -11,12 +11,9 @@ import {SessionService} from "./services/session.service";
 import {PostViewComponent} from "./components/post-view/post-view.component";
 import {AdminSettingsComponent} from "./components/admin-settings/admin-settings.component";
 import {UserSettingsComponent} from "./components/admin-settings/user-settings/user-settings.component";
-import {MatLegacyCheckboxModule as MatCheckboxModule} from "@angular/material/legacy-checkbox";
-import {MatLegacySelectModule as MatSelectModule} from "@angular/material/legacy-select";
-import {MatLegacyTabsModule as MatTabsModule} from "@angular/material/legacy-tabs";
-import {MatLegacyButtonModule as MatButtonModule} from "@angular/material/legacy-button";
+
 import {PostSettingsComponent} from "./components/admin-settings/post-settings/post-settings.component";
-import {MatLegacyInputModule as MatInputModule} from "@angular/material/legacy-input";
+
 import {MatIconModule} from "@angular/material/icon";
 import {OperatorComponent} from "./components/operator/operator.component";
 import {WorkStarterComponent} from "./components/operator/work-starter/work-starter.component";
@@ -24,13 +21,13 @@ import {WorkPrepareComponent} from "./components/operator/work-prepare/work-prep
 import {WorkCompactViewComponent} from "./components/post-view/work-compact-view/work-compact-view.component";
 import { DragDropModule} from "@angular/cdk/drag-drop";
 import {PostDialogComponent} from "./dialogs/post-dialog/post-dialog.component";
-import {MatLegacyDialogModule as MatDialogModule} from "@angular/material/legacy-dialog";
+
 import {InfoViewComponent} from "./dialogs/info-view/info-view.component";
-import {MatLegacyMenuModule as MatMenuModule} from "@angular/material/legacy-menu";
+
 import {WorkEventService} from "./services/work-event.service";
-import {MatLegacyProgressSpinnerModule as MatProgressSpinnerModule} from "@angular/material/legacy-progress-spinner";
+
 import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatLegacyListModule as MatListModule} from "@angular/material/legacy-list";
+
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {DialogHandlerService} from "./services/dialog-handler.service";
 import {NumberDialogComponent} from "./dialogs/number-dialog/number-dialog.component";
@@ -41,13 +38,8 @@ import {PostStatisticComponent} from "./components/analytic/post-statistic/post-
 import {OrderStatisticComponent} from "./components/analytic/order-statistic/order-statistic.component";
 import {NgApexchartsModule} from "ng-apexcharts";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
-import {MatLegacyTooltipModule as MatTooltipModule} from "@angular/material/legacy-tooltip";
+
 import {RetroPostStatisticComponent} from "./components/analytic/retro-post-statistic/retro-post-statistic.component";
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatNativeDateModule,
-  NgxMatTimepickerModule
-} from "@angular-material-components/datetime-picker";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
 import {OrderTimeLineComponent} from "./components/analytic/order-time-line/order-time-line.component";
@@ -57,6 +49,16 @@ import {CardfinderComponent} from "./components/TechCard/cardfinder/cardfinder.c
 import {ImageSetViewComponent} from "./components/TechCard/image-set-view/image-set-view.component";
 import {LightboxModule} from "ng-gallery/lightbox";
 import {GalleryModule} from "ng-gallery";
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatButtonModule} from "@angular/material/button";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatListModule} from "@angular/material/list";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 
 
 
@@ -85,44 +87,45 @@ import {GalleryModule} from "ng-gallery";
         CardfinderComponent,
         ImageSetViewComponent
     ],
-    imports: [
-        BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-        HttpClientModule,
-        FormsModule,
-        RouterModule.forRoot([
-            { path: '*', redirectTo: '', pathMatch: 'full' },
-            { path: 'post', component: PostViewComponent },
-            { path: 'admin', component: AdminSettingsComponent },
-            { path: 'operate', component: OperatorComponent },
-            { path: 'statistic', component: AnalyticComponent },
-            { path: 'card', component: CardViewComponent },
-            { path: 'card-search', component: CardfinderComponent }
-        ]),
-        BrowserAnimationsModule,
-        MatCheckboxModule,
-        MatSelectModule,
-        MatTabsModule,
-        MatButtonModule,
-        MatInputModule,
-        MatIconModule,
-        DragDropModule,
-        MatDialogModule,
-        MatMenuModule,
-        MatProgressSpinnerModule,
-        MatToolbarModule,
-        MatListModule,
-        MatSidenavModule,
-        NgApexchartsModule,
-        MatButtonToggleModule,
-        MatTooltipModule,
-        NgxMatDatetimePickerModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        NgxMatNativeDateModule,
-        MatExpansionModule,
-        GalleryModule,
-        LightboxModule
-    ],
+  imports: [
+    BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
+    HttpClientModule,
+    FormsModule,
+    RouterModule.forRoot([
+      {path: '*', redirectTo: '', pathMatch: 'full'},
+      {path: 'post', component: PostViewComponent},
+      {path: 'admin', component: AdminSettingsComponent},
+      {path: 'operate', component: OperatorComponent},
+      {path: 'statistic', component: AnalyticComponent},
+      {path: 'card', component: CardViewComponent},
+      {path: 'card-search', component: CardfinderComponent}
+    ]),
+    BrowserAnimationsModule,
+
+    MatIconModule,
+    DragDropModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    NgApexchartsModule,
+    MatButtonToggleModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatExpansionModule,
+    GalleryModule,
+    LightboxModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatTooltipModule,
+    MatListModule,
+    MatMenuModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions
+  ],
     providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService],
     bootstrap: [AppComponent]
 })
