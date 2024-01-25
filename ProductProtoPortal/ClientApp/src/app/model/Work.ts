@@ -31,6 +31,7 @@ export interface IWork {
   issues:Issue[];
   comments:string[];
   commentMap:string;
+  priority:number;
 }
 
 export class Work {

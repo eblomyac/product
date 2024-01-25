@@ -36,6 +36,7 @@ namespace ProtoLib.Model
         
 
         public DbSet<TechCard> TechCards { get; set; }
+        public DbSet<WorkPriority> WorkPriorities { get; set; }
         public DbSet<TechCardPost> TechCardPosts { get; set; }
         public DbSet<TechCardLine> TechCardLines { get; set; }
 
@@ -55,7 +56,7 @@ namespace ProtoLib.Model
             {
                 //string connectionString = Constants.Database.ConnectionString;
                 //optionsBuilder.UseSqlServer(connectionString);
-                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
+                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
             }
         }
         private User SystemUser()

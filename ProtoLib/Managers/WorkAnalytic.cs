@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
@@ -103,8 +104,30 @@ namespace ProtoLib.Managers
                     var works = c.Works.Where(x => x.PostId == user.PostIdMaster &&
                                        x.Status != WorkStatus.ended &&
                                        x.Status != WorkStatus.hidden &&
-                                       x.Status != WorkStatus.unkown);
-                    return works.ToList();
+                                       x.Status != WorkStatus.unkown).ToList();
+                    List<long> orders = works.Select(x => x.OrderNumber).Distinct().ToList();
+                    WorkPriorityManager wpm = new WorkPriorityManager();
+                    var pr = wpm.WorkPriorityList(orders);
+                    foreach (var w in works)
+                    {
+                        var orderPriority =
+                            pr.FirstOrDefault(x => x.OrderNumber == w.OrderNumber && x.Article.Length < 1);
+                        var articlePriority =
+                            pr.FirstOrDefault(x => x.OrderNumber == w.OrderNumber && x.Article == w.Article);
+                        if (orderPriority == null && articlePriority == null)
+                        {
+                            w.Priority = 10;
+                        }
+                        if (orderPriority != null)
+                        {
+                            w.Priority = orderPriority.Priority;
+                        }
+                        if (articlePriority != null)
+                        {
+                            w.Priority = articlePriority.Priority;
+                        }
+                    }
+                    return works.OrderByDescending(x=>x.Priority).ToList();
                 }
                 else
                 {

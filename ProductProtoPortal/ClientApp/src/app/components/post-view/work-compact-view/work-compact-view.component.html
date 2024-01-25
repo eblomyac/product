@@ -5,8 +5,9 @@
     <span *ngIf="work.isSaving">Сохранение...</span>
     <mat-spinner style="display: inline-block" color="primary" diameter="15"></mat-spinner>
   </div>
-  <div ><a (click)="view()"> {{work.structure.article}} х {{work.structure.count}}</a></div>
+  <div ><a> {{work.structure.article}} х {{work.structure.count}} (приоритет:{{work.structure.priority}})</a> <div></div></div>
   <div>{{work.structure.orderNumber}} - {{work.structure.productLine}}</div>
+
   <div>Норма: {{work.structure.totalCost|number}}</div>
   <div>{{work.structure.description}}</div>
 

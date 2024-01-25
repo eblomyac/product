@@ -6,6 +6,7 @@ import {PostData} from "./dataSubServices/PostData";
 import {UserData} from "./dataSubServices/UserData";
 import {StatisticData} from "./dataSubServices/StatisticData";
 import {TechCardData} from "./dataSubServices/TechCardData";
+import {PriorityData} from "./dataSubServices/PriorityData";
 
 
 
@@ -21,6 +22,7 @@ export class DataService {
   Issue:IssueData;
   Statistic:StatisticData;
   TechCard:TechCardData;
+  PriorityData:PriorityData;
   constructor(public transport:TransportService) {
       this.User = new UserData(transport);
       this.Post = new PostData(transport,this);
@@ -28,5 +30,6 @@ export class DataService {
       this.Issue = new IssueData(transport,this);
       this.Statistic = new StatisticData(transport,this);
       this.TechCard = new TechCardData(transport,this);
+      this.PriorityData = new PriorityData(transport,this);
   }
 }

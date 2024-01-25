@@ -13,7 +13,8 @@ const PROXY_CONFIG = [
       "/issues",
       "/analytic",
       "/transfer",
-      "/techcard"
+      "/techcard",
+      "/priority"
    ],
     target: target,
     secure: false,

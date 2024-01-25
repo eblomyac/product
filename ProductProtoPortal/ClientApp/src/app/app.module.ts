@@ -59,6 +59,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
+import {PriorityListComponent} from "./components/priority-list/priority-list.component";
 
 
 
@@ -98,7 +99,8 @@ import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/mater
       {path: 'operate', component: OperatorComponent},
       {path: 'statistic', component: AnalyticComponent},
       {path: 'card', component: CardViewComponent},
-      {path: 'card-search', component: CardfinderComponent}
+      {path: 'card-search', component: CardfinderComponent},
+      {path: 'work-priority', component: PriorityListComponent}
     ]),
     BrowserAnimationsModule,
 
@@ -124,7 +126,9 @@ import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/mater
     MatMenuModule,
     MatDialogTitle,
     MatDialogContent,
-    MatDialogActions
+    MatDialogActions,
+    PriorityListComponent,
+    PriorityListComponent
   ],
     providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService],
     bootstrap: [AppComponent]

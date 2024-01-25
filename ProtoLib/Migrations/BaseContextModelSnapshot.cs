@@ -458,6 +458,33 @@ namespace ProtoLib.Migrations
                     b.ToTable("IssueTemplates");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.WorkPriority", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Article")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("DateChange")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("OrderNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkPriorities");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.WorkStatusLog", b =>
                 {
                     b.Property<long>("Id")

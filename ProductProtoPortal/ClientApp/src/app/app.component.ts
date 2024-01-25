@@ -34,6 +34,8 @@ export class AppComponent {
           }if(this.session.currentUser.structure.isOperator){
             this.availableMenu.push({caption:"Оператор ИТР",route:"/operate"})
          //   this.router.navigate(['/operate'])
+          }if(this.session.currentUser.structure.isAdmin || this.session.currentUser.structure.isOperator){
+            this.availableMenu.push({caption:"Приоритет работ",route:"/work-priority"})
           }
 
             this.availableMenu.push({caption:"Анализ",route:"/statistic"})

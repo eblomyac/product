@@ -139,6 +139,25 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background: rgba(79, 79, 79, 0.18);
   font-size: 14px;
 }
+.priority-item{
+  padding: 10px 10px;
+  margin: 5px 5px 5px 5px;
+  border-radius: 4px;
+  border: dotted 1px rgba(35, 35, 35, 0.6);
+  color: rgb(255, 255, 255);
+  box-sizing: border-box;
+  background: rgba(79, 79, 79, 0.18);
+  font-size: 14px;
+}
+.priority-filter-link{
+  cursor: pointer;
+  text-decoration-line: underline;
+  color: rgb(255, 255, 255);
+}
+.priority-filter-link:hover{
+
+  color: rgb(128, 128, 128);
+}
 .work-prepare-header{
   height: 48px;
   vertical-align: center;

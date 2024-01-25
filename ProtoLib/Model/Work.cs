@@ -72,8 +72,9 @@ namespace ProtoLib.Model
             get;
             set;
         }
-        
-        
+
+        [NotMapped]
+        public int Priority { get; set; }
 
         [NotMapped]
         public List<string> Comments
@@ -171,7 +172,7 @@ namespace ProtoLib.Model
             w.MovedFrom = this.MovedFrom;
             w.MovedTo = this.MovedTo;
             w.CommentMap = this.CommentMap;
-         
+            w.Priority = this.Priority;
             return w;
         }
     }
