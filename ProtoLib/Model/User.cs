@@ -12,7 +12,7 @@ namespace ProtoLib.Model
         public string AccName { get; set; }
         [MaxLength(128)]
         public string Name { get; set; }
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string Mail { get; set; }
         
         public ICollection<Role> Roles { get; set; }

@@ -94,7 +94,7 @@ namespace ProtoLib.Managers
         {
             using (BaseContext c = new BaseContext(""))
             {
-                return c.Works.Where(x => x.Status != WorkStatus.ended).Select(x => x.OrderNumber).Distinct().ToList();
+                return c.Works.Where(x => x.Status != WorkStatus.ended).Select(x => x.OrderNumber).Distinct().ToList().OrderBy(x=>x).ToList();
             }
         }
 

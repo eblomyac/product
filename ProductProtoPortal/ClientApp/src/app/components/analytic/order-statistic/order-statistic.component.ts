@@ -20,15 +20,23 @@ import {ApexChartOption, ChartOptions} from "../../../services/charts/ChartOptio
 })
 export class OrderStatisticComponent implements OnInit {
   orders:number[]=[];
+  filteredOrders:number[]=[];
   isLoading = false;
   stat:any;
+  orderFilter=0;
   chartOptions:ChartOptions=new ChartOptions();
   orderChartOptions:ApexChartOption = this.chartOptions.getOrderStatisticChartOptions();
   postsChartOptions:ApexChartOption = this.chartOptions.getOrderByPostsChartOptions();
 
 
 
-
+  filterUpdate(){
+    if(this.orderFilter==0 || this.orderFilter == null){
+      this.filteredOrders = this.orders;
+    }else{
+      this.filteredOrders = this.orders.filter(x=>x.toString().includes(this.orderFilter.toString()));
+    }
+  }
 
 
   constructor(private data:DataService) {
@@ -45,6 +53,7 @@ export class OrderStatisticComponent implements OnInit {
       if(x!=null){
         this.isLoading =false;
         this.orders = x;
+        this.filterUpdate();
 
       }
     });

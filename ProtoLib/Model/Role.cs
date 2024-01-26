@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProtoLib.Model
 {
@@ -12,6 +13,7 @@ namespace ProtoLib.Model
     {
         public long Id { get; set; }
         public RoleType Type { get; set; }
+        [MaxLength(32)]
         public string UserAccName { get; set; }
         public string? PostId { get; set; }
 

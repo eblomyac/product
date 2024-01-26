@@ -56,6 +56,28 @@ namespace ProductProtoPortal.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        public IActionResult RemoveUnstarted(List<string> works)
+        {
+            WorkRemover wr = new WorkRemover();
+            List<Tuple<long, string>> toRemove = new List<Tuple<long, string>>();
+            foreach (var workLine in works)
+            {
+                try
+                {
+                    string[] line = workLine.Split('\t');
+                    toRemove.Add(new Tuple<long, string>(long.Parse(line[0]), line[1]));
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+            wr.RemoveWorks(toRemove);
+            return new OkObjectResult(new ApiAnswer(true));
+        }
+
+        [HttpPost]
+        [Route("[action]")]
         public IActionResult StartWorks(List<WorkAnalytic.WorkStartSuggestion> suggestions)
         {
             var user = AuthHelper.GetADUser(this.HttpContext);

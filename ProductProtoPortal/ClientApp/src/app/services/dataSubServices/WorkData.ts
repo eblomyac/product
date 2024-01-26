@@ -20,6 +20,14 @@ export  class WorkData{
      return null;
     }));
   }
+  public RemoveUnstarted(data:string[]):Observable<boolean|null>{
+    return this.transport.Post('/works/removeUnstarted', new HttpParams(), data).pipe(map<ApiAnswer|null, boolean|null>(x=>{
+      if(x!=null){
+        return x.isSuccess;
+      }
+      return false;
+    }));
+  }
   public Create(works:Work[]):Observable<Work[]|null>{
     let ws = works.map(x=>x.structure);
     return this.transport.Post('/works/create', new HttpParams(), ws).pipe(map<ApiAnswer|null, Work[]|null>(x=>{
