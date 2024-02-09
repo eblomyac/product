@@ -51,6 +51,10 @@ namespace ProtoLib.Migrations
                     b.Property<int>("ProductOrder")
                         .HasColumnType("int");
 
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Name");
 
                     b.ToTable("Posts");
@@ -137,6 +141,7 @@ namespace ProtoLib.Migrations
 
                     b.Property<string>("UserAccName")
                         .IsRequired()
+                        .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
                     b.HasKey("Id");
@@ -381,6 +386,14 @@ namespace ProtoLib.Migrations
                     b.Property<DateTime?>("Resolved")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ReturnBackPostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReturnedFromPostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("TemplateId")
                         .HasColumnType("bigint");
 
@@ -425,6 +438,10 @@ namespace ProtoLib.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
+                    b.Property<string>("ReturnedToPost")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("SourceIssueId")
                         .HasColumnType("bigint");
 
@@ -448,6 +465,9 @@ namespace ProtoLib.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

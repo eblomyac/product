@@ -2,7 +2,7 @@
   <div mat-dialog-title>Выберите участки</div>
   <div style="width: 400px;" mat-dialog-content>
     <div>
-      <mat-form-field>
+      <mat-form-field class="w-100">
         <mat-label>Основной участок</mat-label>
         <mat-select [(ngModel)]="mainPost" (ngModelChange)="filterPosts()">
           <mat-option *ngFor="let p of this.data.posts" [value]="p">{{p}}</mat-option>
@@ -17,6 +17,13 @@
         <mat-checkbox color="primary"  (change)="matCheckChange($event,p)">{{p}}</mat-checkbox>
       </div>
     </div>
+
+      <div *ngIf="this.data.isReturn">
+        <mat-form-field class="w-100">
+          <mat-label>Причина возврата</mat-label>
+          <textarea matInput [(ngModel)]="comment"></textarea>
+        </mat-form-field>
+      </div>
 
   </div>
   <div mat-dialog-actions>

@@ -13,12 +13,13 @@ export class PostDialogComponent implements OnInit {
   selectedPosts:string[]=[];
   availablePost:string[]=[];
   mainPost:string='';
-
+  comment:string="";
 
   constructor(private dialogRef:MatDialogRef<PostDialogComponent>,@Inject(MAT_DIALOG_DATA)
-    public data: {posts:string[], onlyMain:boolean})
+    public data: {posts:string[], onlyMain:boolean, isReturn:boolean})
   {
     if(data == null || data.posts == null || data.posts.length ==0){
+      console.log(data);
       this.dialogRef.close(null);
     }
   }
@@ -46,7 +47,7 @@ export class PostDialogComponent implements OnInit {
     }
   }
   ok(){
-    let result= {main:this.mainPost, additional:this.selectedPosts};
+    let result= {main:this.mainPost, additional:this.selectedPosts, comment:this.comment};
     this.dialogRef.close(result);
   }
 }

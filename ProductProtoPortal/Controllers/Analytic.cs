@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Dynamic;
+using ClosedXML.Excel;
+using KSK_LIB.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ProtoLib.Managers;
@@ -9,7 +12,52 @@ namespace ProductProtoPortal.Controllers
     [Route("/[controller]")]
     public class Analytic:Controller
     {
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult PrintTotalOrderStat(string articleFilter,string orderFilter)
+        {
+            try
+            {
+                AnalyticManager am = new AnalyticManager();
+                if (orderFilter == "*")
+                {
+                    orderFilter = "";
+                }
 
+                if (articleFilter == "*")
+                {
+                    articleFilter = "";
+                }
+
+                dynamic data = am.TotalOrderStat(orderFilter, articleFilter);
+                var table = am.TotalOrderToExcel(data);
+
+                string fileName = Path.Combine(Environment.CurrentDirectory, "download",
+                    Guid.NewGuid().ToString() + ".xlsx");
+                ExcelExporter ee = new ExcelExporter(fileName);
+                ee.CellColorKeys.Add("[green]", XLColor.LightGreen);
+                ee.CellColorKeys.Add("[yellow]", XLColor.LightYellow);
+                ee.ExportTable(table, true);
+
+                dynamic result = new ExpandoObject();
+                result.link = "/download/" + Path.GetFileName(fileName);
+                return new OkObjectResult(new ApiAnswer(result));
+            }
+            catch (Exception exc)
+            {
+                return new BadRequestObjectResult(new ApiAnswer(exc, exc.Message, false).ToString());
+            }
+
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult TotalOrderStat()
+        {
+            AnalyticManager am = new AnalyticManager();
+            return new OkObjectResult(new ApiAnswer(am.TotalOrderStat()));
+        }
+        
         [HttpGet]
         [Route("[action]")]
         public IActionResult PostStatistic()

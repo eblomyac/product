@@ -21,7 +21,7 @@ export class WorkEventService {
   public OnNewWorkBySplit:Observable<Work> = this.newWorkBySplit.asObservable();
 
   public WorkStatusChange(work:Work,from:number,to:number, isSuccess:boolean){
-    console.log(`Workstatus ${isSuccess} change: ${work.structure.id} from: ${from} to:${work.structure.status}`);
+    //console.log(`Workstatus ${isSuccess} change: ${work.structure.id} from: ${from} to:${work.structure.status}`);
     this.workChangedStatus.next({work,from, to, isSuccess});
   }
   public NewWorkBySplit(work:Work){

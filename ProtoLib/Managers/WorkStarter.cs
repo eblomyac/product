@@ -48,12 +48,14 @@ namespace ProtoLib.Managers
             return false;
 
         }
-        public bool MoveWorkMaster(long workId, string toPostId, string accName, List<string> startOnPosts)
+
+
+        public bool MoveWorkMaster(long workId, string toPostId, string accName, List<string> startOnPosts, string oldPostId)
         {
             WorkStatusChanger wss = new WorkStatusChanger();
             using (BaseContext c = new BaseContext(accName))
             {
-                List<Work> allWorks = new List<Work>();
+                //List<Work> allWorks = new List<Work>();
                 var currentWork = c.Works.AsNoTracking().FirstOrDefault(x => x.Id == workId);
 
                 if (currentWork.Status != WorkStatus.sended)
@@ -61,6 +63,24 @@ namespace ProtoLib.Managers
                     return false;
                 }
 
+                if (!string.IsNullOrEmpty(oldPostId))
+                {
+                   
+                    var previousStartedWorks = c.Works.AsNoTracking().Where(x =>
+                        x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber &&
+                        x.MovedFrom == currentWork.PostId && x.Status== WorkStatus.income).ToList();
+                    foreach (var prevStarted in previousStartedWorks)
+                    {
+                        prevStarted.MovedFrom = "";
+                        wss.ChangeStatus(prevStarted, WorkStatus.hidden, accName);
+                    
+                    }
+                    wsm.SaveWorks(previousStartedWorks);
+                }
+                
+               
+                
+                
                 currentWork.MovedTo = toPostId;
 
                 if (toPostId == Constants.Work.EndPosts.JustEnd)

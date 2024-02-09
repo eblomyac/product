@@ -60,6 +60,10 @@ import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 import {PriorityListComponent} from "./components/priority-list/priority-list.component";
+import {
+  TotalOrderStatisticComponent
+} from "./components/analytic/total-order-statistic/total-order-statistic.component";
+
 
 
 
@@ -86,7 +90,7 @@ import {PriorityListComponent} from "./components/priority-list/priority-list.co
         OrderTimeLineComponent,
         CardViewComponent,
         CardfinderComponent,
-        ImageSetViewComponent
+        ImageSetViewComponent, TotalOrderStatisticComponent
     ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

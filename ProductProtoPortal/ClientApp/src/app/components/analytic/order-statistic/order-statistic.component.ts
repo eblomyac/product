@@ -23,12 +23,21 @@ export class OrderStatisticComponent implements OnInit {
   filteredOrders:number[]=[];
   isLoading = false;
   stat:any;
+  articleStat:any;
   orderFilter=0;
   chartOptions:ChartOptions=new ChartOptions();
   orderChartOptions:ApexChartOption = this.chartOptions.getOrderStatisticChartOptions();
   postsChartOptions:ApexChartOption = this.chartOptions.getOrderByPostsChartOptions();
 
+  articleFilter='';
 
+  articleFilterUpdate(){
+    if(this.articleFilter.length == 0){
+      this.articleStat = this.stat.ArticleStat;
+    }else{
+      this.articleStat = this.stat.ArticleStat.filter((x:any)=>x.Article.includes(this.articleFilter));
+    }
+  }
 
   filterUpdate(){
     if(this.orderFilter==0 || this.orderFilter == null){
@@ -66,6 +75,7 @@ export class OrderStatisticComponent implements OnInit {
         this.isLoading=false;
         this.stat=x;
         this.makeOrderTotalStat();
+        this.articleFilterUpdate();
       }
     })
   }

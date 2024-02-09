@@ -56,6 +56,7 @@ namespace ProtoLib.Managers
             {
                 return c.Posts
                     .Include(x => x.PostCreationKeys)
+                    .OrderBy(x=>x.ProductOrder)
                     .ToList();
             }
         }
@@ -81,6 +82,7 @@ namespace ProtoLib.Managers
                         dbPost.ProductOrder = post.ProductOrder;
                         dbPost.Disabled = post.Disabled;
                         dbPost.Keys = post.Keys;
+                        dbPost.TableName = post.TableName;
                     }
 
                     c.SaveChanges();

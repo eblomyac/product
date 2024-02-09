@@ -27,10 +27,27 @@ namespace ProtoLib.Managers
             }
         }
         
-        public WorkIssue RegisterIssue(long workId, long templateId, string description,string accName)
+        public WorkIssue RegisterIssue(long workId, long templateId, string description,string accName, string returnPostId, string returnedFromPostId="")
         {
             using (BaseContext c = new BaseContext(accName))
             {
+                if (templateId == 0)
+                {
+                    var unvisible = c.IssueTemplates.FirstOrDefault(x => x.IsVisible == false);
+                    if (unvisible == null)
+                    {
+                        WorkIssueTemplate tempalte = new WorkIssueTemplate();
+                        tempalte.IsVisible = false;
+                        tempalte.Name = "Возврат";
+                        c.IssueTemplates.Add(tempalte);
+                        c.SaveChanges();
+                        templateId = tempalte.Id;
+                    }
+                    else
+                    {
+                        templateId = unvisible.Id;
+                    }
+                }
                 var exist = c.Issues.Include(x=>x.Template).FirstOrDefault(x => x.WorkId == workId && x.TemplateId == templateId);
                 
                 
@@ -54,9 +71,21 @@ namespace ProtoLib.Managers
                     wi.Description =  $"{template.Name} {description}";
                     wi.TemplateId = templateId;
                     wi.WorkId = workId;
-
+                    if (string.IsNullOrEmpty(returnedFromPostId))
+                    {
+                        wi.ReturnedFromPostId = "";
+                    }
+                    else
+                    {
+                        wi.ReturnedFromPostId = returnedFromPostId;
+                    }
+                    wi.ReturnBackPostId = returnPostId;
+                    if (wi.ReturnBackPostId == null)
+                    {
+                        wi.ReturnBackPostId = "";
+                    }
                     WorkIssueLog wil = new WorkIssueLog();
-                   
+                    wil.ReturnedToPost = wi.ReturnBackPostId;
                     wil.Start=DateTime.Now;
                     wil.Article = work.Article;
                     wil.OrderNumber = work.OrderNumber;
@@ -64,6 +93,22 @@ namespace ProtoLib.Managers
                     wil.Type = template.Name;
                     wil.PostId = work.PostId;
                     wil.End = null;
+
+                    if (!string.IsNullOrWhiteSpace(wi.ReturnBackPostId))
+                    {
+                        var previousWork = c.Works.AsNoTracking().FirstOrDefault(x =>
+                            x.PostId == wi.ReturnBackPostId && x.Article == work.Article &&
+                            x.OrderNumber == work.OrderNumber && (x.Status == WorkStatus.ended || x.Status == WorkStatus.sended));
+                        if (previousWork != null)
+                        {
+                            WorkStatusChanger wss = new WorkStatusChanger();
+                            wss.ChangeStatus(previousWork, WorkStatus.waiting, accName);
+                            WorkSaveManager workSaveManager = new WorkSaveManager(accName);
+                            workSaveManager.SaveWorks(new List<Work> {previousWork});
+
+                            RegisterIssue(previousWork.Id, templateId,description, accName, "", work.PostId);
+                        }
+                    }
                     
                     c.Issues.Add(wi);
                     c.SaveChanges();
@@ -79,7 +124,7 @@ namespace ProtoLib.Managers
         {
             using (BaseContext c = new BaseContext(""))
             {
-                return c.IssueTemplates.AsNoTracking().ToList();
+                return c.IssueTemplates.Where(x=>x.IsVisible).AsNoTracking().ToList();
             }
         }
 

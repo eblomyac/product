@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,11 +23,18 @@ if (!app.Environment.IsDevelopment())
   //  app.UseSwaggerUI();
 }
 
+string downloadDir = Path.Combine(Environment.CurrentDirectory, "download");
+Directory.CreateDirectory(downloadDir);
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 app.UseRouting();
-
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(downloadDir),
+    RequestPath = new PathString("/download")
+});
 app.MapControllers();
+
 
 app.MapFallbackToFile("index.html");
 

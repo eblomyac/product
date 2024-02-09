@@ -21,8 +21,13 @@
 
   <div *ngIf="work.structure.issues && work.structure.issues.length>0">
     <div>События:</div>
-    <div *ngFor="let iss of work.structure.issues" class="w-100">
-      <span class="mt-1">{{iss.description}}</span> <button mat-icon-button color="primary" (click)="work.resolveIssue(iss)"><mat-icon>check</mat-icon></button>
+    <div *ngFor="let iss of work.structure.issues" class="w-100" style="display: flex; justify-content: start; align-items: center">
+      <span class="mt-1">
+        <span *ngIf="iss.returnedFromPostId.length>0" style="background-color: rgba(255,212,0,0.43)">[Возвращено от {{iss.returnedFromPostId}}]</span>
+        <span *ngIf="iss.returnBackPostId.length>0" style="background-color: rgba(102,255,0,0.43)">[Возвращено на {{iss.returnBackPostId}}]</span>
+        {{iss.description}}
+      </span>
+      <button [disabled]="iss.returnBackPostId.length>0" mat-icon-button color="primary" (click)="work.resolveIssue(iss)"><mat-icon>check</mat-icon></button>
     </div>
   </div>
   <div style="display: flex; justify-content: space-between; align-items: baseline" class="mt-1">

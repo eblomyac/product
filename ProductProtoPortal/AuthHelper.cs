@@ -79,8 +79,12 @@ namespace ProductProtoPortal
                     user.SAM = name;
                     return user;
                 }
+           
                
-            } catch { }
+            }catch(Exception exc)
+            {
+                throw new Exception("auth error",exc);
+            }
             return new ADUser();
         }
         public static string GetAccountName(Microsoft.AspNetCore.Http.HttpContext httpContext)

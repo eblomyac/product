@@ -60,7 +60,7 @@ code {
 
 }
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #ffffff }
 .error{
   background-color: rgba(134,0,32,0.51);
 }
@@ -190,4 +190,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .order-stat-table-row:hover{
   background-color: rgba(92,92,92,0.5);
 
+}
+table, th, td {
+  border: 1px dotted rgba(178, 178, 178, 0.15);
+  border-collapse: collapse;
 }

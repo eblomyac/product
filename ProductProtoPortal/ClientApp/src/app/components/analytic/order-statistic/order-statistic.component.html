@@ -85,39 +85,39 @@
     </div>
     <div>
       <div>
-        <table class="w-100">
+        <mat-form-field>
+          <mat-label>
+            Артикул
+          </mat-label>
+          <input type="text" matInput [(ngModel)]="articleFilter" (ngModelChange)="articleFilterUpdate()">
+        </mat-form-field>
+        <div *ngIf="this.stat.ArticleStat.length!=this.articleStat.length" class="mb-2">
+          Фильтр, отображено {{this.articleStat.length}} из {{this.stat.ArticleStat.length}}
+        </div>
+        <table style="border: 1px dashed #ffffff" class="w-100">
 
           <tbody>
           <tr class="order-stat-table-header">
-            <th rowspan="2">Артикул</th>
-            <th colspan="2" class="text-center" style="width: 16%">Количество</th>
-            <th colspan="2" class="text-center" style="width: 16%">Норматив</th>
-            <th rowspan="2" class="text-end" style="width: 8%">Выполнено</th>
-            <th rowspan="2" class="text-center" *ngFor="let postColumn of stat.PostStatus">{{postColumn.Name}}</th>
+            <th  style="min-width: 12%; " >Артикул</th>
+            <th  class="text-center" style="width: 8%">Количество</th>
+            <th class="text-center" style="width: 8%">Норматив</th>
+            <th  class="text-end" style="width: 8%">Выполнено</th>
+            <th  class="text-center" *ngFor="let postColumn of stat.PostStatus">{{postColumn.Name}}</th>
           </tr>
-          <tr>
-            <td>Заказ</td>
-            <td>Работ</td>
-            <td>Всего</td>
-            <td>Выполнено</td>
-          </tr>
-          <ng-container *ngFor="let article of stat.ArticleStat">
+
+          <ng-container *ngFor="let article of articleStat">
             <tr class="order-stat-table-row">
-              <td >{{article.Article}}</td>
-              <td style="width: 8%">
+              <td style="width: 12%">{{article.Article}}</td>
+              <td style="width: 8%" class="text-center">
                 {{article.Count}}
               </td>
 
-              <td style="width: 8%">
-                {{article.WorkCount}}
-              </td>
-              <td style="width: 8%">
+
+              <td style="width: 8%" class="text-center">
                 {{article.TotalCost|number}}
               </td>
-              <td style="width: 8%">
-                {{article.CompletedCost|number}}
-              </td>
-              <td class="text-end" style="width: 8%">
+
+              <td class="text-center" style="width: 8%">
                 {{((article.CompletedCost / article.TotalCost) * 100)|number}}%
               </td>
 

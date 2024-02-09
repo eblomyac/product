@@ -17,6 +17,7 @@ export class PostStatisticComponent implements OnInit {
   byOrderStatus: ApexChartOption = this.ChartOptions.getPostByOrdersChartOptions();
   byOrderTotal: ApexChartOption = this.ChartOptions.getPostByOrdersTotalChartOptions();
 
+
   constructor(private data: DataService) {
   }
 

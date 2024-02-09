@@ -5,10 +5,10 @@
     <mat-button-toggle value="load-by-orders" >Нагрузка по заказам и статусам</mat-button-toggle>
     <mat-button-toggle value="load-by-orders-total" >Нагрузка по заказам общая</mat-button-toggle>
   </mat-button-toggle-group>
-  <div *ngIf="isLoading" style="display: flex; justify-content: center">
+  <div *ngIf="isLoading" class="mt-4" style="display: flex; justify-content: center">
     <mat-spinner [diameter]="35"></mat-spinner>
   </div>
-  <div *ngIf="stat">
+  <div *ngIf="stat" class="mt-2">
     <div class="w-100" *ngIf="chartSelect.value=='load-by-status'">
       <apx-chart [series]="byPostStatus.series" [xaxis]="byPostStatus.xaxis" [dataLabels]="byPostStatus.dataLabels"
                  [chart]="byPostStatus.chart" [theme]="byPostStatus.theme" [title]="byPostStatus.title" [plotOptions]="byPostStatus.plot">

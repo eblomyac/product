@@ -13,16 +13,23 @@ namespace ProductProtoPortal.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            var user = AuthHelper.GetADUser(this.HttpContext);
-            UserManager um = new UserManager(user.SAM);
-            var dbUser= um.Login(user.SAM, user.Mail, user.FullName);
-            if (dbUser == null)
+            try
             {
-                dbUser = um.Add(user.SAM, user.Mail, user.FullName);
-            }
+                var user = AuthHelper.GetADUser(this.HttpContext);
+                UserManager um = new UserManager(user.SAM);
+                var dbUser = um.Login(user.SAM, user.Mail, user.FullName);
+                if (dbUser == null)
+                {
+                    dbUser = um.Add(user.SAM, user.Mail, user.FullName);
+                }
 
-            return new OkObjectResult(new ApiAnswer(dbUser).ToString());
-        }
+                return new OkObjectResult(new ApiAnswer(dbUser).ToString());
+            }
+            catch (Exception exc)
+            {
+                return new BadRequestObjectResult(new ApiAnswer(exc, exc.Message, false).ToString());
+            }
+    }
 
         [HttpGet]
         public IActionResult List()

@@ -87,17 +87,25 @@ namespace ProtoLib.Managers
             }
         }
 
-        public bool MoveToPostRequest(long workId, string toPostId, List<string> alsoStartOnPosts )
+        public bool MoveToPostRequest(long workId, string toPostId, List<string> alsoStartOnPosts, string returnComment )
         {
             using (BaseContext c = new BaseContext(_accName))
             {
+                
                 var work = c.Works.AsNoTracking().FirstOrDefault(x => x.Id == workId);
+                
                 if(work==null){return false;}
-
+                
                 bool isForward = (int)work.Status > 30;
 
                 if (isForward)
                 {
+                    
+                    string currentPost = "";
+                    if (!string.IsNullOrEmpty(work.MovedTo))
+                    {
+                        currentPost = work.MovedTo;
+                    }    
                     work.MovedTo = toPostId;
                     _saveManager.SaveWorks(new List<Work>() {work});
                     var suggest = new WorkAnalytic.WorkStartSuggestion()
@@ -107,7 +115,7 @@ namespace ProtoLib.Managers
                         AvailablePosts = new List<string>(),
                         SelectedPosts = new List<string>() {toPostId}
                     };
-                    return _workStarter.MoveWorkMaster(workId, toPostId,_accName,alsoStartOnPosts);
+                    return _workStarter.MoveWorkMaster(workId, toPostId,_accName,alsoStartOnPosts,currentPost);
 
                 }
                 else
@@ -126,7 +134,8 @@ namespace ProtoLib.Managers
                     _statusChanger.ChangeStatus(prevWork, WorkStatus.waiting, _accName);
                     prevWork.MovedTo = "";
                     work.Status = WorkStatus.hidden;
-                    
+                    IssueManager im = new IssueManager();
+                    im.RegisterIssue(prevWork.Id, 0, returnComment, _accName, "", work.PostId);
                     _saveManager.SaveWorks(new List<Work>() {work, prevWork});
                 }
 

@@ -28,7 +28,7 @@ export class PostSettingsComponent implements OnInit {
 
     });
   }
-  addPost(name:string, keys:string, po:any){
+  addPost(name:string, keys:string, po:any, tableName:string){
     if(name.length<1){
       return;
     }
@@ -36,7 +36,7 @@ export class PostSettingsComponent implements OnInit {
     if(exist){
 
     }else{
-      let p :IPost = {name:name, keys:keys, disabled:true, productOrder:po, isShared:false};
+      let p :IPost = {name:name, keys:keys, disabled:true, productOrder:po, isShared:false, tableName:tableName};
       this.posts.push(p);
     }
   }

@@ -17,11 +17,15 @@ namespace ProtoLib.Model
         public long TemplateId { get; set; }
         [JsonIgnore]
         public WorkIssueTemplate? Template { get; set; }
+        
+        public string ReturnBackPostId { get; set; }
+        public string ReturnedFromPostId { get; set; }
     }
 
     public class WorkIssueTemplate
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

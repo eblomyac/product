@@ -104,7 +104,7 @@ namespace ProductProtoPortal.Controllers
             
             WorkStatusChanger wss = new WorkStatusChanger();
             var result = wss.ChangeStatus(id,status,user.SAM);
-            return new OkObjectResult(new ApiAnswer(result,"",result));
+            return new OkObjectResult(new ApiAnswer(result,"",result!= null));
         }
         [HttpPut]
         [Route("{id}/[action]")]
@@ -140,10 +140,10 @@ namespace ProductProtoPortal.Controllers
             string mainPost = data.mainPost;
             List<object> additionalObjects = data.additional;
             List<string> additional = additionalObjects.Select(x => x.ToString()).ToList();
-            
+            string comment = data.comment;
             var user = AuthHelper.GetADUser(this.HttpContext);
             WorkManagerFacade wmf = new WorkManagerFacade(user.SAM);
-            var result = wmf.MoveToPostRequest(id, mainPost, additional);
+            var result = wmf.MoveToPostRequest(id, mainPost, additional,comment);
             return new OkObjectResult(new ApiAnswer(result, "", result).ToString());
         }
     }

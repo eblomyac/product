@@ -8,15 +8,17 @@
   <table class="mt-4 w-100">
     <colgroup>
       <col span="1" style="width: 15%;">
+      <col span="1" style="width: 8%;">
       <col span="1" style="width: 30%;">
-      <col span="1" style="width: 10%;">
-      <col span="1" style="width: 10%;">
-      <col span="1" style="width: 15%;">
+      <col span="1" style="width: 8%;">
+      <col span="1" style="width: 8%;">
+      <col span="1" style="width: 11%;">
 
     </colgroup>
     <tbody>
     <tr>
       <th>Название участка</th>
+      <th>Карткое название</th>
       <th class="text-center">Сокращения в CRP</th>
       <th class="text-center">Деактивирован</th>
       <th class="text-center">Публичный пост  <mat-icon style="color: #8f8f8f;" [matTooltip]="'Позволяет передавать работу на пост при отсуствии поста в цепочке производства'">info</mat-icon></th>
@@ -25,6 +27,12 @@
     <tr *ngFor="let p of this.posts">
       <td>
         {{p.name}}
+      </td>
+      <td>
+        <mat-form-field>
+          <mat-label></mat-label>
+          <input matInput type="text" [(ngModel)]="p.tableName">
+        </mat-form-field>
       </td>
       <td>
         <mat-form-field class="w-100" style="padding-top: 7px; padding-bottom: 3px">
@@ -41,7 +49,7 @@
     </tr>
     <tr>
 
-      <td colspan="4" style="border-top: 2px #6d6d6d dashed">
+      <td colspan="5" style="border-top: 2px #6d6d6d dashed">
         <div  style="padding-top: 7px; padding-bottom: 3px">
           Создание
         </div>
@@ -52,6 +60,12 @@
         <mat-form-field  style="padding-top: 7px; padding-bottom: 3px">
           <mat-label>Имя</mat-label>
           <input #name matInput type="text">
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field  style="padding-top: 7px; padding-bottom: 3px">
+          <mat-label>Краткое</mat-label>
+          <input #tableName matInput type="text">
         </mat-form-field>
       </td>
       <td>
@@ -76,7 +90,7 @@
       <td></td>
       <td></td>
       <td  class="text-end" >
-        <button class="w-50" mat-raised-button color="primary" (click)="addPost(name.value, keys.value, (productOrder.value));name.value='';keys.value=''">Создать</button>
+        <button class="w-50" mat-raised-button color="primary" (click)="addPost(name.value, keys.value, (productOrder.value), tableName.value);name.value='';keys.value=''">Создать</button>
       </td>
     </tr>
     </tbody>

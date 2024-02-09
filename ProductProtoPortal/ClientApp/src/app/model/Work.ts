@@ -86,16 +86,23 @@ export class Work {
       }
       if (this.structure.status == 20) {
         result.push('Выполнять');
-        result.push('Зарегистрировать событие');
+        if(this.structure.issues && this.structure.issues.length==0){
+          result.push('Зарегистрировать событие');
+        }
+
       }
       if (this.structure.status == 30) {
-        result.push('Зарегистрировать событие');
+        if(this.structure.issues && this.structure.issues.length==0){
+          result.push('Зарегистрировать событие');
+        }
         result.push('Приостановить');
         result.push('Завершить');
 
       }
       if (this.structure.status == 40 && (this.structure.movedTo==null||this.structure.movedTo.length<1)) {
         result.push('Передать на пост');
+      }else if(this.structure.status==40){
+        result.push('Изменить участок передачи')
       }
       result.push('Открыть тех. карту');
 
@@ -128,6 +135,7 @@ export class Work {
       case 'Разделить':
         this.splitWork();
         break;
+      case 'Изменить участок передачи':
       case 'Передать на пост':
         this.moveToPosts();
         break;
@@ -139,21 +147,23 @@ export class Work {
 
   async moveToPosts() {
     let p: string[] = this.structure.status == 40 ? this.structure.forwardMoves : this.structure.backwardMoves;
-    let posts = await DialogHandlerService.Singleton.ask(PostDialogComponent, {data: {posts: p, onlyMain: this.structure.status==10}});
-    console.log(posts);
+    let posts = await DialogHandlerService.Singleton.ask(PostDialogComponent, {data: {posts: p, onlyMain: this.structure.status==10, isReturn:this.structure.status==10}});
+   // console.log(posts);
     if(!posts){return;}
     let mainPost = posts.main;
     let additionalPosts = posts.additional;
+    let comment = posts.comment;
     if(additionalPosts==null || additionalPosts.length==0){
       additionalPosts = [];
     }
     if (mainPost && mainPost.length > 0) {
       this.isLoading = true;
-      let data = {mainPost:mainPost, additional:additionalPosts};
+      let data = {mainPost:mainPost, additional:additionalPosts, comment:comment};
       this.dataService.Work.Move(this.structure.id, data).subscribe(x => {
         if (x != null) {
           this.isLoading = false;
           this.structure.movedTo=mainPost;
+          this.updateStructure();
         }
 
       });
@@ -169,9 +179,11 @@ export class Work {
     });
   }
   async registerIssue(){
-    let issue = await DialogHandlerService.Singleton.ask(IssueCreateDialogComponent, {data: {}});
+    let issue = await DialogHandlerService.Singleton.ask(IssueCreateDialogComponent, {data: {forWork:this}});
+    this.isLoading=true;
     if(issue){
       this.dataService.Issue.Register(issue,this.structure.id).subscribe(x=>{
+        this.isLoading=false;
         if(x){
           this.loadIssues();
         }
@@ -243,17 +255,17 @@ export class Work {
 
   updateStructure(){
     this.dataService.Work.View(this.structure.id).subscribe(x=>{
-      if(x!=null){
-        if(this.structure.status!= x.structure.status) {
+      if (x != null) {
+        if (this.structure.status != x.structure.status) {
           this.workEventService.WorkStatusChange(this, this.structure.status, x.structure.status, true);
         }
-          if(this.structure.count != x.structure.count){
-            this.workEventService.PossibleNewWork();
-          }
-          this.structure.count = x.structure.count;
-          this.structure.status = x.structure.status;
-          this.loadSuggestions();
+        if (this.structure.count != x.structure.count) {
+          this.workEventService.PossibleNewWork();
         }
+        this.structure.count = x.structure.count;
+        this.structure.status = x.structure.status;
+        this.loadSuggestions();
+      }
 
     });
   }
@@ -267,11 +279,13 @@ export class Work {
       if (x != null) {
         this.isLoading = false;
         this.isSaving = false;
-        this.workEventService.WorkStatusChange(this, this.structure.status, to, x);
+
+        this.updateStructure()
+        this.workEventService.WorkStatusChange(this, this.structure.status, to, true);
         if (x) {
           this.structure.status = to;
-          this.loadSuggestions();
-        }
+         this.loadSuggestions();
+     }
 
       }
 

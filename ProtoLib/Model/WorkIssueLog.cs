@@ -17,6 +17,7 @@ namespace ProtoLib.Model
         public string Type { get; set; }
         [MaxLength(256)]
         public string Description { get; set; }
+        public string ReturnedToPost { get; set; }
         
         public long SourceIssueId { get; set; }
     }

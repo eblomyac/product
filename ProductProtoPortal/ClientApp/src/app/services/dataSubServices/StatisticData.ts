@@ -9,6 +9,41 @@ export class StatisticData {
   constructor(private transportService: TransportService, private dataService: DataService) {
 
   }
+  public PrintTotalOrderStat(articleFilter:string,orderFilter:string):Observable<any|null>{
+    let params = new HttpParams();
+    if(articleFilter==null || articleFilter.length<1){
+      articleFilter='*'
+    }
+    if(orderFilter==null || orderFilter.length<1){
+     orderFilter = '*'
+    }
+    params = params.append('articleFilter',articleFilter);
+    params = params.append('orderFilter',orderFilter);
+    return this.transportService.Get('/analytic/PrintTotalOrderStat', params)
+      .pipe(map<ApiAnswer|null,any|null>(x=>{
+        if(x!=null){
+          if(x.isSuccess){
+            return x.result;
+          }
+          return {};
+        }
+        return null;
+      }))
+
+  }
+  public TotalOrderStat():Observable<any|null>{
+    return this.transportService.Get('/analytic/TotalOrderStat', new HttpParams())
+      .pipe(map<ApiAnswer|null,any|null>(x=>{
+        if(x!=null){
+          if(x.isSuccess){
+            return x.result;
+          }
+          return {};
+        }
+        return null;
+      }))
+
+  }
   public OrderTimeLine(orderNumber:number):Observable<any|null>{
     return this.transportService.Get('/analytic/OrderTimeLine', new HttpParams().append('orderNumber',orderNumber))
       .pipe(map<ApiAnswer|null,any|null>(x=>{

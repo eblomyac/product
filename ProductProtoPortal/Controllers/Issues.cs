@@ -53,7 +53,7 @@ namespace ProductProtoPortal.Controllers
         {
             IssueManager im = new IssueManager();
             var user = AuthHelper.GetADUser(this.HttpContext);
-            var result = im.RegisterIssue(workId, iw.TemplateId, iw.Description, user.SAM);
+            var result = im.RegisterIssue(workId, iw.TemplateId, iw.Description, user.SAM, iw.ReturnBackPostId);
             return new OkObjectResult(new ApiAnswer(result).ToString());
         }
     }

@@ -12,6 +12,7 @@ namespace ProtoLib.Model
         [Key]
         [MaxLength(32)]
         public string Name { get; set; }
+        public string TableName { get; set; }
         
         public bool Disabled { get; set; }
         public int ProductOrder { get; set; }
