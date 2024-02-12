@@ -127,7 +127,7 @@ namespace ProtoLib.Managers
                             w.Priority = articlePriority.Priority;
                         }
                     }
-                    return works.OrderByDescending(x=>x.Priority).ToList();
+                    return works.OrderByDescending(x=>x.Priority).ThenBy(x=>x.DeadLine).ToList();
                 }
                 else
                 {

@@ -329,6 +329,9 @@ namespace ProtoLib.Migrations
                     b.Property<DateTime>("CreatedStamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DeadLine")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(256)

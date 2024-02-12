@@ -17,6 +17,7 @@ namespace ProtoLib.Managers
             DataTable dt = new DataTable();
             dt.Columns.Add("Заказ");
             dt.Columns.Add("Артикул");
+            dt.Columns.Add("Дата сдачи");
             dt.Columns.Add("Количество");
 
             dt.Columns.Add("Текущий участок");
@@ -48,6 +49,7 @@ namespace ProtoLib.Managers
                 row["Производство"] = line.ProductLine;
                 row["Комментарий"] = line.Comment;
                 row["% выполнено всего"] = double.PositiveInfinity;
+                row["Дата сдачи"] = line.DeadLine;
                 if (line.TotalCost != 0)
                 {
                     row["% выполнено всего"] = Math.Round((line.CompletedCost/line.TotalCost)*100,2);
@@ -526,6 +528,7 @@ namespace ProtoLib.Managers
                         
                         if (articleWorks.Count > 0)
                         {
+                            articleStat.DeadLine = articleWorks.FirstOrDefault().DeadLine; 
                             articleStat.ProductLine = articleWorks.FirstOrDefault().ProductLine;
                             articleStat.Comment = articleWorks.FirstOrDefault().Description;
                         }

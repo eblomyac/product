@@ -1,5 +1,5 @@
 
-<div>
+<div style="max-height: 90vh; height: 90vh; overflow-y: auto">
   <div *ngIf="isLoading" class="mt-4 mb-4" style="display: flex; justify-content: center">
     <mat-spinner [diameter]="35"></mat-spinner>
   </div>
@@ -28,23 +28,27 @@
       Фильтр, отображено {{this.articleStat.length}} из {{this.stat.length}}
     </div>
 
-    <table style="border: 1px dashed #ffffff" class="w-100">
+    <table style="border: 1px dashed #ffffff; position: relative; " class="w-100">
 
-      <tbody>
-      <tr class="order-stat-table-header">
-        <th style="min-width: 5%">Заказ</th>
-        <th  style="min-width: 12%; " >Артикул</th>
-        <th  class="text-center" style="width: 8%">Количество</th>
-        <th class="text-center">Текущий уч.</th>
-        <th class="text-center" style="width: 8%">Норматив</th>
-        <th  class="text-end" style="width: 8%">Выполнено</th>
-        <th  class="text-center" *ngFor="let postColumn of this.posts">{{postColumn.tableName}}</th>
+
+      <thead  class="order-stat-table-header">
+      <tr>
+        <th style="min-width: 5%; " class="sticky">Заказ</th>
+        <th  style="min-width: 12%; " class="sticky" >Артикул</th>
+        <th  class="sticky" >Дата сдачи</th>
+        <th  class="text-center sticky" style="width: 8%; " >Количество</th>
+        <th class="text-center sticky" >Текущий уч.</th>
+        <th class="text-center sticky" style="width: 8%; ">Норматив</th>
+        <th  class="text-end sticky" style="width: 8%; ">Выполнено</th>
+        <th  class="text-center sticky"  *ngFor="let postColumn of this.posts">{{postColumn.tableName}}</th>
       </tr>
-
+      </thead >
+      <tbody>
       <ng-container *ngFor="let article of articleStat">
         <tr class="order-stat-table-row">
           <td>{{article.Order}}</td>
           <td style="width: 12%">{{article.Article}}</td>
+          <td>{{article.DeadLine | date:'dd.MM.yyyy'}}</td>
           <td style="width: 8%" class="text-center">
             {{article.Count}}
           </td>

@@ -17,6 +17,25 @@ namespace ProductProtoPortal.Controllers
     [Route("/[controller]")]
     public class Works:Controller
     {
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult UpdateDates()
+        {
+            WorkTemplateLoader wtl = new WorkTemplateLoader();
+            try
+            {
+                int result = wtl.MaconomyProductionDateUpdate();
+                return new OkObjectResult(new ApiAnswer($"У {result} работ изменена дата сдачи",
+                    $"У {result} работ изменена дата сдачи", true).ToString());
+            }
+            catch (Exception exc)
+            {
+                return new BadRequestObjectResult(new ApiAnswer(exc, exc.Message, false).ToString());
+            }
+            
+            
+        }
+        
         [HttpPost]
         [Route("[action]")]
         public IActionResult Prepare(List<long> orders)

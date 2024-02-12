@@ -63,6 +63,7 @@ import {PriorityListComponent} from "./components/priority-list/priority-list.co
 import {
   TotalOrderStatisticComponent
 } from "./components/analytic/total-order-statistic/total-order-statistic.component";
+import {OperatorUtilityComponent} from "./components/operator/operator-utility/operator-utility.component";
 
 
 
@@ -88,8 +89,8 @@ import {
         OrderStatisticComponent,
         RetroPostStatisticComponent,
         OrderTimeLineComponent,
-        CardViewComponent,
-        CardfinderComponent,
+        CardViewComponent, PriorityListComponent,
+        CardfinderComponent, OperatorUtilityComponent,
         ImageSetViewComponent, TotalOrderStatisticComponent
     ],
   imports: [
@@ -131,8 +132,8 @@ import {
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    PriorityListComponent,
-    PriorityListComponent
+
+
   ],
     providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService],
     bootstrap: [AppComponent]

@@ -61,6 +61,7 @@ namespace ProtoLib.Model
         public string ProductLine { get; set; }
         [MaxLength(256)]
         public string Description { get; set; }
+        public DateTime DeadLine { get; set; }
         
         public DateTime CreatedStamp { get; set; }
         [MaxLength(32)]
@@ -173,6 +174,7 @@ namespace ProtoLib.Model
             w.MovedTo = this.MovedTo;
             w.CommentMap = this.CommentMap;
             w.Priority = this.Priority;
+            w.DeadLine = this.DeadLine;
             return w;
         }
     }

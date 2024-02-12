@@ -225,6 +225,7 @@ namespace ProtoLib.Managers
             w.Comments = template.Comment.Split('\r',StringSplitOptions.RemoveEmptyEntries).Select(x=>x.Trim()).Where(x=>x.Length>0).ToList();
             w.MovedFrom = "";
             w.MovedTo = "";
+            w.DeadLine = template.DeadLine;
 
             var suggestablePost = this._postCreationKeys.FirstOrDefault(x =>
                 x.Key.Equals(template.PostKey, StringComparison.InvariantCultureIgnoreCase));
@@ -332,6 +333,7 @@ namespace ProtoLib.Managers
         public string Description { get; set; } = "";
         public string ProductLine { get; set; } = "";
         public string Comment { get; set; } = "";
+        public DateTime DeadLine { get; set; } = DateTime.Today;
 
     }
 }

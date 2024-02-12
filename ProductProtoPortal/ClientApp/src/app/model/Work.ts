@@ -32,6 +32,7 @@ export interface IWork {
   comments:string[];
   commentMap:string;
   priority:number;
+  deadLine:Date;
 }
 
 export class Work {

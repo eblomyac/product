@@ -1,0 +1,9 @@
+<div class="mt-2">
+  <div style="display: flex;justify-content: center" *ngIf="isLoading">
+    <mat-spinner diameter="25"></mat-spinner>
+
+  </div>
+  <div>
+    <button (click)="updateDates()" mat-raised-button color="primary" [disabled]="isLoading">Обновить даты сдачи</button>
+  </div>
+</div>

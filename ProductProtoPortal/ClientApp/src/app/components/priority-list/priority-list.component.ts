@@ -10,15 +10,6 @@ import {animate, keyframes, style, transition, trigger} from "@angular/animation
 
 @Component({
   selector: 'app-priority-list',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    MatInputModule,
-    FormsModule,
-    NgIf,
-    NgForOf,
-    MatButtonModule
-  ],
   templateUrl: './priority-list.component.html',
   styleUrl: './priority-list.component.css',
   animations:[

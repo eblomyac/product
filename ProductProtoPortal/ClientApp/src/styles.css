@@ -178,6 +178,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
 .order-stat-table-header{
   height: 40px;
   vertical-align: center;
+
 }
 .order-stat-table-row{
   height: 48px;
@@ -194,4 +195,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
 table, th, td {
   border: 1px dotted rgba(178, 178, 178, 0.15);
   border-collapse: collapse;
+}
+th.sticky{
+  top:0;
+  position: sticky;
+  background-color: #575757;
+  border: #201e1f 2px dotted;
 }
