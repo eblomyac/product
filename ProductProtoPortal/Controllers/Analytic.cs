@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Dynamic;
+using System.Globalization;
 using ClosedXML.Excel;
 using KSK_LIB.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using ProtoLib;
 using ProtoLib.Managers;
 
 namespace ProductProtoPortal.Controllers
@@ -12,6 +14,26 @@ namespace ProductProtoPortal.Controllers
     [Route("/[controller]")]
     public class Analytic:Controller
     {
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> DailyReport(string date)
+        {
+            try
+            {
+                DateTime pDate = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                ReportManager rm = new ReportManager();
+                var request = rm.DailyReportMail(pDate);
+                await EmailNotificatorSingleton.Instance.Send(request);
+                return new OkObjectResult(new ApiAnswer(true));
+            }
+            catch (Exception exc)
+            {
+                return new BadRequestObjectResult(new ApiAnswer(exc).ToString());
+            }
+            
+            
+        }
+        
         [HttpGet]
         [Route("[action]")]
         public IActionResult PrintTotalOrderStat(string articleFilter,string orderFilter)

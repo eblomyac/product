@@ -1,0 +1,11 @@
+<div style="max-height: 100%; overflow-y: hidden">
+  <div class="mt-3" style="display: flex;justify-content: flex-start; align-items: baseline">
+    <mat-form-field>
+      <mat-label>Отчет по призводству</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="date">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="makeDailyReport()">Выполнить</button>
+  </div>
+</div>

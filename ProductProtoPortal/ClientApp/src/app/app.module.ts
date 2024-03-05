@@ -41,7 +41,7 @@ import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 import {RetroPostStatisticComponent} from "./components/analytic/retro-post-statistic/retro-post-statistic.component";
 import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatNativeDateModule} from "@angular/material/core";
+import {DateAdapter, MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
 import {OrderTimeLineComponent} from "./components/analytic/order-time-line/order-time-line.component";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {CardViewComponent} from "./components/TechCard/card-view/card-view.component";
@@ -64,6 +64,8 @@ import {
   TotalOrderStatisticComponent
 } from "./components/analytic/total-order-statistic/total-order-statistic.component";
 import {OperatorUtilityComponent} from "./components/operator/operator-utility/operator-utility.component";
+import {ReportComponent} from "./components/admin-settings/report/report.component";
+import {CustomDateAdapter} from "./CustomAdapter";
 
 
 
@@ -88,7 +90,7 @@ import {OperatorUtilityComponent} from "./components/operator/operator-utility/o
         PostStatisticComponent,
         OrderStatisticComponent,
         RetroPostStatisticComponent,
-        OrderTimeLineComponent,
+        OrderTimeLineComponent, ReportComponent,
         CardViewComponent, PriorityListComponent,
         CardfinderComponent, OperatorUtilityComponent,
         ImageSetViewComponent, TotalOrderStatisticComponent
@@ -135,7 +137,7 @@ import {OperatorUtilityComponent} from "./components/operator/operator-utility/o
 
 
   ],
-    providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService],
+    providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService,  { provide: DateAdapter, useClass: CustomDateAdapter },],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

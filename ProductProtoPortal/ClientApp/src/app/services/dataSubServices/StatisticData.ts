@@ -9,6 +9,15 @@ export class StatisticData {
   constructor(private transportService: TransportService, private dataService: DataService) {
 
   }
+  public DateReport(date:string):Observable<boolean|null>{
+    return this.transportService.Get('/analytic/DailyReport', new HttpParams().append('date',date))
+      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
+        if(x!=null){
+          x.isSuccess
+        }
+        return null;
+      }))
+  }
   public PrintTotalOrderStat(articleFilter:string,orderFilter:string):Observable<any|null>{
     let params = new HttpParams();
     if(articleFilter==null || articleFilter.length<1){
