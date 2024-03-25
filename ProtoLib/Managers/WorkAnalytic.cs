@@ -90,7 +90,7 @@ namespace ProtoLib.Managers
 
     public class WorkAnalyticFacade
     {
-        public List<Work> PostWorks(string accName)
+        public List<Work> PostWorks(string accName, string postId)
         {
             using (BaseContext c = new BaseContext(accName))
             {
@@ -99,9 +99,22 @@ namespace ProtoLib.Managers
                 {
                     return new List<Work>();
                 }
-                if (user.IsMaster && user.PostIdMaster.Length>0)
+                string selectedPost = null;
+                List<string> availablePosts = user.PostIdMaster;
+                if (availablePosts.Count == 1)
                 {
-                    var works = c.Works.Where(x => x.PostId == user.PostIdMaster &&
+                    selectedPost = availablePosts[0];
+                }else if (availablePosts.Count > 1)
+                {
+                    selectedPost = availablePosts.FirstOrDefault(x => x == postId);
+                }
+                if (string.IsNullOrEmpty(selectedPost))
+                {
+                    return new List<Work>();
+                }
+                if (user.IsMaster)
+                {
+                    var works = c.Works.Include(x=>x.Issues).Where(x => x.PostId ==selectedPost &&
                                        x.Status != WorkStatus.ended &&
                                        x.Status != WorkStatus.hidden &&
                                        x.Status != WorkStatus.unkown).ToList();
@@ -126,6 +139,7 @@ namespace ProtoLib.Managers
                         {
                             w.Priority = articlePriority.Priority;
                         }
+                        
                     }
                     return works.OrderByDescending(x=>x.Priority).ThenBy(x=>x.DeadLine).ToList();
                 }
@@ -150,7 +164,7 @@ namespace ProtoLib.Managers
                 else
                 {
                     IsOperator = user.IsOperator;
-                    post = user.PostIdMaster;
+             
                 }
             }
             WorkStarter ws = new WorkStarter(accName);
@@ -192,13 +206,14 @@ namespace ProtoLib.Managers
                     var backwardDirection = allWorks
                        .Where(x => (x.Status == WorkStatus.sended || x.Status == WorkStatus.ended) && x.MovedTo == work.PostId)
                        .Select(x=>x.PostId)
-                       .Where(x=>x!=user.PostIdMaster).Distinct().ToList();
+                       .Where(x=>x!=work.PostId)
+                       .Distinct().ToList();
                     
                     var forwardDirection =
                         allWorks
                             .Where(x => x.Status == WorkStatus.hidden || x.Status == WorkStatus.unkown)
                             .Select(x=>x.PostId)
-                            .Where(x=>x!=user.PostIdMaster)
+                            .Where(x=>x!=work.PostId)
                             .Distinct().ToList();
                     if (forwardDirection.Count == 0)
                     {

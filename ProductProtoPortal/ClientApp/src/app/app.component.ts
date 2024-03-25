@@ -3,6 +3,7 @@ import {SessionService} from "./services/session.service";
 import {Router} from "@angular/router";
 
 import {DialogHandlerService} from "./services/dialog-handler.service";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-root',
@@ -13,18 +14,20 @@ export class AppComponent {
 
   availableMenu:any[]=[]
 
-  constructor(private session:SessionService, public router:Router, private dialogHandler:DialogHandlerService) {
+  constructor(private session:SessionService, public router:Router, private dialogHandler:DialogHandlerService, private locate:Location) {
 
 
     this.router.events.subscribe(event => {
       // close sidenav on routing
+    //  console.log(event);
 
     });
     this.session.OnEvent.subscribe(x=>{
-      console.log(x);
+
       if(x == "logged_in"){
 
         if(this.session.currentUser && this.session.currentUser.structure){
+          this.availableMenu = [];
           if(this.session.currentUser.structure.isAdmin){
             this.availableMenu.push({caption:"Администрирование",route:"/admin"})
           //  this.router.navigate(['/admin']);
@@ -41,8 +44,9 @@ export class AppComponent {
             this.availableMenu.push({caption:"Анализ",route:"/statistic"})
             //   this.router.navigate(['/operate'])
 
-
-            this.router.navigate([this.availableMenu[0].route])
+            if(this.locate.path().length==0) {
+              this.router.navigate([this.availableMenu[0].route])
+            }
 
         }
       }

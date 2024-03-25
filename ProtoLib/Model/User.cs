@@ -140,7 +140,7 @@ namespace ProtoLib.Model
                         exist = new Role();
                         exist.Type = RoleType.PostMaster;
                         exist.UserAccName = this.AccName;
-                        exist.PostId = "";
+                        exist.MasterPosts = new List<string>();
                         this.Roles.Add(exist);
                     }
                 }else
@@ -160,30 +160,30 @@ namespace ProtoLib.Model
         }
 
         [NotMapped]
-        public string PostIdMaster
+        public List<string> PostIdMaster
         {
             get
             {
                 if (Roles == null || Roles.Count == 0)
                 {
-                    return "";
+                    return new List<string>();
                 }
                 else
                 {
                     var masterRole = Roles.FirstOrDefault(x => x.Type == RoleType.PostMaster);
                     if (masterRole == null)
                     {
-                        return "";
+                        return new List<string>();
                     }
                     else
                     {
-                        return masterRole.PostId;
+                        return masterRole.MasterPosts;
                     }
                 }
             }
             set
             {
-                if (value.Length > 0)
+                if (value.Count > 0)
                 {
                     if (this.Roles == null)
                     {
@@ -196,11 +196,11 @@ namespace ProtoLib.Model
                         exist = new Role();
                         exist.Type = RoleType.PostMaster;
                         exist.UserAccName = this.AccName;
-                        exist.PostId = value;
+                        exist.MasterPosts = value;
                         this.Roles.Add(exist);
                     }
 
-                    exist.PostId = value;
+                    exist.MasterPosts = value;
                 }
                 else
                 {

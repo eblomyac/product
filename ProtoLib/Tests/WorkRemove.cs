@@ -1,5 +1,7 @@
 ﻿using System.Data;
+using System.Diagnostics;
 using KSK_LIB.Excel;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProtoLib.Model;
 
@@ -8,6 +10,57 @@ namespace ProtoLib.Tests;
 [TestFixture]
 public class WorkRemove
 {
+    [Test]
+    public void removeWorks2()
+    {
+        string FilePath = @"C:\Users\yande\OneDrive\Desktop\Новый текстовый документ.txt";
+        string s = File.ReadAllText(FilePath);
+        var orders = s.Split(',');
+        using (BaseContext c = new BaseContext())
+        {
+            foreach (var order in orders)
+            {
+                try
+                {
+                    string orderNormalize = order.Trim();
+                    if (long.TryParse(orderNormalize, out var on))
+                    {
+                        var works = c.Works.Where(x => x.OrderNumber == on).Include(x => x.Issues).ToList();
+                        var stat = c.WorkStatusLogs.Where(x => x.OrderNumber == on).ToList();
+                        var issLog = c.WorkIssueLogs.Where(x => x.OrderNumber == on).ToList();
+                        if (stat.Count > 0)
+                        {
+                            c.WorkStatusLogs.RemoveRange(stat);
+                        }
+
+                        if (issLog.Count > 0)
+                        {
+                            c.WorkIssueLogs.RemoveRange(issLog);
+                        }
+
+                        foreach (var w in works)
+                        {
+                            if (w.Issues != null && w.Issues.Count > 0)
+                            {
+                                c.Issues.RemoveRange(w.Issues);
+                            }
+
+                            c.Works.Remove(w);
+                        }
+                    }
+
+                    c.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"{order}: {e.Message}");
+                }
+
+            }    
+        }
+        
+    }
+
 
     [Test]
     public void removeWorks()

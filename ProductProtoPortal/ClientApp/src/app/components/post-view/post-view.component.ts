@@ -8,6 +8,7 @@ import {Observable, firstValueFrom} from "rxjs";
 import {PostDialogComponent} from "../../dialogs/post-dialog/post-dialog.component";
 import {WorkEventService} from "../../services/work-event.service";
 import {MatDialog} from "@angular/material/dialog";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-post-view',
@@ -16,7 +17,8 @@ import {MatDialog} from "@angular/material/dialog";
 })
 export class PostViewComponent implements OnInit {
 
-
+  selectedPost='';
+  isLoading=false;
   allWorks:Work[]=[];
   filteredWorks:Work[]=[];
   incomeWorks:Work[]=[];
@@ -27,6 +29,10 @@ export class PostViewComponent implements OnInit {
   orderFilter:number[]=[];
   articleFilter:string='';
 
+  selectedPostChange(){
+
+    this.loadWorks();
+  }
   sendedUpdateTimer;
 
   clearFilters(){
@@ -58,12 +64,19 @@ export class PostViewComponent implements OnInit {
     });
   }
 
-  constructor(private data:DataService, public session:SessionService, private matDialog:MatDialog, private workEvent:WorkEventService) {
+  constructor(private data:DataService, public session:SessionService,
+              private matDialog:MatDialog, private workEvent:WorkEventService, private router:Router) {
+    if(this.session.currentUser==null ||  this.session.currentUser?.structure?.postIdMaster == null ){
+      this.router.navigate(['/']);
+    }
+
+    this.selectedPost = this.session.currentUser?.structure?.postIdMaster[0]!;
+
     this.sendedUpdateTimer = setInterval(()=>{
       this.endedWorks.forEach(x=>{
         x.updateStructure();
       })
-    },60000);
+    },60000*7);
     workEvent.OnWorkChangedStatus.subscribe(x=>{
       if(!x.isSuccess){
         this.returnBack(x.work,x.from,x.to);
@@ -173,9 +186,18 @@ export class PostViewComponent implements OnInit {
     this.endedWorks = this.filteredWorks.filter(x=>x.structure.status==40);
 
   }
+  printWorks(workList:Work[]){
+    let ids = workList.map(x=>x.structure.id);
+    this.data.Work.PrintWorkList(ids).subscribe(x=>{
+      if(x){
+        window.open(x.link,'_blank');
+      }
+    })
+  }
 
   updateWorks(){
-    this.data.Post.PostWorksUpdate().subscribe(x=>{
+
+    this.data.Post.PostWorksUpdate(this.selectedPost).subscribe(x=>{
       if(x && x.length>0) {
         x.forEach(w=>{
           let exist = this.allWorks.find(f=>f.structure.id == w.id);
@@ -191,8 +213,20 @@ export class PostViewComponent implements OnInit {
   }
 
   loadWorks(){
-    this.data.Post.PostWorks().subscribe(x=>{
+    this.isLoading=true;
+    this.allWorks=[];
+    this.filteredWorks=[];
+    this.waitWorks=[];
+    this.runningWorks=[];
+    this.endedWorks=[];
+    this.incomeWorks=[];
+    this.data.Post.PostWorks(this.selectedPost).subscribe(x=>{
+
+if(x){
+  this.isLoading=false
+}
       if(x && x.length>0){
+
         this.allWorks = x;
         this.filteredWorks =    this.filterWorks();
         this.workDeselect();
@@ -201,7 +235,7 @@ export class PostViewComponent implements OnInit {
 
       }
 
-    });
+    },error => {this.isLoading=false; console.log(error)});
   }
 
 }

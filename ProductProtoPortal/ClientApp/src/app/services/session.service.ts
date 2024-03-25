@@ -20,6 +20,9 @@ export class SessionService {
       this.userEvent(x);
     }));
   }
+  CheckRoles(){
+    this.currentUser?.checkRoles();
+  }
   private userEvent(event:any){
       if(event=="logged_in"){
         this.event.next(event);

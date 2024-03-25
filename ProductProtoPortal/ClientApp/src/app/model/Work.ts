@@ -2,7 +2,7 @@
 import {DataService} from "../services/data.service";
 
 import {PostDialogComponent} from "../dialogs/post-dialog/post-dialog.component";
-import {firstValueFrom} from "rxjs";
+import {firstValueFrom, lastValueFrom} from "rxjs";
 import {WorkEventService} from "../services/work-event.service";
 
 import {DialogHandlerService} from "../services/dialog-handler.service";
@@ -44,8 +44,8 @@ export class Work {
   constructor(struct: IWork, private dataService: DataService,) {
     this.structure = struct;
 
-    this.loadSuggestions();
-    this.loadIssues();
+   // this.loadSuggestions();
+   // this.loadIssues();
   }
   loadIssues(){
     this.isLoading=true;
@@ -55,6 +55,11 @@ export class Work {
         this.structure.issues = x;
       }
     })
+  }
+  loadSuggestionsA(){
+
+     return this.dataService.Work.LoadSuggestions([this]);
+
   }
   loadSuggestions() {
     if (this.structure.status == 10 || this.structure.status == 40) {
@@ -134,41 +139,52 @@ export class Work {
         this.changeStatus(20);
         break;
       case 'Разделить':
-        this.splitWork();
+        await this.splitWork();
         break;
       case 'Изменить участок передачи':
       case 'Передать на пост':
-        this.moveToPosts();
+        await this.moveToPosts();
         break;
       case 'Открыть тех. карту':
-        this.techCard();
+       await this.techCard();
         break;
     }
   }
 
   async moveToPosts() {
-    let p: string[] = this.structure.status == 40 ? this.structure.forwardMoves : this.structure.backwardMoves;
-    let posts = await DialogHandlerService.Singleton.ask(PostDialogComponent, {data: {posts: p, onlyMain: this.structure.status==10, isReturn:this.structure.status==10}});
-   // console.log(posts);
-    if(!posts){return;}
-    let mainPost = posts.main;
-    let additionalPosts = posts.additional;
-    let comment = posts.comment;
-    if(additionalPosts==null || additionalPosts.length==0){
-      additionalPosts = [];
-    }
-    if (mainPost && mainPost.length > 0) {
-      this.isLoading = true;
-      let data = {mainPost:mainPost, additional:additionalPosts, comment:comment};
-      this.dataService.Work.Move(this.structure.id, data).subscribe(x => {
-        if (x != null) {
-          this.isLoading = false;
-          this.structure.movedTo=mainPost;
-          this.updateStructure();
+      await lastValueFrom(this.loadSuggestionsA());
+      this.isLoading=false;
+      let p: string[] = this.structure.status == 40 ? this.structure.forwardMoves : this.structure.backwardMoves;
+      let posts = await DialogHandlerService.Singleton.ask(PostDialogComponent, {
+        data: {
+          posts: p,
+          onlyMain: this.structure.status == 10,
+          isReturn: this.structure.status == 10
         }
-
       });
-    }
+      // console.log(posts);
+      if (!posts) {
+        return;
+      }
+      let mainPost = posts.main;
+      let additionalPosts = posts.additional;
+      let comment = posts.comment;
+      if (additionalPosts == null || additionalPosts.length == 0) {
+        additionalPosts = [];
+      }
+      if (mainPost && mainPost.length > 0) {
+        this.isLoading = true;
+        let data = {mainPost: mainPost, additional: additionalPosts, comment: comment};
+        this.dataService.Work.Move(this.structure.id, data).subscribe(x => {
+          if (x != null) {
+            this.isLoading = false;
+            this.structure.movedTo = mainPost;
+            this.updateStructure();
+          }
+
+        });
+      }
+
   }
   resolveIssue(issue:Issue){
     this.isLoading=true;
@@ -265,7 +281,7 @@ export class Work {
         }
         this.structure.count = x.structure.count;
         this.structure.status = x.structure.status;
-        this.loadSuggestions();
+       // this.loadSuggestions();
       }
 
     });

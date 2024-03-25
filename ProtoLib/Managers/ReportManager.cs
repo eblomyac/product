@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System.Data;
+using System.Dynamic;
 using System.Text;
 using KSK_LIB.DataStructure.MQRequest;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ public class ReportManager
         {
             dynamic result = new ExpandoObject();
             List<string> operators = bc.Roles.AsNoTracking().Where(x => x.Type == RoleType.Operator).Select(x => x.UserAccName).Distinct().ToList();
-            List<string> masters = bc.Roles.AsNoTracking().Where(x => x.Type == RoleType.PostMaster && x.PostId != null)
+            List<string> masters = bc.Roles.AsNoTracking().Where(x => x.Type == RoleType.PostMaster).ToList().Where(x=>x.MasterPosts.Count>0)
                 .Select(x => x.UserAccName).Distinct().ToList();
             var records = bc.WorkStatusLogs.AsNoTracking().Where(x => x.Stamp.Date == stamp.Date).ToList();
             var issues = bc.WorkIssueLogs.AsNoTracking().Where(x =>
@@ -132,5 +133,45 @@ public class ReportManager
         }
         
         
-    } 
+    }
+
+    public DataTable PrintWorkList(List<long> ids)
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            var works = c.Works.Where(x => ids.Contains(x.Id)).ToList();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Заказ");
+            dt.Columns.Add("Артикул");
+            dt.Columns.Add("Количество");
+            dt.Columns.Add("Комментарий");
+            dt.Columns.Add("Производство");
+
+            dt.Columns.Add("Норматив");
+            
+            dt.Columns.Add("Дата сдачи");
+            dt.Columns.Add("Операции");
+            dt.Columns.Add("Статус");
+
+            foreach (var w in works)
+            {
+                DataRow r = dt.NewRow();
+                r["Заказ"] = w.OrderNumber;
+                r["Артикул"] = w.Article;
+                r["Количество"] = w.Count;
+                r["Норматив"] = w.TotalCost;
+                r["Комментарий"] = w.Description;
+                r["Производство"] = w.ProductLine;
+                r["Дата сдачи"] = w.DeadLine;
+                r["Операции"] = w.CommentMap.Replace("\t","\r\n");
+                r["Статус"] = w.StatusString;
+                dt.Rows.Add(r);
+            }
+
+            
+            
+            return dt;
+
+        }
+    }
 }

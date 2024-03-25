@@ -1,47 +1,54 @@
 <div>
-  <div class="mt-2">
+  <div class="mt-2" *ngIf="!stat">
     <mat-form-field>
       <mat-label>Заказ №</mat-label>
       <input matInput type="number" [(ngModel)]="orderFilter" (ngModelChange)="filterUpdate()">
     </mat-form-field>
   </div>
-  <div class="mt-3 mb-3">
-    <button style="margin-left: 3px; margin-top: 3px" mat-raised-button color="primary" (click)="loadOrderStatistic(order)"
-            [disabled]="isLoading" *ngFor="let order of this.filteredOrders">{{order}}</button>
+  <div class="mt-3 mb-3" *ngIf="!stat">
+    <button style="margin-left: 3px; margin-top: 3px" mat-raised-button color="primary"
+            (click)="loadOrderStatistic(order)"
+            [disabled]="isLoading" *ngFor="let order of this.filteredOrders">{{ order }}
+    </button>
   </div>
   <div *ngIf="isLoading" style="display: flex; justify-content: center">
     <mat-spinner [diameter]="35"></mat-spinner>
+  </div>
+  <div *ngIf="stat" class="mt-2 mb-2">
+    <button mat-raised-button color="primary" (click)="stat=null">Выбрать другой заказ</button>
   </div>
   <div *ngIf="stat">
     <div style="display: flex;justify-content: space-between">
       <div>
         <div style="font-size: 18px">
           <div>
-            Заказ № {{stat.Order}} - {{stat.Line}}
+            Заказ № {{ stat.Order }} - {{ stat.Line }}
           </div>
           <div>
-            Суммарный норматив: {{stat.TotalCost | number}}
+            Суммарный норматив: {{ stat.TotalCost | number }}
           </div>
           <div>
-            Выполненный норматив: {{stat.CompletedCost | number}}
-            ({{((stat.CompletedCost / stat.TotalCost) * 100)|number}}%)
+            Выполненный норматив: {{ stat.CompletedCost | number }}
+            ({{ ((stat.CompletedCost / stat.TotalCost) * 100)|number }}%)
           </div>
           <div>
-            Количество работ: {{stat.TotalWorks | number}}
+            Количество работ: {{ stat.TotalWorks | number }}
           </div>
           <div>
-            Выполнено работ: {{stat.CompletedWorks | number}}
-            ({{((stat.CompletedWorks / stat.TotalWorks) * 100)|number}}%)
+            Выполнено работ: {{ stat.CompletedWorks | number }}
+            ({{ ((stat.CompletedWorks / stat.TotalWorks) * 100)|number }}%)
           </div>
           <div>
-            Всего артикулов: {{stat.TotalArticles | number}}
+            Всего артикулов: {{ stat.TotalArticles | number }}
           </div>
           <div>
 
             <div style="display: flex; justify-content: start">
-              <div style="margin-top: 2px">Активных проблем: {{stat.Issues | number}}</div>
-              <div style="margin-left: 2px" >
-                <mat-icon style="color: #beb41c"   *ngIf="stat.Issues>0" [matTooltip]="stat.IssuesText" matTooltipClass="tooltip">highlight_off</mat-icon>
+              <div style="margin-top: 2px">Активных проблем: {{ stat.Issues | number }}</div>
+              <div style="margin-left: 2px">
+                <mat-icon style="color: #beb41c" *ngIf="stat.Issues>0" [matTooltip]="stat.IssuesText"
+                          matTooltipClass="tooltip">highlight_off
+                </mat-icon>
               </div>
 
             </div>
@@ -49,22 +56,25 @@
           </div>
         </div>
       </div>
-      <div style="width: 60%">
+      <div style="width: 60%" >
         <mat-button-toggle-group #chartSelect="matButtonToggleGroup" value="plan-complete">
           <mat-button-toggle value="plan-complete">Норматив/выполнено</mat-button-toggle>
           <mat-button-toggle value="by-posts">Состояние на участках</mat-button-toggle>
         </mat-button-toggle-group>
         <div *ngIf="chartSelect.value == 'plan-complete'">
-          <apx-chart [series]="orderChartOptions.series" [xaxis]="orderChartOptions.xaxis" [plotOptions]="orderChartOptions.plot"
+          <apx-chart #orderChart [series]="orderChartOptions.series" [xaxis]="orderChartOptions.xaxis"
+                     [plotOptions]="orderChartOptions.plot"
                      [dataLabels]="orderChartOptions.dataLabels"
-                     [chart]="orderChartOptions.chart" [theme]="orderChartOptions.theme" [title]="orderChartOptions.title">
+                     [chart]="orderChartOptions.chart" [theme]="orderChartOptions.theme"
+                     [title]="orderChartOptions.title">
           </apx-chart>
         </div>
         <div *ngIf="chartSelect.value=='by-posts'">
 
-          <apx-chart [dataLabels]="postsChartOptions.dataLabels" [series]="postsChartOptions.series"
+          <apx-chart #postChart [dataLabels]="postsChartOptions.dataLabels" [series]="postsChartOptions.series"
                      [xaxis]="postsChartOptions.xaxis" [plotOptions]="postsChartOptions.plot"
-                     [chart]="postsChartOptions.chart" [theme]="postsChartOptions.theme" [title]="postsChartOptions.title">
+                     [chart]="postsChartOptions.chart" [theme]="postsChartOptions.theme"
+                     [title]="postsChartOptions.title">
           </apx-chart>
 
         </div>
@@ -84,41 +94,50 @@
       </canvas> !-->
     </div>
     <div>
-      <div>
-        <mat-form-field>
-          <mat-label>
-            Артикул
-          </mat-label>
-          <input type="text" matInput [(ngModel)]="articleFilter" (ngModelChange)="articleFilterUpdate()">
-        </mat-form-field>
-        <div *ngIf="this.stat.ArticleStat.length!=this.articleStat.length" class="mb-2">
-          Фильтр, отображено {{this.articleStat.length}} из {{this.stat.ArticleStat.length}}
+      <div class="d-flex justify-content-between">
+        <div>
+          <mat-form-field>
+            <mat-label>
+              Артикул
+            </mat-label>
+            <input type="text" matInput [(ngModel)]="articleFilter" (ngModelChange)="articleFilterUpdate()">
+
+          </mat-form-field>
+
+          <div *ngIf="this.stat.ArticleStat.length!=this.articleStat.length" class="mb-2">
+            Фильтр, отображено {{ this.articleStat.length }} из {{ this.stat.ArticleStat.length }}
+          </div>
         </div>
+
+        <div *ngIf="this.stat.ArticleStat.length!=this.articleStat.length">
+          <button mat-raised-button color="primary" (click)="redrawCharts()">Применить фильтр к графику</button>
+        </div>
+      </div>
         <table style="border: 1px dashed #ffffff" class="w-100">
 
           <tbody>
           <tr class="order-stat-table-header">
-            <th  style="min-width: 12%; " >Артикул</th>
-            <th  class="text-center" style="width: 8%">Количество</th>
+            <th style="min-width: 12%; ">Артикул</th>
+            <th class="text-center" style="width: 8%">Количество</th>
             <th class="text-center" style="width: 8%">Норматив</th>
-            <th  class="text-end" style="width: 8%">Выполнено</th>
-            <th  class="text-center" *ngFor="let postColumn of stat.PostStatus">{{postColumn.Name}}</th>
+            <th class="text-end" style="width: 8%">Выполнено</th>
+            <th class="text-center" *ngFor="let postColumn of stat.PostStatus">{{ postColumn.Name }}</th>
           </tr>
 
           <ng-container *ngFor="let article of articleStat">
             <tr class="order-stat-table-row">
-              <td style="width: 12%">{{article.Article}}</td>
+              <td style="width: 12%">{{ article.Article }}</td>
               <td style="width: 8%" class="text-center">
-                {{article.Count}}
+                {{ article.Count }}
               </td>
 
 
               <td style="width: 8%" class="text-center">
-                {{article.TotalCost|number}}
+                {{ article.TotalCost|number }}
               </td>
 
               <td class="text-center" style="width: 8%">
-                {{((article.CompletedCost / article.TotalCost) * 100)|number}}%
+                {{ ((article.CompletedCost / article.TotalCost) * 100)|number }}%
               </td>
 
               <td *ngFor="let articlePost of article.ByPosts" class="text-center">
@@ -134,9 +153,11 @@
                   </ng-template>
                   <ng-template #perc>
                     <div style="display: flex; justify-content: center">
-                      <div style="margin-top: 2px">{{articlePost.Percentage|number}}%</div>
-                      <div style="margin-left: 2px" >
-                        <mat-icon style="color: #beb41c"  *ngIf="articlePost.Issues>0" [matTooltip]="articlePost.IssuesText" matTooltipClass="tooltip">highlight_off</mat-icon>
+                      <div style="margin-top: 2px">{{ articlePost.Percentage|number }}%</div>
+                      <div style="margin-left: 2px">
+                        <mat-icon style="color: #beb41c" *ngIf="articlePost.Issues>0"
+                                  [matTooltip]="articlePost.IssuesText" matTooltipClass="tooltip">highlight_off
+                        </mat-icon>
                       </div>
 
                     </div>
@@ -161,4 +182,4 @@
 
     </div>
   </div>
-</div>
+

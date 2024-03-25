@@ -9,6 +9,13 @@ import {DataService} from "../data.service";
 export  class WorkData{
   constructor(private transport:TransportService, private dataService:DataService) {
   }
+  public PrintWorkList(worksIds:Array<number>):Observable<any|null>{
+    return this.transport.Post('/works/PrintList', new HttpParams(),worksIds).pipe(map<ApiAnswer|null,any|null>(x=>{
+      if(x!=null){
+        return x.result;
+      }
+    }));
+  }
   public UpdateDates() :Observable<string|null>{
     return this.transport.Get('/works/UpdateDates', new HttpParams()).pipe(map<ApiAnswer|null, string|null>(x=>{
       if(x!=null){

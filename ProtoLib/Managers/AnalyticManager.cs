@@ -203,7 +203,7 @@ namespace ProtoLib.Managers
             }
         }
 
-        public object OrderStat(long orderId)
+        public object OrderStat(long orderId,List<string> articleIds)
         {
             dynamic result = new ExpandoObject();
 
@@ -212,6 +212,10 @@ namespace ProtoLib.Managers
                 var posts = c.Posts.OrderBy(x => x.ProductOrder).ToList();
                 var orderWorks = c.Works.AsNoTracking().Include(x => x.Issues).Where(x => x.OrderNumber == orderId)
                     .ToList();
+                if (articleIds.Count>0)
+                {
+                    orderWorks = orderWorks.Where(x => articleIds.Contains(x.Article)).ToList();
+                }
                 var completedWorks = orderWorks.Where(x => x.Status == WorkStatus.ended).ToList();
                 result.Order = orderId;
                 result.Line = orderWorks.FirstOrDefault()?.ProductLine;

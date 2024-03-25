@@ -38,12 +38,11 @@
       <td>
         <mat-form-field class="w-100" style="padding-top: 7px; padding-bottom: 3px;">
           <mat-label>Участок</mat-label>
-          <mat-select [(ngModel)]="user.postIdMaster">
-            <mat-option [value]="">Нет</mat-option>
+          <mat-select  multiple [(ngModel)]="user.postIdMaster">
+            <mat-option [value]="'Нет'" >Нет</mat-option>
             <mat-option *ngFor="let p of this.posts" [value]="p.name">{{p.name}}</mat-option>
           </mat-select>
         </mat-form-field>
-
       </td>
     </tr>
     </tbody>

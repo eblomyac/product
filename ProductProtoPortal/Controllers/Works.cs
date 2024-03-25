@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KSK_LIB.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
@@ -17,6 +18,22 @@ namespace ProductProtoPortal.Controllers
     [Route("/[controller]")]
     public class Works:Controller
     {
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult PrintList([FromBody]List<long> ids)
+        {
+            ReportManager rm = new();
+            var dt = rm.PrintWorkList(ids);
+            string fileName = Path.Combine(Environment.CurrentDirectory, "download",
+                Guid.NewGuid().ToString() + ".xlsx");
+            ExcelExporter ee = new ExcelExporter(fileName);
+            ee.ExportTable(dt);
+            
+            dynamic result = new ExpandoObject();
+            result.link = "/download/" + Path.GetFileName(fileName);
+            return new OkObjectResult(new ApiAnswer(result));
+        }
+        
         [HttpGet]
         [Route("[action]")]
         public IActionResult UpdateDates()

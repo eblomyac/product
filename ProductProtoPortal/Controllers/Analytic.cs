@@ -101,7 +101,14 @@ namespace ProductProtoPortal.Controllers
         public IActionResult OrderStatistic(long orderId)
         {
             AnalyticManager am = new AnalyticManager();
-            return new OkObjectResult(new ApiAnswer(am.OrderStat(orderId)));
+            return new OkObjectResult(new ApiAnswer(am.OrderStat(orderId, new List<string>())));
+        }
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult OrderStatistic([FromQuery]long orderId,[FromBody]List<string> articleIds)
+        {
+            AnalyticManager am = new AnalyticManager();
+            return new OkObjectResult(new ApiAnswer(am.OrderStat(orderId,articleIds)));
         }
 
         [HttpGet]

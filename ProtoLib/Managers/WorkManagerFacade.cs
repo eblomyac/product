@@ -44,9 +44,10 @@ namespace ProtoLib.Managers
             using (BaseContext c = new BaseContext(_accName))
             {
                 var userPost = c.Roles.AsNoTracking().FirstOrDefault(x => x.UserAccName == this._accName && x.Type == RoleType.PostMaster);
-                if (userPost != null && !string.IsNullOrEmpty(userPost.PostId))
+                if (userPost != null )
                 {
-                    return result.Where(x => x.PostId == userPost.PostId).ToList();
+                    var post = userPost.MasterPosts.FirstOrDefault(x => x == source.PostId);
+                    return result.Where(x => x.PostId == post).ToList();
                 }
             }
 

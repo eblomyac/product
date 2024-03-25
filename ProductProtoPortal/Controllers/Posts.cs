@@ -31,12 +31,13 @@ namespace ProductProtoPortal.Controllers
             return new OkObjectResult(new ApiAnswer("").ToString());
         }
 
+      
         [HttpGet]
-        public IActionResult CurrentWorks()
+        public IActionResult CurrentWorks(string postId)
         {
             var user = AuthHelper.GetADUser(this.HttpContext);
             WorkAnalyticFacade waf = new WorkAnalyticFacade();
-            var works = waf.PostWorks(user.SAM);
+            var works = waf.PostWorks(user.SAM, postId);
             return new OkObjectResult(new ApiAnswer(works).ToString());
         }
     }

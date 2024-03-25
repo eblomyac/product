@@ -11,8 +11,8 @@ export class PostData {
   constructor(private transportService: TransportService, private dataService:DataService) {
   }
 
-  public PostWorksUpdate():Observable<IWork[]>{
-    return this.transportService.Get('/posts/CurrentWorks', new HttpParams()).pipe(map<ApiAnswer|null,IWork[]>(x=>{
+  public PostWorksUpdate(postId:string):Observable<IWork[]>{
+    return this.transportService.Get('/posts/CurrentWorks', new HttpParams().append('PostId',postId)).pipe(map<ApiAnswer|null,IWork[]>(x=>{
       if(x){
         if(x.isSuccess){
           return (x.result as IWork[]);
@@ -21,14 +21,14 @@ export class PostData {
       return [];
     }));
   }
-  public PostWorks():Observable<Work[]>{
-    return this.transportService.Get('/posts/CurrentWorks', new HttpParams()).pipe(map<ApiAnswer|null,Work[]>(x=>{
+  public PostWorks(postId:string):Observable<Work[]|null>{
+    return this.transportService.Get('/posts/CurrentWorks', new HttpParams().append('PostId',postId)).pipe(map<ApiAnswer|null,Work[]|null>(x=>{
       if(x){
         if(x.isSuccess){
           return (x.result as IWork[]).map(z=>new Work(z,this.dataService))
         }
       }
-      return [];
+      return null;
     }));
   }
   public List():Observable<IPost[]>{

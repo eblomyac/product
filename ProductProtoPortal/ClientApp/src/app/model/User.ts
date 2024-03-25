@@ -8,7 +8,8 @@ export interface IUser{
     isAdmin:boolean;
     isOperator:boolean;
     isMaster:boolean;
-    postIdMaster:string;
+    postIdMaster:string[];
+    roles:Role[];
 }
 export class User{
 
@@ -20,6 +21,19 @@ export class User{
     dataService.User.Login().subscribe(x=>{
       this.structure = x;
       this.eventSubject.next("logged_in");
+    });
+  }
+  public checkRoles(){
+    this.dataService.User.Login().subscribe(x=>{
+
+      if(this.structure && x){
+        console.log(x);
+        this.structure.roles = x.roles;
+        this.structure.isAdmin = x.isAdmin;
+        this.structure.isOperator = x.isOperator;
+        this.structure.isMaster = x.isMaster;
+        this.structure.postIdMaster = x.postIdMaster;
+      }
     });
   }
 

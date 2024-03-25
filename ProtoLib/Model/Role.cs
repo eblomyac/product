@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProtoLib.Model
 {
@@ -15,7 +16,36 @@ namespace ProtoLib.Model
         public RoleType Type { get; set; }
         [MaxLength(32)]
         public string UserAccName { get; set; }
-        public string? PostId { get; set; }
+      //  public string? PostId { get; set; }
+        
+        public string MasterPostMap { get; set; }
+        [NotMapped]
+        public List<string> MasterPosts{
+            get
+            {
+                if (string.IsNullOrEmpty(this.MasterPostMap))
+                {
+                    return new List<string>();
+                }
+                else
+                {
+                    return this.MasterPostMap.Split(';').ToList();
+                }
+            }
+            set
+            {
+                if (value.Contains("Нет") || value.Contains(null) || value.Count==0)
+                {
+                    this.MasterPostMap = "";
+                }
+                else
+                {
+                    this.MasterPostMap = string.Join(';', value);
+                }
+                
+            }
+            
+        } 
 
         public bool Equals(Role? other)
         {

@@ -88,6 +88,17 @@ export class StatisticData {
       return null;
     }));
   }
+  public OrderStatisticArticleFiltered(orderId:number, artilceIds:Array<string>):Observable<any|null>{
+    return this.transportService.Post('/analytic/OrderStatistic', new HttpParams().append('orderId',orderId), artilceIds).pipe(map<ApiAnswer|null,any|null>(x=>{
+      if(x!=null){
+        if(x.isSuccess){
+          return x.result;
+        }
+        return {};
+      }
+      return null;
+    }))
+  }
   public OrderStatistic(orderId:number):Observable<any|null>{
     return this.transportService.Get('/analytic/OrderStatistic', new HttpParams().append('orderId',orderId)).pipe(map<ApiAnswer|null,any|null>(x=>{
       if(x!=null){
