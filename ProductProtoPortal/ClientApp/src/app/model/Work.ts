@@ -106,6 +106,7 @@ export class Work {
 
       }
       if (this.structure.status == 40 && (this.structure.movedTo==null||this.structure.movedTo.length<1)) {
+        result.push('Продолжить работу');
         result.push('Передать на пост');
       }else if(this.structure.status==40){
         result.push('Изменить участок передачи')
@@ -126,6 +127,7 @@ export class Work {
       case 'Зарегистрировать событие':
         this.registerIssue();
         break;
+      case 'Продолжить работу':
       case 'Выполнять':
         this.changeStatus(30);
         break;
@@ -252,7 +254,13 @@ export class Work {
         return false;
       }
     }
-    if (this.structure.status == 40) {
+    if(this.structure.status==40 && newStatus==30 && this.structure.movedTo.length>0){
+      alert('Работа уже передана');
+      return (): boolean => {
+        return false;
+      }
+    }
+    if (this.structure.status == 40 && newStatus!=30) {
       alert('Работа завершена');
       return (): boolean => {
         return false;

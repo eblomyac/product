@@ -26,6 +26,9 @@ export class PostViewComponent implements OnInit {
   runningWorks:Work[]=[];
   endedWorks:Work[]=[];
 
+  showReturnedWorks=false;
+  showSendedWorks = true;
+
   orderFilter:number[]=[];
   articleFilter:string='';
 
@@ -95,7 +98,7 @@ export class PostViewComponent implements OnInit {
     this.updateWorks();
   }
   checkRightStatus(work:Work,from:number,to:number){
-    console.log('check right array')
+
     let currentArray:Work[]=this.getArrayByStatus(to);
     let oldArray:Work[]=this.getArrayByStatus(from);
 
@@ -181,9 +184,19 @@ export class PostViewComponent implements OnInit {
   }
   workDeselect(){
     this.incomeWorks = this.filteredWorks.filter(x=>x.structure.status == 10);
-    this.waitWorks = this.filteredWorks.filter(x=>x.structure.status==20);
+    if(this.showReturnedWorks){
+      this.waitWorks = this.filteredWorks.filter(x=>x.structure.status==20);
+    }else{
+      this.waitWorks = this.filteredWorks.filter(x=>x.structure.status==20 && x.structure.issues.filter(z=>z.returnBackPostId.length>0).length==0)
+    }
+
     this.runningWorks = this.filteredWorks.filter(x=>x.structure.status==30);
-    this.endedWorks = this.filteredWorks.filter(x=>x.structure.status==40);
+    if(this.showSendedWorks){
+      this.endedWorks = this.filteredWorks.filter(x=>x.structure.status==40 );
+    }else{
+      this.endedWorks = this.filteredWorks.filter(x=>x.structure.status==40 && x.structure.movedTo.length==0);
+    }
+
 
   }
   printWorks(workList:Work[]){

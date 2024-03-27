@@ -44,6 +44,10 @@
   <div class="row">
     <div class="col-3 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
+        <div class="align-self-start">
+          <button mat-icon-button color="primary" disabled="true"><mat-icon>filter_list</mat-icon></button>
+
+        </div>
         <div class="align-self-center">
           Поступление
         </div>
@@ -60,6 +64,12 @@
     </div>
     <div class="col-3 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
+        <div class="align-self-start">
+          <button mat-icon-button color="primary" [matMenuTriggerFor]="waitFilterMenu"><mat-icon>filter_list</mat-icon></button>
+          <mat-menu #waitFilterMenu>
+            <mat-checkbox color="primary" [(ngModel)]="showReturnedWorks" (change)="workDeselect()">Показывать возвращенные работы</mat-checkbox>
+          </mat-menu>
+        </div>
         <div class="align-self-center">
           Ожидание
         </div>
@@ -76,6 +86,10 @@
     </div>
     <div class="col-3 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
+        <div class="align-self-start">
+          <button mat-icon-button color="primary" disabled="true"><mat-icon>filter_list</mat-icon></button>
+
+        </div>
         <div class="align-self-center">
           Выполнение
         </div>
@@ -93,6 +107,12 @@
     </div>
     <div class="col-3 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
+        <div class="align-self-start">
+          <button mat-icon-button color="primary" [matMenuTriggerFor]="sendedFilterMenu"><mat-icon>filter_list</mat-icon></button>
+          <mat-menu #sendedFilterMenu>
+            <mat-checkbox color="primary" [(ngModel)]="showSendedWorks" (change)="workDeselect()">Показывать переденные работы</mat-checkbox>
+          </mat-menu>
+        </div>
         <div class="align-self-center">
           Завершение
         </div>
