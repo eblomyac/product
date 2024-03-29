@@ -96,6 +96,10 @@ namespace ProtoLib.Managers
                 foreach (var postKey in CrpLines.Keys)
                 {
                     var p = d.PostKeys.FirstOrDefault(x => x.Key == postKey);
+                    if (p == null)
+                    {
+                        continue;
+                    }
                     var existPart = tc.PostParts.FirstOrDefault(x => x.PostId == p.PostId);
                     if (existPart == null)
                     {

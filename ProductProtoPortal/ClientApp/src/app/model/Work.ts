@@ -85,9 +85,7 @@ export class Work {
 
       }
       if (this.structure.status == 10) {
-        if(this.structure.backwardMoves!=null && this.structure.backwardMoves.length>0) {
-          result.push('Вернуть');
-        }
+        result.push('Вернуть');
         result.push('Принять')
       }
       if (this.structure.status == 20) {
