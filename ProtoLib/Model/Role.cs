@@ -18,7 +18,7 @@ namespace ProtoLib.Model
         public string UserAccName { get; set; }
       //  public string? PostId { get; set; }
         
-        public string MasterPostMap { get; set; }
+        public string? MasterPostMap { get; set; }
         [NotMapped]
         public List<string> MasterPosts{
             get

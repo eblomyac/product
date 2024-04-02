@@ -8,10 +8,20 @@ namespace ProtoLib.Managers
 {
     public class WorkStatusChanger
     {
-        public void ChangeStatus(Work w, WorkStatus newStatus,string accName)
+        public void ChangeStatus(Work w, WorkStatus newStatus, string accName, string moveTo = "",
+            string moveFrom = "")
         {
             var oldStatus = w.Status;
             w.Status = newStatus;
+            if (moveTo.Length > 0 && string.IsNullOrEmpty(w.MovedTo))
+            {
+                w.MovedTo = moveTo;
+            }
+
+            if (moveFrom.Length > 0 && string.IsNullOrEmpty(w.MovedFrom))
+            {
+                w.MovedFrom = moveFrom;
+            }
             if (newStatus == WorkStatus.waiting && oldStatus == WorkStatus.income)
             {
                 //перевести переднные работы в завершенные
@@ -58,7 +68,7 @@ namespace ProtoLib.Managers
             
         }
 
-        public bool ChangeStatus(long id, WorkStatus newStatus,string accName)
+        public bool ChangeStatus(long id, WorkStatus newStatus,string accName, string moveTo="",string moveFrom="")
         {
             using (BaseContext c = new BaseContext(accName))
             {
@@ -69,7 +79,7 @@ namespace ProtoLib.Managers
                 }
                 else
                 {
-                    ChangeStatus(work,newStatus,accName);
+                    ChangeStatus(work,newStatus,accName, moveTo, moveFrom);
                 }
 
                 int r = c.SaveChanges();

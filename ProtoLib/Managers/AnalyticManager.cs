@@ -355,6 +355,7 @@ namespace ProtoLib.Managers
 
             using (BaseContext c = new BaseContext("system"))
             {
+                var posts = c.Posts.OrderBy(x=>x.ProductOrder).ToList();
                 var data = c.WorkStatusLogs.Where(x => x.OrderNumber == orderNumber)
                     .OrderBy(x => x.Stamp)
                     .ToList();
@@ -389,21 +390,25 @@ namespace ProtoLib.Managers
                         iss.Description = issue.Description;
                     }
 
+                    
                     var postGroup = article
                         .GroupBy(x => x.PostId);
-                    foreach (var post in postGroup)
+                    //orderby post
+                    posts = posts.Where(x => postGroup.Select(x => x.Key).Contains(x.Name)).ToList();
+                    foreach (var post in posts)
                     {
                         dynamic postData = new ExpandoObject();
-                        postData.Post = post.Key;
+                        postData.Post = post.Name;
                         Article.Data.Add(postData);
                         postData.Values = new List<object>();
                         DateTime? lastEvent = null;
                         bool isEnded = false;
-                        var works = post.Where(x =>
+                        
+                        var works = postGroup.First(x=>x.Key==post.Name).Where(x =>
                             x.PrevStatus !=
                             WorkStatus.unkown); //чтобы отсечь прогнозируемые работы но при это сохранить все артикула
                         postData.Issues = new List<object>();
-                        var postIssues = articleIssues.Where(x => x.PostId == post.Key);
+                        var postIssues = articleIssues.Where(x => x.PostId == post.Name);
 
                         WorkStatus lastState = WorkStatus.unkown;
 

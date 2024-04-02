@@ -28,7 +28,7 @@ namespace ProtoLib.Managers
             using (BaseContext c = new BaseContext("system"))
             {
                 DateTime stamp = DateTime.Now;
-                var lastStamp = c.PostStatistics.LastOrDefault()?.Stamp;
+                var lastStamp = c.PostStatistics.OrderBy(x=>x.Stamp).OrderBy(x=>x.Stamp).LastOrDefault()?.Stamp;
                 if (lastStamp.HasValue)
                 {
                     if ((stamp - lastStamp.Value).TotalMinutes < 15)

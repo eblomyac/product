@@ -9,6 +9,13 @@ import {DataService} from "../data.service";
 export  class WorkData{
   constructor(private transport:TransportService, private dataService:DataService) {
   }
+  public MaconomySyncClose():Observable<any>{
+    return this.transport.Get('/transfer/MaconomyOrderSync', new HttpParams()).pipe(map<ApiAnswer|null,any|null>(x=>{
+      if(x!=null){
+        return x.result;
+      }
+    }));
+  }
   public PrintWorkList(worksIds:Array<number>):Observable<any|null>{
     return this.transport.Post('/works/PrintList', new HttpParams(),worksIds).pipe(map<ApiAnswer|null,any|null>(x=>{
       if(x!=null){

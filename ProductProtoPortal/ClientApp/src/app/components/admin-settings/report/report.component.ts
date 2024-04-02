@@ -23,4 +23,11 @@ export class ReportComponent {
       this.isLoading=false;
     })
   }
+
+  orderMaconomyClose(){
+    this.isLoading=true;
+    this.data.Work.MaconomySyncClose().subscribe(x=>{
+      if(x) this.isLoading=false;
+    }, error => {this.isLoading=false;console.log(error)});
+  }
 }

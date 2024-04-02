@@ -123,8 +123,14 @@ public class ReportManager
             mr.From = "product-report@ksk.ru";
             mr.Subject = $"Отчет производства от {stamp:dd.MM.yyyy}";
             mr.IsBodyHtml = true;
+#if DEBUG
+            mr.To = new List<string>() {"po@ksk.ru"};
+            mr.Bcc = new List<string>();
+#endif
+#if RELEASE
             mr.To = bc.Users.Select(x => x.Mail).ToList();//new List<string>() {"po@ksk.ru"};// 
             mr.Bcc = new List<string>() {"artur.vagapov@ksk.ru"};
+#endif
             #if DEBUG
                 mr.Bcc = new List<string>();
             #endif
