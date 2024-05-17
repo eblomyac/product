@@ -224,9 +224,9 @@ namespace ProtoLib.Managers
                 result.TotalArticles = orderWorks.Select(x => x.Article).Distinct().Count();
                 result.TotalWorkItems = orderWorks.Sum(x => x.Count);
                 result.Issues = orderWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
-                result.IssuesText = String.Join("\r\n", orderWorks.SelectMany(x => x.Issues)
+                result.IssuesText = String.Join("\n", orderWorks.SelectMany(x => x.Issues)
                     .Where(x => x.Resolved == null)
-                    .Select(x => $"{x.Work.PostId}: {x.Work.Article} - {x.Description}").ToList());
+                    .Select(x => $"{x.Created:dd.MM HH:mm}: {x.Work.PostId}: {x.Work.Article} - {x.Description}").ToList());
                 result.CompletedWorks = completedWorks.Count();
                 result.CompletedCost = completedWorks.Sum(x => x.TotalCost);
 
@@ -304,7 +304,7 @@ namespace ProtoLib.Managers
 
                         postStat.Issues = articlePostWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
                         postStat.IssuesText = articlePostWorks.SelectMany(x => x.Issues).Where(x => x.Resolved == null)
-                            .Select(x => x.Description).ToList();
+                            .Select(x =>$"{x.Created:dd.MM HH:mm}: {x.Description}" ).ToList();
                     }
                 }
             }
@@ -323,6 +323,8 @@ namespace ProtoLib.Managers
                 result.orders = statistics.Select(x => x.OrderNumber.ToString()).Distinct();
                 result.posts = statistics.Select(x => x.PostId).Distinct();
 
+                var postNames = c.Posts.ToList();
+
                 result.dataByStatus = new List<object>();
                 var stamps = statistics.GroupBy(x => x.Stamp);
                 foreach (var stamp in stamps)
@@ -332,6 +334,9 @@ namespace ProtoLib.Managers
                     {
                         dynamic postStatus = new ExpandoObject();
                         postStatus.post = post.Key;
+                        postStatus.shortName = postNames.FirstOrDefault(x => x.Name == post.Key)?.TableName;
+                        postStatus.stamp = stamp.Key;
+                      
                         postStatus.predict = post.Sum(x => x.PredictCost);
                         postStatus.income = post.Sum(x => x.IncomeCost);
                         postStatus.waiting = post.Sum(x => x.WaitingCost);

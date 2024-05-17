@@ -1,35 +1,25 @@
 <div>
 
   <mat-form-field>
-    <input matInput
+    <input matInput  [matDatepicker]="pickerFrom"
            placeholder="От" [(ngModel)]="this.from"
            [max]="this.to"
            >
-    <mat-datepicker-toggle matSuffix [for]="$any(fromPicker)">
+    <mat-datepicker-toggle matSuffix [for]="$any(pickerFrom)">
     </mat-datepicker-toggle>
-    <mat-datepicker #fromPicker></mat-datepicker>
-  <!--  <ngx-mat-datetime-picker #fromPicker
+    <mat-datepicker #pickerFrom></mat-datepicker>
 
-                             [showSeconds]="false"
-                             [stepHour]="1" [stepMinute]="1"
-                             color="primary">
-    </ngx-mat-datetime-picker> -->
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput
+    <input matInput [matDatepicker]="toPicker"
            placeholder="По" [(ngModel)]="this.to"
            [min]="this.from"
     >
     <mat-datepicker-toggle matSuffix [for]="$any(toPicker)">
     </mat-datepicker-toggle>
     <mat-datepicker #toPicker></mat-datepicker>
-    <!--<ngx-mat-datetime-picker #toPicker
 
-                             [showSeconds]="false"
-                             [stepHour]="1" [stepMinute]="1"
-                             color="primary">
-    </ngx-mat-datetime-picker> -->
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="load()">Загрузить</button>
 </div>
@@ -37,7 +27,7 @@
   <mat-button-toggle-group #chartSelect="matButtonToggleGroup" value="load-by-total">
     <mat-button-toggle value="load-by-total">Нагрузка общая</mat-button-toggle>
     <mat-button-toggle value="load-by-status">Нагрузка по статусам</mat-button-toggle>
-    <mat-button-toggle value="load-by-orders">Нагрузка по заказам</mat-button-toggle>
+  <!--  <mat-button-toggle value="load-by-orders">Нагрузка по заказам</mat-button-toggle> -->
   </mat-button-toggle-group>
 
   <div *ngIf="stat">
@@ -49,12 +39,28 @@
 
     </apx-chart>
   </div>
-  <div class="w-100" *ngIf="chartSelect.value=='load-by-status'">
-    <apx-chart *ngFor="let post of stat.posts"  [series]="getByStatusChart(post).series" [xaxis]="getByStatusChart(post).xaxis"
+  <div class="w-100 row" *ngIf="chartSelect.value=='load-by-status'">
+    <div class="col-3 mt-2">
+      <span class="text-decoration-underline">Посты:</span>
+      <mat-chip-listbox multiple="true" selectable="true">
+        <mat-chip-option *ngFor="let i of this.posts" [selected]="isPost3dSelected(i)" (click)="selectPost3d(i)" >{{i}}</mat-chip-option>
+      </mat-chip-listbox>
+      <span class="text-decoration-underline">Статусы:</span>
+      <div>
+        <mat-chip-listbox multiple="true" selectable="true">
+          <mat-chip-option *ngFor="let i of this.statuses" [selected]="isStatus3dSelected(i)" (click)="selectStatus3d(i)" >{{i}}</mat-chip-option>
+        </mat-chip-listbox>
+      </div>
+    </div>
+
+
+    <div  echarts [options]="bar3dChart" (chartInit)="onChartInit($event)" class="col-9"></div>
+    <!--<apx-chart *ngFor="let post of stat.posts"  [series]="getByStatusChart(post).series" [xaxis]="getByStatusChart(post).xaxis"
                [yaxis]="getByStatusChart(post).yaxis" [stroke]="getByStatusChart(post).stroke"
                [theme]="getByStatusChart(post).theme" [chart]="getByStatusChart(post).chart" [markers]="getByStatusChart(post).markers"
                [grid]="getByStatusChart(post).grid" [tooltip]="getByStatusChart(post).tooltip" [title]="getByStatusChart(post).title">
-    </apx-chart>
+    </apx-chart> -->
+
   </div>
 
   <div class="w-100" *ngIf="chartSelect.value=='load-by-orders'">

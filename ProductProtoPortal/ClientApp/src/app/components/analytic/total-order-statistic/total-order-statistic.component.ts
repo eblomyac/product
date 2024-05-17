@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../../../services/data.service";
 import {IPost} from "../../../model/Post";
+import {F} from "@angular/cdk/keycodes";
 
 @Component({
   selector: 'app-total-order-statistic',
@@ -15,6 +16,7 @@ export class TotalOrderStatisticComponent implements OnInit{
   isLoading=false;
   articleFilter='';
   orderFilter='';
+  hideCompleted = true;
   constructor(private data:DataService) {
 
   }
@@ -22,6 +24,7 @@ export class TotalOrderStatisticComponent implements OnInit{
       this.load();
   }
   filterUpdate(){
+
 
     if(this.articleFilter.length < 1 && this.orderFilter.length<1){
       this.articleStat = this.stat;
@@ -37,6 +40,11 @@ export class TotalOrderStatisticComponent implements OnInit{
       this.articleStat = this.stat.filter((x:any)=>{
         return x.Order.toString().includes(this.orderFilter)
       })
+    }
+    if(this.hideCompleted){
+      this.articleStat = this.articleStat.filter((x:any)=>{
+        return x.CurrentPost!="[завершено]";
+      });
     }
 
   }
@@ -68,4 +76,6 @@ export class TotalOrderStatisticComponent implements OnInit{
     })
 
   }
+
+  protected readonly F = F;
 }

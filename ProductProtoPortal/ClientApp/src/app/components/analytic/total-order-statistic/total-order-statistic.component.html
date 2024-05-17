@@ -20,6 +20,9 @@
           </mat-label>
           <input type="text" matInput [(ngModel)]="articleFilter" (ngModelChange)="filterUpdate()">
         </mat-form-field>
+        <mat-checkbox [(ngModel)]="hideCompleted" color="primary" (ngModelChange)="filterUpdate()">
+          Спрятать завершенные
+        </mat-checkbox>
       </div>
       <button mat-icon-button color="primary" (click)="print()"><mat-icon>download</mat-icon></button>
     </div>

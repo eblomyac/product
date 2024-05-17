@@ -97,8 +97,15 @@ public class ReportManager
                       $"<th>Сумма норматива завершенных заданий</th>" +
                       $"<th>Количество выполненных операций</th>" +
                       $"</tr>");
+        decimal totalWorkEnd = 0;
+        decimal totalCostEnd = 0;
+        decimal totalOperation = 0;
+        
         foreach (dynamic p in DailyReport.Posts)
         {
+            totalOperation += p.EndedCount;
+            totalCostEnd += p.EndedCost;
+            totalWorkEnd += p.EndedWorkCount;
             sb.AppendLine($"<tr>" +
                           $"<td><strong>{p.PostName}</strong></td>" +
                           $"<td style='text-align: center;'>{p.EndedWorkCount}</td>" +
@@ -107,6 +114,7 @@ public class ReportManager
                           $"</tr>");
         }
 
+        sb.AppendLine($"<tr><td><strong>Сумма</strong></td><td style='text-align: center;'><strong>{totalWorkEnd}</strong></td><td style='text-align: center;'><strong>{totalCostEnd}</strong></td><td style='text-align: center;'><strong>{totalOperation}</strong></td>");
         sb.AppendLine("</table>");
         sb.AppendLine("<br><span></span>");
         return sb.ToString();

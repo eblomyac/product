@@ -30,7 +30,7 @@
   <div class="row">
     <div class="col-3">
 
-      <div *ngFor="let op of orders" class="priority-item">
+      <div *ngFor="let op of orders; let i=index" class="priority-item" [@indexChanged]>
         <div style="font-size: 16px;">
           Заказ: <a class="priority-filter-link" (click)="orderClick(op.orderNumber)">{{ op.orderNumber }}</a>
         </div>
@@ -59,7 +59,7 @@
     </div>
     <div class="col-8">
       <div class="row">
-        <div *ngFor="let a of this.articles" class="priority-item col-3">
+        <div *ngFor="let a of this.articles; let i = index" class="priority-item col-3" [@indexChanged]>
           <div style="font-size: 16px">
             Артикул: <a class="priority-filter-link" (click)="articleClick(a.article)">{{ a.article }}</a>
           </div>

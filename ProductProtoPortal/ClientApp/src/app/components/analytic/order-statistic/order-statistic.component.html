@@ -45,9 +45,10 @@
 
             <div style="display: flex; justify-content: start">
               <div style="margin-top: 2px">Активных проблем: {{ stat.Issues | number }}</div>
-              <div style="margin-left: 2px">
-                <mat-icon style="color: #beb41c" *ngIf="stat.Issues>0" [matTooltip]="stat.IssuesText"
-                          matTooltipClass="tooltip">highlight_off
+
+              <div class="html-tooltip" style="margin-left: 2px">
+                <span class="html-tooltiptext">{{stat.IssuesText}}</span>
+                <mat-icon style="color: #beb41c" *ngIf="stat.Issues>0" >highlight_off
                 </mat-icon>
               </div>
 

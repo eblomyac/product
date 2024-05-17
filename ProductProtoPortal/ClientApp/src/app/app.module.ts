@@ -66,6 +66,10 @@ import {
 import {OperatorUtilityComponent} from "./components/operator/operator-utility/operator-utility.component";
 import {ReportComponent} from "./components/admin-settings/report/report.component";
 import {CustomDateAdapter} from "./CustomAdapter";
+import {NgxEchartsDirective, NgxEchartsModule} from "ngx-echarts";
+import {DatePipe} from "@angular/common";
+import {MatChipsModule} from "@angular/material/chips";
+
 
 
 
@@ -109,6 +113,10 @@ import {CustomDateAdapter} from "./CustomAdapter";
       {path: 'card-search', component: CardfinderComponent},
       {path: 'work-priority', component: PriorityListComponent}
     ]),
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    }),
+
     BrowserAnimationsModule,
 
     MatIconModule,
@@ -134,10 +142,13 @@ import {CustomDateAdapter} from "./CustomAdapter";
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
+    NgxEchartsDirective,
+    MatChipsModule,
 
 
   ],
-    providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService,  { provide: DateAdapter, useClass: CustomDateAdapter },],
+    providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService,
+      { provide: DateAdapter, useClass: CustomDateAdapter },DatePipe],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

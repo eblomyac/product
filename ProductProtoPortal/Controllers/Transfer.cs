@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KSK_LIB.DataStructure.MQRequest;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProtoLib;
@@ -22,6 +23,7 @@ namespace ProductProtoPortal.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [AllowAnonymous]
         public async Task<IActionResult> MaconomyOrderSync()
         {
             WorkCleaner wc = new WorkCleaner();

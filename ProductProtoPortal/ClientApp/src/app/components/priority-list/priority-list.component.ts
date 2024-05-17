@@ -25,6 +25,23 @@ import {animate, keyframes, style, transition, trigger} from "@angular/animation
           ])),
         ]),
       ]),
+    trigger(
+      'indexChanged',
+      [
+        transition(':enter', [
+          animate(1, keyframes([
+            style ({opacity:0}),
+            style ({opacity:1}),
+          ])),
+        ]),
+        transition(':leave', [
+          animate(1, keyframes([
+            style ({opacity:0}),
+            style ({opacity:1}),
+          ])),
+        ]),
+
+      ]),
   ]
 }
 )
@@ -41,10 +58,11 @@ export class PriorityListComponent implements OnInit{
   changeOrderPriority(orderNumber:number, change:number){
     this.ordersPriorityData?.filter(x=>x.orderNumber == orderNumber).every(x=>x.priority+= change);
     this.articlePriorityData?.filter(x=>x.orderNumber == orderNumber).every(x=>x.priority += change);
-
+    this.orderByPriority();
   }
   changeArticlePriority(orderNumber:number, article:string, change:number){
     this.articlePriorityData?.filter(x=>x.orderNumber == orderNumber && x.article == article).every(x=>x.priority+=change);
+    this.orderByPriority();
   }
 
   orderClick(order:number){
@@ -65,6 +83,14 @@ export class PriorityListComponent implements OnInit{
       this.filterUpdate();
     }
   }
+  orderByPriority(){
+    if(this.articles){
+      this.articles.sort((x,y)=> {return y.priority-x.priority});
+    }
+    if(this.orders){
+      this.orders.sort((x,y)=>{return y.priority - x.priority});
+    }
+  }
   filterUpdate(){
     if(this.articleFilter.length>0 && this.orderFilter != 0){
       //filter by art and order
@@ -83,6 +109,7 @@ export class PriorityListComponent implements OnInit{
       this.articles = this.articlePriorityData;
       this.orders = this.ordersPriorityData;
     }
+    this.orderByPriority();
   }
 
   selectMany<TIn, TOut>(input: TIn[], selectListFn: (t: TIn) => TOut[]): TOut[] {

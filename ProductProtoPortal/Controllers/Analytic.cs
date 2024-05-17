@@ -3,6 +3,7 @@ using System.Dynamic;
 using System.Globalization;
 using ClosedXML.Excel;
 using KSK_LIB.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ProtoLib;
@@ -16,6 +17,7 @@ namespace ProductProtoPortal.Controllers
     {
         [HttpGet]
         [Route("[action]")]
+        [AllowAnonymous]
         public async Task<IActionResult> DailyReport(string date)
         {
             try

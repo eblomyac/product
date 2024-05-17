@@ -217,14 +217,15 @@ namespace ProtoLib.Managers
                             .Distinct().ToList();
                     if (forwardDirection.Count == 0)
                     {
-                        if (allWorks.All(x => x.Status == WorkStatus.ended || x.Status == WorkStatus.sended))
+                        forwardDirection.Add(Constants.Work.EndPosts.JustEnd);
+                            /*if (allWorks.All(x => x.Status == WorkStatus.ended || x.Status == WorkStatus.sended))
                         {
                             forwardDirection.Add(Constants.Work.EndPosts.TotalEnd);    
                         }
                         else
                         {
-                            forwardDirection.Add(Constants.Work.EndPosts.JustEnd);
-                        }
+                           
+                        }*/
                         
                     }
                     backwardDirection.AddRange(c.Posts.Where(x=>x.IsShared).Select(x=>x.Name).ToList());
