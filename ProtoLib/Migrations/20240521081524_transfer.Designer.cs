@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProtoLib.Model;
 
@@ -11,9 +12,10 @@ using ProtoLib.Model;
 namespace ProtoLib.Migrations
 {
     [DbContext(typeof(BaseContext))]
-    partial class BaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240521081524_transfer")]
+    partial class transfer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,109 +285,6 @@ namespace ProtoLib.Migrations
                     b.HasIndex("TechCardId");
 
                     b.ToTable("TechCardPosts");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.Transfer", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime?>("Closed")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ClosedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ClosedStamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedStamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaperId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("PostFromId")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<string>("PostToId")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostFromId");
-
-                    b.HasIndex("PostToId");
-
-                    b.ToTable("Transfers");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.TransferLine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Article")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsTransfered")
-                        .HasColumnType("bit");
-
-                    b.Property<long>("OrderNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ProductionLine")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Remark")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("SourceWorkCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<long>("SourceWorkId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("TargetWorkId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("TransferId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("TransferedCount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TransferId");
-
-                    b.ToTable("TransferLines");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.User", b =>
@@ -719,32 +618,6 @@ namespace ProtoLib.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("ProtoLib.Model.Transfer", b =>
-                {
-                    b.HasOne("ProtoLib.Model.Post", "PostFrom")
-                        .WithMany()
-                        .HasForeignKey("PostFromId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProtoLib.Model.Post", "PostTo")
-                        .WithMany()
-                        .HasForeignKey("PostToId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PostFrom");
-
-                    b.Navigation("PostTo");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.TransferLine", b =>
-                {
-                    b.HasOne("ProtoLib.Model.Transfer", null)
-                        .WithMany("Lines")
-                        .HasForeignKey("TransferId");
-                });
-
             modelBuilder.Entity("ProtoLib.Model.Work", b =>
                 {
                     b.HasOne("ProtoLib.Model.Post", "Post")
@@ -791,11 +664,6 @@ namespace ProtoLib.Migrations
                 });
 
             modelBuilder.Entity("ProtoLib.Model.TechCardPost", b =>
-                {
-                    b.Navigation("Lines");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.Transfer", b =>
                 {
                     b.Navigation("Lines");
                 });

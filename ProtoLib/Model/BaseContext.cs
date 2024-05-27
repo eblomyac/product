@@ -39,6 +39,9 @@ namespace ProtoLib.Model
         public DbSet<WorkPriority> WorkPriorities { get; set; }
         public DbSet<TechCardPost> TechCardPosts { get; set; }
         public DbSet<TechCardLine> TechCardLines { get; set; }
+        
+        public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<TransferLine> TransferLines { get; set; }
 
         public BaseContext()
         {
@@ -60,7 +63,7 @@ namespace ProtoLib.Model
               
                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
               //  #else
-               optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
+               //optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
                #if DEBUG
              //  optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
                 #endif

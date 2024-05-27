@@ -27,7 +27,7 @@ export class User{
     this.dataService.User.Login().subscribe(x=>{
 
       if(this.structure && x){
-        console.log(x);
+
         this.structure.roles = x.roles;
         this.structure.isAdmin = x.isAdmin;
         this.structure.isOperator = x.isOperator;

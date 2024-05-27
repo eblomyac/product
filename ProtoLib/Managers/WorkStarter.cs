@@ -33,7 +33,7 @@ namespace ProtoLib.Managers
                             {
                                 work.MovedFrom = "ИТР";
                             }
-                            wss.ChangeStatus(works, WorkStatus.income,accName);
+                            wss.ChangeStatus(works, WorkStatus.waiting,accName);
                             allWorks.AddRange(works);                         
                         }
                         
@@ -94,7 +94,7 @@ namespace ProtoLib.Managers
                 }
 
                 var nextWorks = c.Works.AsNoTracking().Where(x =>
-                    x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber &&
+                    x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber && x.Count==currentWork.Count &&
                     (startOnPosts.Contains(x.PostId)||x.PostId==toPostId)).ToList();
 
 

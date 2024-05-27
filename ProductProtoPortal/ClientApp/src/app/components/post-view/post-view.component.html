@@ -42,6 +42,7 @@
     </div>
   </div>
   <div class="row">
+    <!--
     <div class="col-3 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
         <div class="align-self-start">
@@ -61,8 +62,8 @@
       <div>Работ: {{incomeWorks.length}}</div>
       <div style="margin-left: 20px">Норматив: {{getTotalCost(incomeWorks)}}</div>
       </div>
-    </div>
-    <div class="col-3 text-center post-column-caption">
+    </div> -->
+    <div class="col-4 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
         <div class="align-self-start">
           <button mat-icon-button color="primary" [matMenuTriggerFor]="waitFilterMenu"><mat-icon>filter_list</mat-icon></button>
@@ -79,12 +80,20 @@
           </button>
         </div>
       </div>
-      <div style="display: flex; justify-content: center">
-        <div>Работ: {{waitWorks.length}}</div>
-        <div style="margin-left: 20px">Норматив: {{getTotalCost(waitWorks)}}</div>
+      <div style="display: flex; justify-content: space-between">
+        <div class="d-flex justify-content-end align-items-center">
+
+
+          <button mat-button color="primary" (click)="showTransfers('in')" [matBadge]="this.incomeTransfers.length" [disabled]="this.incomeTransfers.length==0">Принять</button>
+        </div>
+        <div>
+          <div class="text-start">Работ: {{waitWorks.length}}</div>
+          <div class="text-start">Норматив: {{getTotalCost(waitWorks)}}</div>
+        </div>
+
       </div>
     </div>
-    <div class="col-3 text-center post-column-caption">
+    <div class="col-4 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
         <div class="align-self-start">
           <button mat-icon-button color="primary" disabled="true"><mat-icon>filter_list</mat-icon></button>
@@ -105,7 +114,7 @@
       </div>
 
     </div>
-    <div class="col-3 text-center post-column-caption">
+    <div class="col-4 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
         <div class="align-self-start">
           <button mat-icon-button color="primary" [matMenuTriggerFor]="sendedFilterMenu"><mat-icon>filter_list</mat-icon></button>
@@ -122,9 +131,19 @@
           </button>
         </div>
       </div>
-      <div style="display: flex; justify-content: center">
-      <div>Работ: {{endedWorks.length}}</div>
-      <div style="margin-left: 20px">Норматив: {{getTotalCost(endedWorks)}}</div>
+      <div style="display: flex; justify-content: space-between">
+
+        <div>
+          <div class="text-start">Работ: {{endedWorks.length}}</div>
+          <div class="text-start">Норматив: {{getTotalCost(endedWorks)}}</div>
+        </div>
+        <div class="d-flex justify-content-end align-items-center">
+          <button mat-icon-button color="primary" (click)="showTransfers('out')" [matBadge]="this.outcomeTransfers.length" [disabled]="this.outcomeTransfers.length==0"><mat-icon>list</mat-icon></button>
+
+            <button mat-button color="primary"  (click)="createTransfer()" [disabled]="endedWorks.length==0">Передать</button>
+
+
+        </div>
       </div>
     </div>
   </div>
@@ -134,6 +153,7 @@
   </div>
   <div class="row post-column-container" *ngIf="!isLoading">
 
+    <!--
     <div class="col-3" style="padding-left: 2px;padding-right: 2px">
 
 
@@ -152,12 +172,12 @@
         </div>
 
       </div>
-    </div>
-    <div class="col-3" style="padding-left: 2px;padding-right: 2px">
+    </div> -->
+    <div class="col-4" style="padding-left: 2px;padding-right: 2px">
       <div
         #wait="cdkDropList"
         (cdkDropListDropped)="drop($event)"
-        [cdkDropListConnectedTo]="[inc,wait,run,end]"
+        [cdkDropListConnectedTo]="[wait,run,end]"
         [cdkDropListData]="waitWorks" cdkDropList
         class="post-column" id="20">
         <div
@@ -168,11 +188,11 @@
 
       </div>
     </div>
-    <div class="col-3" style="padding-left: 2px;padding-right: 2px">
+    <div class="col-4" style="padding-left: 2px;padding-right: 2px">
       <div
         #run="cdkDropList"
         (cdkDropListDropped)="drop($event)"
-        [cdkDropListConnectedTo]="[inc,wait,run,end]"
+        [cdkDropListConnectedTo]="[wait,run,end]"
         [cdkDropListData]="runningWorks" cdkDropList
         class="post-column" id="30">
         <div
@@ -184,11 +204,11 @@
 
       </div>
     </div>
-    <div class="col-3" style="padding-left: 2px;padding-right: 2px">
+    <div class="col-4" style="padding-left: 2px;padding-right: 2px">
       <div
         #end="cdkDropList"
         (cdkDropListDropped)="drop($event)"
-        [cdkDropListConnectedTo]="[inc,wait,run,end]"
+        [cdkDropListConnectedTo]="[wait,run,end]"
         [cdkDropListData]="endedWorks" cdkDropList
         class="post-column" id="40">
         <div

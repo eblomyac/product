@@ -69,6 +69,9 @@ import {CustomDateAdapter} from "./CustomAdapter";
 import {NgxEchartsDirective, NgxEchartsModule} from "ngx-echarts";
 import {DatePipe} from "@angular/common";
 import {MatChipsModule} from "@angular/material/chips";
+import {TransferCreateComponent} from "./dialogs/transfer-create/transfer-create.component";
+import {TransferListComponent} from "./dialogs/transfer-list/transfer-list.component";
+import {MatBadgeModule} from "@angular/material/badge";
 
 
 
@@ -92,8 +95,8 @@ import {MatChipsModule} from "@angular/material/chips";
         IssueSettingsComponent,
         IssueCreateDialogComponent,
         PostStatisticComponent,
-        OrderStatisticComponent,
-        RetroPostStatisticComponent,
+        OrderStatisticComponent, TransferListComponent,
+        RetroPostStatisticComponent, TransferCreateComponent,
         OrderTimeLineComponent, ReportComponent,
         CardViewComponent, PriorityListComponent,
         CardfinderComponent, OperatorUtilityComponent,
@@ -144,6 +147,7 @@ import {MatChipsModule} from "@angular/material/chips";
     MatDialogActions,
     NgxEchartsDirective,
     MatChipsModule,
+    MatBadgeModule,
 
 
   ],

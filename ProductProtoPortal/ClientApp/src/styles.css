@@ -236,3 +236,12 @@ th.sticky{
   visibility: visible;
   opacity: 1;
 }
+.transfer-caption {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  cursor: pointer;
+}
+.transfer-caption:hover {
+   background-color: rgba(0200,200,200,0.51);
+}

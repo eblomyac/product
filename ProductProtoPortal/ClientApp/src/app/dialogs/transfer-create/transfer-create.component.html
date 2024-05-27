@@ -1,0 +1,44 @@
+<div>
+  <div mat-dialog-title>Создание акта передачи</div>
+  <div style="width: 500px" mat-dialog-content>
+    <div  *ngIf="isLoading" class="d-flex justify-content-center">
+      <mat-spinner diameter="20" class="mt-1 mb-2" *ngIf="isLoading"></mat-spinner>
+    </div>
+
+    <div >
+      <div *ngIf="posts.length>0">
+        <mat-form-field class="w-100">
+          <mat-label>Участок назначения</mat-label>
+          <mat-select [disabled]="isLoading" [(ngModel)]="toPost" (ngModelChange)="filterWorks()">
+            <mat-option *ngFor="let p of this.posts" [value]="p">{{p.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+      <div *ngIf="toPost">
+
+        <table class="w-100">
+          <tr>
+            <th>#</th>
+            <th>Заказ</th>
+            <th>Артикул</th>
+            <th class="text-end">Количество</th>
+          </tr>
+          <tr *ngFor="let w of this.movableWorks">
+            <td> <mat-checkbox color="primary" [disabled]="isLoading" [ngModel]="isSelected(w)" (ngModelChange)="selectWork(w, $event)"></mat-checkbox></td>
+            <td>{{w.structure.orderNumber}}</td>
+            <td>{{w.structure.article}}</td>
+            <td class="text-end">{{w.structure.count}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <div  style="display: flex;justify-content: space-between; width: 100%">
+
+      <button mat-raised-button color="primary" [disabled]="isLoading" (click)="cancel()">Отмена</button>
+      <button mat-raised-button color="primary" [disabled]="isLoading" (click)="create()">Готово</button>
+    </div>
+  </div>
+</div>

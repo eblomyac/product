@@ -105,9 +105,9 @@ export class Work {
       }
       if (this.structure.status == 40 && (this.structure.movedTo==null||this.structure.movedTo.length<1)) {
         result.push('Продолжить работу');
-        result.push('Передать на пост');
+       // result.push('Передать на пост');
       }else if(this.structure.status==40){
-        result.push('Изменить участок передачи')
+        //result.push('Изменить участок передачи')
       }
       result.push('Открыть тех. карту');
 

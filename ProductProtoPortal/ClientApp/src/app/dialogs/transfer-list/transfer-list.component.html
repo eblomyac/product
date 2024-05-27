@@ -1,0 +1,103 @@
+<div>
+  <div mat-dialog-title>Акты приемопередачи {{this.data.type=='in'?'(входящие)':'(исходящие)'}}</div>
+  <div style="width: 900px;min-height: 500px" mat-dialog-content>
+    <div class="row" *ngIf="!edit">
+      <div class="col-4" >
+        <div *ngFor="let t of this.data.transfers">
+          <div class="transfer-caption" (click)="selectTransfer(t)">{{t.paperId}}</div>
+        </div>
+      </div>
+      <div class="col-8" >
+        <div *ngIf="selectedTransfer">
+          <div>Акт № {{selectedTransfer.paperId}}</div>
+          <div>От: {{selectedTransfer.postFromId}}</div>
+          <div>Куда: {{selectedTransfer.postToId}}</div>
+          <div>Создан: {{selectedTransfer.createdStamp|date:'dd.MM HH:mm'}}</div>
+          <div *ngIf="selectedTransfer.closed!=null">Принят: {{selectedTransfer.closedStamp|date:'dd.MM HH:mm'}} </div>
+          <div class="mt-2">
+            <table class="w-100">
+              <tr>
+                <th class="text-start">#</th>
+                <th class="text-center">Артикул</th>
+                <th class="text-center" >Количество</th>
+                <th class="text-center" *ngIf="selectedTransfer.closed">Принято</th>
+                <th class="text-end">Заказ</th>
+              </tr>
+              <tr *ngFor="let l of selectedTransfer.lines; let i = index">
+                <td class="text-start">{{i+1}}</td>
+                <td class="text-start">{{l.article}}</td>
+                <td class="text-center">{{l.count}}</td>
+                <th class="text-center" *ngIf="selectedTransfer.closed">
+                  <div class="d-flex align-items-center justify-content-center">
+                    <span>{{l.transferedCount}}</span>
+                    <mat-icon *ngIf="l.transferedCount!=l.count" [matTooltip]="l.remark" color="warn">info</mat-icon>
+                  </div>
+                </th>
+
+                <td class="text-end">{{l.orderNumber}}</td>
+              </tr>
+            </table>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div *ngIf="edit && selectedTransfer">
+      <div>Акт № {{selectedTransfer.paperId}}</div>
+      <div>От: {{selectedTransfer.postFromId}}</div>
+      <div>Куда: {{selectedTransfer.postToId}}</div>
+      <div>Создан: {{selectedTransfer.createdStamp|date:'dd.MM HH:mm'}}</div>
+      <div *ngIf="selectedTransfer.closed!=null">Принят: {{selectedTransfer.closedStamp|date:'dd.MM HH:mm'}} </div>
+      <div class="mt-2">
+        <table class="w-100">
+          <tr>
+            <th class="text-start">#</th>
+            <th class="text-center">Артикул</th>
+            <th class="text-center" >Количество</th>
+            <th class="text-center">Принять</th>
+            <th class="text-center">Причина возврата</th>
+            <th class="text-end">Заказ</th>
+          </tr>
+          <tr *ngFor="let l of selectedTransfer.lines; let i = index">
+            <td class="text-start">{{i+1}}</td>
+            <td class="text-start">{{l.article}}</td>
+            <td class="text-center">{{l.count}}</td>
+            <td class="text-center" >
+
+
+                <input matInput class="w-50" type="number" [defaultValue]="l.count" [(ngModel)]="l.transferedCount" [max]="l.count" [min]="0">
+
+            </td>
+            <td class="text-end">
+
+
+                <input matInput type="text" class="w-100"  *ngIf="l.count!=l.transferedCount" [(ngModel)]="l.remark">
+
+            </td>
+            <td class="text-end">{{l.orderNumber}}</td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+
+      <div  *ngIf="!edit" style="display: flex;justify-content: space-between; width: 100%">
+        <div *ngIf="selectedTransfer" class="align-self-start">
+          <button mat-raised-button color="primary" (click)="print(selectedTransfer)"  >Печать</button>
+          <button mat-raised-button color="primary" (click)="edit=true" *ngIf="data.type=='in'" >Принять</button>
+        </div>
+
+        <button mat-raised-button color="primary" class="justify-content-end" (click)="close()" >Закрыть</button>
+      </div>
+
+      <div *ngIf="edit" style="display: flex;justify-content: end; width: 100%">
+
+        <button mat-raised-button color="primary" (click)="apply()" [disabled]="isLoading" >Бумага подписана</button>
+        <mat-spinner diameter="20"  *ngIf="isLoading"></mat-spinner>
+      </div>
+
+  </div>
+</div>
