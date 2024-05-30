@@ -202,6 +202,7 @@ namespace ProtoLib.Managers
                 }
                 foreach (var work in works)
                 {
+                    /*
                     var allWorks = c.Works.AsNoTracking().Where(x => x.Article == work.Article && x.OrderNumber == work.OrderNumber);
                     var backwardDirection = allWorks
                        .Where(x => (x.Status == WorkStatus.sended || x.Status == WorkStatus.ended) && x.MovedTo == work.PostId)
@@ -225,11 +226,13 @@ namespace ProtoLib.Managers
                         else
                         {
                            
-                        }*/
+                        }
                         
-                    }
-                    backwardDirection.AddRange(c.Posts.Where(x=>x.IsShared).Select(x=>x.Name).ToList());
-                    forwardDirection.AddRange(c.Posts.Where(x=>x.IsShared).Select(x=>x.Name).ToList());
+                    }*/
+                    List<string> backwardDirection = new List<string>();
+                    List<string> forwardDirection = new List<string>();
+                    backwardDirection.AddRange(c.Posts.Select(x=>x.Name).ToList());
+                    forwardDirection.AddRange(c.Posts.Select(x=>x.Name).ToList());
                     var resultRecord = new
                         {Work = work, Forward = forwardDirection,
                             Backward = backwardDirection};

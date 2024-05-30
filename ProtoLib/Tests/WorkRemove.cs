@@ -3,6 +3,7 @@ using System.Diagnostics;
 using KSK_LIB.Excel;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProtoLib.Managers;
 using ProtoLib.Model;
 
 namespace ProtoLib.Tests;
@@ -10,6 +11,20 @@ namespace ProtoLib.Tests;
 [TestFixture]
 public class WorkRemove
 {
+    [Test]
+    public void takeAllWorksFromIncBuffer()
+    {
+        WorkStatusChanger wss = new WorkStatusChanger();
+        using (BaseContext c = new BaseContext())
+        {
+            var works = c.Works.AsNoTracking().Where(x => x.Status == WorkStatus.income).Select(x=>x.Id).ToList();
+            foreach (var work in works)
+            {
+                wss.ChangeStatus(work, WorkStatus.waiting, "system");
+            }
+        }
+    }
+    
     [Test]
     public void removeWorks2()
     {

@@ -20,14 +20,29 @@ export class TransferCreateComponent {
   selectedWorks:Array<Work>=[];
   currentPost:string='';
   movableWorks:Array<Work>=[];
+  artFilter = "";
+  orderFilter="";
+  applyFilter(){
+    this.movableWorks = this.data.availableWorks.filter(x=>{
+      let r = true;
+      if(this.artFilter.length>0){
+        r = r&& x.structure.article.indexOf(this.artFilter)>=0;
+      }
+      if(this.orderFilter.length>0){
+        r = r&& x.structure.orderNumber.toString().indexOf(this.orderFilter)>=0;
+      }
+      return r;
+    });
+  }
   constructor(private dialogRef:MatDialogRef<TransferCreateComponent>,@Inject(MAT_DIALOG_DATA)
   public data: {sourcePost:string, availableWorks: Array<Work>, dataService:DataService})
   {
     this.currentPost = data.sourcePost;
     this.dataService = data.dataService;
     this.works = data.availableWorks;
-    this.loadWorksDestination();
-this.loadPosts();
+    this.movableWorks = data.availableWorks;
+    //this.loadWorksDestination();
+    this.loadPosts();
   }
   loadPosts(){
     this.dataService.Post.List().subscribe(x=>{
@@ -47,8 +62,7 @@ this.loadPosts();
   }
 
   selectWork(w:Work, e:any){
-    console.log(w)
-    console.log(e)
+
 
     if(e){
       //добавить
@@ -67,11 +81,11 @@ this.loadPosts();
     return this.selectedWorks.findIndex(z=>z.structure.id == w.structure.id)>-1;
   }
   filterWorks(){
-    if(this.toPost && this.toPost.name){
-      // @ts-ignore
-      this.movableWorks = this.works.filter(x=>x.structure.forwardMoves.indexOf(this.toPost.name)>0)
+      this.orderFilter='';
+      this.artFilter='';
+      this.movableWorks=this.data.availableWorks;
       this.selectedWorks=[];
-    }
+
 
   }
   create(){

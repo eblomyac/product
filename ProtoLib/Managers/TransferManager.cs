@@ -156,8 +156,8 @@ public class TransferManager
         using(BaseContext c = new BaseContext())
         {
             var notClosed= c.Transfers.Include(x=>x.Lines).Where(x => x.Closed == null && x.PostFromId == postId).ToList();
-            DateTime d = DateTime.Today.AddDays(-2);
-            var closedLast = c.Transfers.Include(x => x.Lines).Where(x => x.Closed.HasValue && x.ClosedStamp > d)
+            DateTime d = DateTime.Today.AddDays(-4);
+            var closedLast = c.Transfers.Include(x => x.Lines).Where(x => x.Closed.HasValue && x.ClosedStamp > d && x.PostFromId==postId)
                 .Take(10).ToList();
             if (closedLast.Count > 0)
             {

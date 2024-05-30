@@ -3,6 +3,7 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.WorkRemove.removeWorks2&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.CleanWorkTest.CleanTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.WorkRemove.takeAllWorksFromIncBuffer&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=79fc71db_002Dc645_002D4f46_002Da743_002Dc570678f218b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="FacadeCreateAndSplitTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
@@ -12,5 +13,6 @@
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.WorkRemove.removeWorks2&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.CleanWorkTest.CleanTest&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.PrinterTest.TestPDFTransfer&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.WorkRemove.takeAllWorksFromIncBuffer&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

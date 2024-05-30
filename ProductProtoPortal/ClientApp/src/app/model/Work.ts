@@ -127,7 +127,10 @@ export class Work {
         break;
       case 'Продолжить работу':
       case 'Выполнять':
-        this.changeStatus(30);
+        if(this.canChangeStatus(30)){
+          this.changeStatus(30);
+        }
+
         break;
       case 'Приостановить':
         this.changeStatus(20)

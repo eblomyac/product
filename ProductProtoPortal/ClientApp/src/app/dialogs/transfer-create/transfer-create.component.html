@@ -15,8 +15,17 @@
         </mat-form-field>
 
       </div>
-      <div *ngIf="toPost">
-
+      <div>
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>Артикул</mat-label>
+            <input matInput [(ngModel)]="artFilter" (ngModelChange)="applyFilter()">
+          </mat-form-field>
+          <mat-form-field class="col-6">
+            <mat-label>Заказ</mat-label>
+            <input matInput [(ngModel)]="orderFilter" (ngModelChange)="applyFilter()">
+          </mat-form-field>
+        </div>
         <table class="w-100">
           <tr>
             <th>#</th>
@@ -38,7 +47,7 @@
     <div  style="display: flex;justify-content: space-between; width: 100%">
 
       <button mat-raised-button color="primary" [disabled]="isLoading" (click)="cancel()">Отмена</button>
-      <button mat-raised-button color="primary" [disabled]="isLoading" (click)="create()">Готово</button>
+      <button mat-raised-button color="primary" [disabled]="isLoading || toPost==undefined" (click)="create()">Готово</button>
     </div>
   </div>
 </div>
