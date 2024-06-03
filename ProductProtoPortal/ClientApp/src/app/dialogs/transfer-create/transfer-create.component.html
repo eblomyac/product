@@ -47,7 +47,7 @@
     <div  style="display: flex;justify-content: space-between; width: 100%">
 
       <button mat-raised-button color="primary" [disabled]="isLoading" (click)="cancel()">Отмена</button>
-      <button mat-raised-button color="primary" [disabled]="isLoading || toPost==undefined" (click)="create()">Готово</button>
+      <button mat-raised-button color="primary" [disabled]="isLoading || toPost==undefined || selectedWorks.length==0" (click)="create()">Готово</button>
     </div>
   </div>
 </div>

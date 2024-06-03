@@ -30,6 +30,7 @@ export class PostViewComponent implements OnInit {
   endedWorks: Work[] = [];
 
   incomeTransfers:Transfer[]=[];
+  newIncomeTransfers:Transfer[]=[];
   outcomeTransfers:Transfer[]=[];
 
   showReturnedWorks = false;
@@ -56,12 +57,24 @@ export class PostViewComponent implements OnInit {
     this.filteredWorks = this.filterWorks();
     this.workDeselect();
   }
-  async showTransfers(type:'in'|'out'){
+  async showTransfers(type:'in'|'out'|'old-in'){
+    let tr = [];
+    switch (type){
+      case "in":
+        tr = this.newIncomeTransfers
+        break;
+      case 'out':
+        tr=this.outcomeTransfers;
+        break;
+      case 'old-in':
+        tr=this.incomeTransfers;
+        break;
+    }
     let x = this.matDialog.open(TransferListComponent, {
       data: {
         dataService:this.data,
         type:type,
-        transfers:type=='in'?this.incomeTransfers:this.outcomeTransfers
+        transfers:tr
       },
 
       autoFocus: true,
@@ -100,7 +113,8 @@ export class PostViewComponent implements OnInit {
   public transfers(){
     this.data.TransferData.inTransfers(this.selectedPost).subscribe(x=>{
       if(x){
-        this.incomeTransfers = x;
+        this.incomeTransfers = x.filter(z=>z.closed);
+        this.newIncomeTransfers = x.filter(z=>z.closed==null);
       }
     })
     this.data.TransferData.outTransfers(this.selectedPost).subscribe(x=>{
@@ -276,6 +290,9 @@ export class PostViewComponent implements OnInit {
     });
   }
 
+  get notClosedTransfers():number{
+    return this.outcomeTransfers.filter(x=>x.closed==null).length;
+  }
   loadWorks() {
     this.isLoading = true;
     this.allWorks = [];

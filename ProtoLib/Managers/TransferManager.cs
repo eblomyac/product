@@ -149,16 +149,30 @@ public class TransferManager
     public List<Transfer> ListIn(string postId){
         using(BaseContext c = new BaseContext())
         {
-            return c.Transfers.Include(x=>x.Lines).Where(x => x.Closed == null && x.PostToId == postId).ToList();
+            var result  = c.Transfers.Include(x=>x.Lines).
+                Where(x => x.Closed.HasValue==false && x.PostToId == postId).ToList().OrderByDescending(x=>x.Id).ToList();
+            DateTime d = DateTime.Today.AddDays(-7);
+            
+            var closedLast = c.Transfers.Include(x => x.Lines)
+                .Where(x => x.Closed.HasValue && x.CreatedStamp > d && x.PostToId==postId)
+                .OrderByDescending(x=>x.CreatedStamp).Take(30).ToList();
+
+            if (closedLast.Count > 0)
+            {
+                result.AddRange(closedLast);
+            }
+            return result;
         }
     } 
     public List<Transfer> ListOut(string postId){
         using(BaseContext c = new BaseContext())
         {
-            var notClosed= c.Transfers.Include(x=>x.Lines).Where(x => x.Closed == null && x.PostFromId == postId).ToList();
-            DateTime d = DateTime.Today.AddDays(-4);
-            var closedLast = c.Transfers.Include(x => x.Lines).Where(x => x.Closed.HasValue && x.ClosedStamp > d && x.PostFromId==postId)
-                .Take(10).ToList();
+            var notClosed= c.Transfers.Include(x=>x.Lines)
+                .Where(x => x.Closed.HasValue==false && x.PostFromId == postId).ToList().OrderByDescending(x=>x.CreatedStamp).ToList();
+            DateTime d = DateTime.Today.AddDays(-7);
+            var closedLast = c.Transfers.Include(x => x.Lines)
+                .Where(x => x.Closed.HasValue && x.CreatedStamp > d && x.PostFromId==postId)
+                .OrderByDescending(x=>x.CreatedStamp).Take(30).ToList();
             if (closedLast.Count > 0)
             {
                 notClosed.AddRange(closedLast);

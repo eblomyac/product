@@ -1,10 +1,10 @@
 <div>
-  <div mat-dialog-title>Акты приемопередачи {{this.data.type=='in'?'(входящие)':'(исходящие)'}}</div>
+  <div mat-dialog-title>Акты приемопередачи {{this.data.type=='out'?'(исходящие)':'(вхоядщие)'}}</div>
   <div style="width: 900px;min-height: 500px" mat-dialog-content>
     <div class="row" *ngIf="!edit">
       <div class="col-4" >
         <div *ngFor="let t of this.data.transfers">
-          <div class="transfer-caption" (click)="selectTransfer(t)">{{t.paperId}}</div>
+          <div class="transfer-caption" (click)="selectTransfer(t)">{{t.paperId}} {{this.data.type=='out' && t.closed?'(принят)':''}}</div>
         </div>
       </div>
       <div class="col-8" >

@@ -84,7 +84,8 @@
         <div class="d-flex justify-content-end align-items-center">
 
 
-          <button mat-button color="primary" (click)="showTransfers('in')" [matBadge]="this.incomeTransfers.length" [disabled]="this.incomeTransfers.length==0">Принять</button>
+          <button mat-button color="primary" (click)="showTransfers('in')" [matBadge]="this.newIncomeTransfers.length" [disabled]="this.newIncomeTransfers.length==0">Принять</button>
+          <button mat-icon-button color="primary" (click)="showTransfers('old-in')"  [disabled]="this.incomeTransfers.length==0"><mat-icon>list</mat-icon></button>
         </div>
         <div>
           <div class="text-start">Работ: {{waitWorks.length}}</div>
@@ -138,7 +139,7 @@
           <div class="text-start">Норматив: {{getTotalCost(endedWorks)}}</div>
         </div>
         <div class="d-flex justify-content-end align-items-center">
-          <button mat-icon-button color="primary" (click)="showTransfers('out')" [matBadge]="this.outcomeTransfers.length" [disabled]="this.outcomeTransfers.length==0"><mat-icon>list</mat-icon></button>
+          <button mat-icon-button color="primary" (click)="showTransfers('out')" [matBadge]="notClosedTransfers" ><mat-icon>list</mat-icon></button>
 
             <button mat-button color="primary"  (click)="createTransfer()" [disabled]="endedWorks.length==0">Передать</button>
 
