@@ -176,7 +176,7 @@ namespace ProtoLib.Managers
                     foreach (var w in works)
                     {
                         var existWorks = c.Works.AsNoTracking().FirstOrDefault(x =>
-                            x.OrderNumber == w.OrderNumber && x.Article == w.Article && x.PostId == w.PostId);
+                            x.OrderNumber == w.OrderNumber && x.Article == w.Article && x.PostId == w.PostId && x.OrderLineNumber == w.OrderLineNumber);
                         if (existWorks == null)
                         {
                             filtered.Add(w);
@@ -188,23 +188,10 @@ namespace ProtoLib.Managers
             var aggregated = works.AggregateWorksByPosts();
 
             
-            return aggregated.OrderBy(x=>x.OrderNumber).ThenBy(x=>x.Article).ThenBy(x=>x.PostId).ToList();
+            return aggregated.OrderBy(x=>x.OrderNumber).ThenBy(x=>x.OrderLineNumber).ThenBy(x=>x.PostId).ToList();
         }
 
-        public List<Work> CreateWorks(List<Work> works)
-        {
-            List<Work> worksResult = new List<Work>();
-            foreach (var template in works)
-            {
-                var work = CreateWork(template);
-                worksResult.Add(work);
-            }
-
-            var aggregated = works.AggregateWorksByPosts();
-        
-            return aggregated.OrderBy(x=>x.OrderNumber).ThenBy(x=>x.Post).ThenBy(x=>x.Article).ToList();
-        }
-
+     
         private Work CreateWork(Work work)
         {
             Work w = (Work)work.Clone();
@@ -214,6 +201,7 @@ namespace ProtoLib.Managers
         private Work CreateWork(WorkCreateTemplate template)
         {
             Work w = new Work();
+            w.OrderLineNumber = template.OrderLineNumber;
             w.Article = template.Article;
             w.Count = template.Count;
             w.OrderNumber = template.OrderNumber;
@@ -261,10 +249,15 @@ namespace ProtoLib.Managers
                     var post = articleGroup.GroupBy(x => x.PostId);
                     foreach (var postGroup in post)
                     {
-                        Work w = (Work)postGroup.First().Clone();
-                        w.SingleCost = postGroup.Sum(x => x.SingleCost);
-                        w.Comments = postGroup.SelectMany(x=>x.Comments).ToList();
-                        Aggregated.Add(w);
+                        var lineGroup = postGroup.GroupBy(x => x.OrderLineNumber);
+                        foreach (var line in lineGroup)
+                        {
+                            Work w = (Work)line.First().Clone();
+                            w.SingleCost = postGroup.Sum(x => x.SingleCost);
+                            w.Comments = postGroup.SelectMany(x=>x.Comments).ToList();
+                            Aggregated.Add(w);
+                        }
+                      
                         /*
                         Work w = new Work();
                         w.OrderNumber = orderGroup.Key;
@@ -327,6 +320,7 @@ namespace ProtoLib.Managers
     {
         public string Article { get; set; }
         public long OrderNumber { get; set; }
+        public int OrderLineNumber { get; set; }
         public decimal SingleCost { get; set; }
         public int Count { get; set; }
         public string PostKey { get; set; }

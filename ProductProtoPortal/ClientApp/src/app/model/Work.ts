@@ -13,6 +13,7 @@ import {CardViewComponent} from "../components/TechCard/card-view/card-view.comp
 
 export interface IWork {
   id: number;
+  orderLineNumber:number;
   orderNumber: number;
   article: string;
   postId: string;

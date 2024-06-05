@@ -9,6 +9,15 @@ export class StatisticData {
   constructor(private transportService: TransportService, private dataService: DataService) {
 
   }
+  public PeriodReport(dateFrom:string,dateTo:string):Observable<boolean|null>{
+    return this.transportService.Get('/analytic/PeriodReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo))
+      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
+        if(x!=null){
+          x.isSuccess
+        }
+        return null;
+      }))
+  }
   public DateReport(date:string):Observable<boolean|null>{
     return this.transportService.Get('/analytic/DailyReport', new HttpParams().append('date',date))
       .pipe(map<ApiAnswer|null,boolean|null>(x=>{

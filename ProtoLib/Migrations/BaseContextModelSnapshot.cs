@@ -355,6 +355,9 @@ namespace ProtoLib.Migrations
                     b.Property<bool>("IsTransfered")
                         .HasColumnType("bit");
 
+                    b.Property<int>("OrderLineNumber")
+                        .HasColumnType("int");
+
                     b.Property<long>("OrderNumber")
                         .HasColumnType("bigint");
 
@@ -447,6 +450,9 @@ namespace ProtoLib.Migrations
                     b.Property<string>("MovedTo")
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
+
+                    b.Property<int>("OrderLineNumber")
+                        .HasColumnType("int");
 
                     b.Property<long>("OrderNumber")
                         .HasColumnType("bigint");

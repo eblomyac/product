@@ -48,6 +48,7 @@ namespace ProtoLib.Model
     {
         public long Id { get; set; }
         public long OrderNumber { get; set; }
+        public int OrderLineNumber { get; set; }
         [MaxLength(64)]
         public string Article { get; set; }
         [MaxLength(32)]
@@ -104,6 +105,9 @@ namespace ProtoLib.Model
         [JsonIgnore]
         public string CommentMap { get; set; } = "";
         
+        
+        
+        
 
       
       
@@ -155,12 +159,13 @@ namespace ProtoLib.Model
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(OrderNumber, Article, PostId);
+            return HashCode.Combine(OrderNumber, OrderLineNumber);
         }
 
         public object Clone()
         {
             Work w = new Work();
+            w.OrderLineNumber = this.OrderLineNumber;
             w.Article = this.Article;
             w.Count = this.Count;
             w.PostId = this.PostId;

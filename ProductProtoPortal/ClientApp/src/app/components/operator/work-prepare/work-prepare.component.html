@@ -43,7 +43,7 @@
       </colgroup>
       <tr>
         <th class="work-prepare-header">
-          Номер заказа
+          Номер заказа (строка)
         </th>
         <th class="work-prepare-header">
           Артикул
@@ -74,7 +74,7 @@
 
       <tr *ngFor="let w of this.preparedWorks; let i = index" class="work-prepare-row">
         <td>
-          {{w.structure.orderNumber}}
+          {{w.structure.orderNumber}} ({{w.structure.orderLineNumber}})
         </td>
         <td>
           {{w.structure.article}}

@@ -17,6 +17,29 @@ namespace ProductProtoPortal.Controllers
     {
         [HttpGet]
         [Route("[action]")]
+        public async Task<IActionResult> PeriodReport(string dateFrom,string dateTo)
+        {
+            try
+            {
+                var user = AuthHelper.GetADUser(this.HttpContext);
+                DateTime pDateFrom = DateTime.ParseExact(dateFrom, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                DateTime pDateTo = DateTime.ParseExact(dateTo, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                ReportManager rm = new ReportManager();
+                var request = rm.PeriodReport(pDateFrom,pDateTo);
+                var r =rm.PeriodReportToMail(request, user.SAM);
+                await EmailNotificatorSingleton.Instance.Send(r);  
+                return new OkObjectResult(new ApiAnswer(true));
+            }
+            catch (Exception exc)
+            {
+                return new BadRequestObjectResult(new ApiAnswer(exc).ToString());
+            }
+            
+            
+        }
+        
+        [HttpGet]
+        [Route("[action]")]
         [AllowAnonymous]
         public async Task<IActionResult> DailyReport(string date)
         {
@@ -25,7 +48,11 @@ namespace ProductProtoPortal.Controllers
                 DateTime pDate = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
                 ReportManager rm = new ReportManager();
                 var request = rm.DailyReportMail(pDate);
-                await EmailNotificatorSingleton.Instance.Send(request);
+                foreach (var r in request)
+                {
+                    await EmailNotificatorSingleton.Instance.Send(r);    
+                }
+                
                 return new OkObjectResult(new ApiAnswer(true));
             }
             catch (Exception exc)

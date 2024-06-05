@@ -52,6 +52,7 @@ public class TransferManager
             if (wmf.MoveToPostRequest(w.Id, postIdTo, new List<string>(), ""))
             {
                 TransferLine tl = new TransferLine();
+                tl.OrderLineNumber = w.OrderLineNumber;
                 tl.OrderNumber = w.OrderNumber;
                 tl.Article = w.Article;
                 tl.IsTransfered = false;
@@ -87,7 +88,7 @@ public class TransferManager
             {
                 var toSplitWork = works.FirstOrDefault(x =>
                     x.PostId == t.PostToId && x.Article == notFullTransfer.Article &&
-                    x.OrderNumber == notFullTransfer.OrderNumber);
+                    x.OrderNumber == notFullTransfer.OrderNumber && x.OrderLineNumber == notFullTransfer.OrderLineNumber);
                 if (toSplitWork != null)
                 {
                     var newWorks = wmf.SplitWork(toSplitWork, notFullTransfer.Count - notFullTransfer.TransferedCount);
@@ -117,7 +118,7 @@ public class TransferManager
 
                 var work = works.FirstOrDefault(x =>
                     x.Article == stl.Article && x.PostId == t.PostToId && x.Status == WorkStatus.income &&
-                    x.OrderNumber == stl.OrderNumber && x.Count == existTl.TransferedCount);
+                    x.OrderNumber == stl.OrderNumber && x.Count == existTl.TransferedCount && x.OrderLineNumber == stl.OrderLineNumber );
                 if (work != null)
                 {
                     existTl.TargetWorkId = work.Id;

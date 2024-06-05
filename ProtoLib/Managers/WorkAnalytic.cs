@@ -13,6 +13,7 @@ namespace ProtoLib.Managers
         public class WorkStartSuggestion
         {
             public long OrderNumber { get; set; }
+            public int OrderLineNumber { get; set; }
             public string Article { get; set; }
             public List<string> AvailablePosts { get; set; }
             public List<string> SelectedPosts { get; set; }
@@ -33,12 +34,19 @@ namespace ProtoLib.Managers
                 var article = orderGroup.GroupBy(x => x.Article);
                 foreach (var articleGroup in article)
                 {
-                    WorkStartSuggestion uws = new WorkStartSuggestion();
-                    uws.Article = articleGroup.Key;
-                    uws.OrderNumber = orderGroup.Key;
-                    uws.AvailablePosts = articleGroup.Select(x => x.Post).OrderBy(x=>x.ProductOrder).Select(x=>x.Name).ToList();
-                    uws.SelectedPosts = new List<string>();
-                    result.Add(uws);
+                    var line = articleGroup.GroupBy(x => x.OrderLineNumber);
+
+                    foreach (var lineGroup in line)
+                    {
+                        WorkStartSuggestion uws = new WorkStartSuggestion();
+                        uws.Article = articleGroup.Key;
+                        uws.OrderNumber = orderGroup.Key;
+                        uws.OrderLineNumber = lineGroup.Key;
+                        uws.AvailablePosts = lineGroup.Select(x => x.Post).OrderBy(x=>x.ProductOrder).Select(x=>x.Name).ToList();
+                        uws.SelectedPosts = new List<string>();
+                        result.Add(uws);
+                    }
+                   
                 }
             }
 

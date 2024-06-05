@@ -45,13 +45,13 @@
 
           <tbody>
           <tr class="work-prepare-header">
-            <th>Заказ</th>
+            <th>Заказ (строка)</th>
             <th *ngIf="editMode" >Удалить?<mat-checkbox  [(ngModel)]="delAll" color="primary" (ngModelChange)="changeDeleteToAll($event)"></mat-checkbox></th>
             <th>Артикул</th>
             <th class="text-end">Начать на участках</th>
           </tr>
           <tr *ngFor="let s of this.filteredSuggestions" class="work-prepare-row">
-            <td>{{ s.orderNumber }}</td>
+            <td>{{s.orderNumber}} ({{s.orderLineNumber}})</td>
             <td *ngIf="editMode">
               <mat-checkbox color="primary" [ngModel]="isSelected(s.orderNumber, s.article)" (change)="setSelected(s.orderNumber,s.article,$event)"></mat-checkbox>
             </td>

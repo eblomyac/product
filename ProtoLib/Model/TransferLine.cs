@@ -6,6 +6,7 @@ public class TransferLine
     
     public string Article { get; set; }
     public long OrderNumber { get; set; }
+    public int OrderLineNumber { get; set; }
     public int Count { get; set; }
     
     public string ProductionLine { get; set; }
