@@ -94,7 +94,7 @@ namespace ProtoLib.Managers
                 }
 
                 var nextWorks = c.Works.AsNoTracking().Where(x =>
-                    x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber && x.Count==currentWork.Count &&
+                    x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber && x.Count==currentWork.Count && x.OrderLineNumber == currentWork.OrderLineNumber &&
                     (startOnPosts.Contains(x.PostId)||x.PostId==toPostId)).ToList();
 
 
@@ -106,6 +106,7 @@ namespace ProtoLib.Managers
                         sharedWork.Status = WorkStatus.income;
                         sharedWork.MovedTo = null;
                         sharedWork.OrderNumber = currentWork.OrderNumber;
+                        sharedWork.OrderLineNumber = currentWork.OrderLineNumber;
                         sharedWork.Comments = new List<string>();
                         sharedWork.Description = currentWork.Description;
                         sharedWork.PostId = toPostId;

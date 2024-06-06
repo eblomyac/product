@@ -122,7 +122,7 @@ namespace ProtoLib.Managers
                 }
                 if (user.IsMaster)
                 {
-                    var works = c.Works.Include(x=>x.Issues).Where(x => x.PostId ==selectedPost &&
+                    var works = c.Works.Include(x=>x.Issues.Where(x=>x.Resolved==null)).Where(x => x.PostId ==selectedPost &&
                                        x.Status != WorkStatus.ended &&
                                        x.Status != WorkStatus.hidden &&
                                        x.Status != WorkStatus.unkown).ToList();

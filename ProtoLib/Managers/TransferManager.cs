@@ -82,34 +82,58 @@ public class TransferManager
         
         using (BaseContext c = new BaseContext(accName))
         {
+            WorkSaveManager wsm = new WorkSaveManager();
+            WorkStatusChanger wss = new WorkStatusChanger();
             var works = c.Works.AsNoTracking().Where(x => x.Status == WorkStatus.income && x.PostId == t.PostToId).ToList();
             
             foreach (var notFullTransfer in t.Lines.Where(x=>x.TransferedCount!= x.Count))
             {
-                var toSplitWork = works.FirstOrDefault(x =>
-                    x.PostId == t.PostToId && x.Article == notFullTransfer.Article &&
-                    x.OrderNumber == notFullTransfer.OrderNumber && x.OrderLineNumber == notFullTransfer.OrderLineNumber);
-                if (toSplitWork != null)
+                if (notFullTransfer.TransferedCount != 0)
                 {
-                    var newWorks = wmf.SplitWork(toSplitWork, notFullTransfer.Count - notFullTransfer.TransferedCount);
-                    var myWork = newWorks[0]; //эту двинем дальше ниже
-                    var returnWork = newWorks[1]; //эту надо вернуть в прогноз
-                
+                    //частично вернем работу
+                    var toSplitWork = works.FirstOrDefault(x =>
+                        x.PostId == t.PostToId && x.Article == notFullTransfer.Article &&
+                        x.OrderNumber == notFullTransfer.OrderNumber &&
+                        x.OrderLineNumber == notFullTransfer.OrderLineNumber);
+                    if (toSplitWork != null)
+                    {
+                        var newWorks = wmf.SplitWork(toSplitWork,
+                            notFullTransfer.Count - notFullTransfer.TransferedCount);
+                        var myWork = newWorks[0]; //эту двинем дальше ниже
+                        var returnWork = newWorks[1]; //эту надо вернуть в прогноз
 
-                    wmf.MoveToPostRequest(returnWork.Id,t.PostFromId, new List<string>(),
-                        notFullTransfer.Remark);
-                    
-                    Debug.WriteLine(JsonConvert.SerializeObject(newWorks));
+
+                        wmf.MoveToPostRequest(returnWork.Id, t.PostFromId, new List<string>(),
+                            notFullTransfer.Remark);
+
+                        Debug.WriteLine(JsonConvert.SerializeObject(newWorks));
+                    }
+                    else
+                    {
+                        Debug.WriteLine("ApplyTansfer: work to split is null");
+                    }
                 }
                 else
                 {
-                    Debug.WriteLine("ApplyTansfer: work to split is null");
-                } 
+                    //полностью вернуть работу
+                    
+                   
+                    var currentWork =  works.First(x =>
+                        x.PostId == t.PostToId && x.Article == notFullTransfer.Article &&
+                        x.OrderNumber == notFullTransfer.OrderNumber &&
+                        x.OrderLineNumber == notFullTransfer.OrderLineNumber);
+                    wmf.MoveToPostRequest(currentWork.Id, t.PostFromId, new List<string>(),
+                        notFullTransfer.Remark);
+                   // wss.ChangeStatus(currentWork.Id, WorkStatus.hidden, accName);
+
+                 //   wsm.SaveWorks(new List<Work>() { currentWork });
+                }
             }
             works = c.Works.AsNoTracking().Where(x => x.Status == WorkStatus.income && x.PostId == t.PostToId).ToList();
             var transfer = c.Transfers.Include(x=>x.Lines).FirstOrDefault(x => x.Id == t.Id);
             List<Work> toPost = new List<Work>();
-            foreach (var stl in t.Lines)
+           
+            foreach (var stl in t.Lines.Where(x=>x.TransferedCount!=0))
             {
                 var existTl = transfer.Lines.FirstOrDefault(x => x.Id == stl.Id);
                 existTl.IsTransfered = stl.IsTransfered;
@@ -131,10 +155,11 @@ public class TransferManager
 
             }
 
-            WorkSaveManager wsm = new WorkSaveManager();
-            WorkStatusChanger wss = new WorkStatusChanger();
+            
             wss.ChangeStatus(toPost, WorkStatus.waiting, accName);
+         
             wsm.SaveWorks(toPost);
+           
 
             transfer.ClosedStamp = DateTime.Now;
             transfer.Closed = DateTime.Today;

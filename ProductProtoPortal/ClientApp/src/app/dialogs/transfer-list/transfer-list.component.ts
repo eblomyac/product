@@ -15,6 +15,22 @@ export class TransferListComponent {
   edit=false;
   isLoading=false;
 
+  isAllCancel=false;
+  allCancelReason = '';
+
+  selectAllCancel(){
+    if(this.isAllCancel){
+      this.selectedTransfer?.lines.forEach(x=>x.transferedCount=0);
+    }else{
+      this.selectedTransfer?.lines.forEach(x=>x.transferedCount = x.count);
+      this.selectedTransfer?.lines.forEach(x=>x.remark = '');
+    }
+  }
+  allCancelReasonChange(){
+    if(this.isAllCancel){
+      this.selectedTransfer?.lines.forEach(x=>x.remark = this.allCancelReason);
+    }
+  }
   selectTransfer(t:Transfer){
     this.selectedTransfer = t;
     this.selectedTransfer.lines.forEach(x=>{
@@ -43,6 +59,9 @@ export class TransferListComponent {
       })
 
     }
+  }
+  cancelAct(){
+
   }
   print(t:Transfer){
     window.open('/transfer/'+t.id+'/print');

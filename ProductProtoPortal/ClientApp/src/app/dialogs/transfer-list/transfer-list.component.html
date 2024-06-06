@@ -49,6 +49,14 @@
       <div>Куда: {{selectedTransfer.postToId}}</div>
       <div>Создан: {{selectedTransfer.createdStamp|date:'dd.MM HH:mm'}}</div>
       <div *ngIf="selectedTransfer.closed!=null">Принят: {{selectedTransfer.closedStamp|date:'dd.MM HH:mm'}} </div>
+      <div  class="mt-2 d-flex justify-content-start align-items-center " style="column-gap: 10px">
+        <mat-checkbox color="primary" [(ngModel)]="isAllCancel" (ngModelChange)="selectAllCancel()">Отмена акта</mat-checkbox>
+        <mat-form-field style="width: 50%" *ngIf="isAllCancel" >
+          <mat-label>Причина</mat-label>
+          <input matInput type="text" [(ngModel)]="allCancelReason" (ngModelChange)="allCancelReasonChange()">
+        </mat-form-field>
+
+      </div>
       <div class="mt-2">
         <table class="w-100">
           <tr>
@@ -66,17 +74,19 @@
             <td class="text-center" >
 
 
-                <input matInput class="w-50" type="number" [defaultValue]="l.count" [(ngModel)]="l.transferedCount" [max]="l.count" [min]="0">
+                <input matInput class="w-50" type="number" [disabled]="isAllCancel" [defaultValue]="l.count" [(ngModel)]="l.transferedCount" [max]="l.count" [min]="0">
 
             </td>
             <td class="text-end">
 
 
-                <input matInput type="text" class="w-100"  *ngIf="l.count!=l.transferedCount" [(ngModel)]="l.remark">
+                <input matInput type="text" class="w-100" [disabled]="isAllCancel" *ngIf="l.count!=l.transferedCount" [(ngModel)]="l.remark">
 
             </td>
             <td class="text-end">{{l.orderNumber}}</td>
           </tr>
+
+
         </table>
 
       </div>

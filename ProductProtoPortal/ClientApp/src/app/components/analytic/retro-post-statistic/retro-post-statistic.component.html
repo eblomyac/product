@@ -1,27 +1,20 @@
-<div>
+<div class="container">
 
-  <mat-form-field>
-    <input matInput  [matDatepicker]="pickerFrom"
-           placeholder="От" [(ngModel)]="this.from"
-           [max]="this.to"
-           >
-    <mat-datepicker-toggle matSuffix [for]="$any(pickerFrom)">
-    </mat-datepicker-toggle>
-    <mat-datepicker #pickerFrom></mat-datepicker>
+<div class="row">
 
+  <mat-form-field class="col-3">
+    <mat-label>Период</mat-label>
+    <mat-date-range-input [rangePicker]="periodPicker">
+      <input matStartDate placeholder="Начало" [(ngModel)]="this.from" [max]="this.to">
+      <input matEndDate placeholder="Конец" [(ngModel)]="this.to" [min]="this.from">
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="periodPicker"></mat-datepicker-toggle>
+    <mat-date-range-picker #periodPicker></mat-date-range-picker>
   </mat-form-field>
+  <div class="col-1">
+    <button class="mt-3" mat-raised-button color="primary" (click)="load()">Загрузить</button>
+  </div>
 
-  <mat-form-field>
-    <input matInput [matDatepicker]="toPicker"
-           placeholder="По" [(ngModel)]="this.to"
-           [min]="this.from"
-    >
-    <mat-datepicker-toggle matSuffix [for]="$any(toPicker)">
-    </mat-datepicker-toggle>
-    <mat-datepicker #toPicker></mat-datepicker>
-
-  </mat-form-field>
-  <button mat-raised-button color="primary" (click)="load()">Загрузить</button>
 </div>
 <div *ngIf="stat">
   <mat-button-toggle-group #chartSelect="matButtonToggleGroup" value="load-by-total">
@@ -71,4 +64,5 @@
     </apx-chart>
   </div>
   </div>
+</div>
 </div>

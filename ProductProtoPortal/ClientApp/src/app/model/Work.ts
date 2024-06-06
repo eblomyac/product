@@ -128,7 +128,7 @@ export class Work {
         break;
       case 'Продолжить работу':
       case 'Выполнять':
-        if(this.canChangeStatus(30)){
+        if(this.canChangeStatus(30).call(null)){
           this.changeStatus(30);
         }
 

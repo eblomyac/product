@@ -72,7 +72,7 @@ namespace ProtoLib.Managers
         {
             using (BaseContext c = new BaseContext(accName))
             {
-                var work = c.Works.FirstOrDefault(x => x.Id == id);
+                var work = c.Works.Include(x=>x.Issues).FirstOrDefault(x => x.Id == id);
                 if (work == null)
                 {
                     //
@@ -80,6 +80,17 @@ namespace ProtoLib.Managers
                 else
                 {
                     ChangeStatus(work,newStatus,accName, moveTo, moveFrom);
+                    var actualIssues = work.Issues.Where(x => x.Resolved == null); 
+                    if (actualIssues.Count()>0 && newStatus==WorkStatus.running)
+                    {
+
+                        IssueManager im = new IssueManager();
+                        foreach (var issue in actualIssues)
+                        {
+                            im.ResolveIssue(issue.Id, accName);
+                        }
+                        
+                    }
                 }
 
                 int r = c.SaveChanges();

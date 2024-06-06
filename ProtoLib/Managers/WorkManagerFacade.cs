@@ -135,6 +135,7 @@ namespace ProtoLib.Managers
                     _statusChanger.ChangeStatus(prevWork, WorkStatus.waiting, _accName);
                     prevWork.MovedTo = "";
                     work.Status = WorkStatus.hidden;
+                    work.MovedFrom = "";
                     IssueManager im = new IssueManager();
                     im.RegisterIssue(prevWork.Id, 0, returnComment, _accName, "", work.PostId);
                     _saveManager.SaveWorks(new List<Work>() {work, prevWork});

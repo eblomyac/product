@@ -16,7 +16,7 @@
       <mat-label>Отчет по производству (период)</mat-label>
       <mat-date-range-input [rangePicker]="periodPicker">
         <input matStartDate placeholder="Начало" [(ngModel)]="fromDate" [max]="toDate">
-        <input matEndDate placeholder="Конец" [ngModel]="toDate" [min]="fromDate">
+        <input matEndDate placeholder="Конец" [(ngModel)]="toDate" [min]="fromDate">
       </mat-date-range-input>
       <mat-datepicker-toggle matIconSuffix [for]="periodPicker"></mat-datepicker-toggle>
       <mat-date-range-picker #periodPicker></mat-date-range-picker>

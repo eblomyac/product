@@ -36,7 +36,7 @@ public class ReportManager
         
         return result;
     }
-        public dynamic DailyReportLine(DateTime stamp, string productionLine){
+    public dynamic DailyReportLine(DateTime stamp, string productionLine){
         using (BaseContext bc = new BaseContext())
         {
             dynamic result = new ExpandoObject();
@@ -309,6 +309,8 @@ public class ReportManager
         return sb.ToString();
 
     }
+
+
 
     public List<MailRequest> DailyReportMail(DateTime stamp)
     {
