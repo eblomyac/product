@@ -198,6 +198,16 @@ namespace ProtoLib.Managers
             return wa.UnstartedSuggestions(list);
         }
 
+        public List<string> ReturnedAllow(long orderNumber,  int lineNumber)
+        {
+            using (BaseContext c = new BaseContext())
+            {
+                var posts = c.Works.Where(x => x.OrderNumber == orderNumber && x.OrderLineNumber == lineNumber && x.Status== WorkStatus.ended)
+                    .Select(x => x.PostId).Distinct().ToList();
+                return posts;
+            }
+        }
+
         public List<object> GetMoveSuggestions(List<Work> works,string accName)
         {
             var result = new List<object>();

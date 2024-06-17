@@ -22,6 +22,48 @@ namespace ProtoLib.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("ProtoLib.Model.DailySource", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FilledBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("ProductLineId")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("ProductLineId");
+
+                    b.ToTable("DailySources");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.ImageSet", b =>
                 {
                     b.Property<Guid>("Id")
@@ -123,6 +165,17 @@ namespace ProtoLib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PostStatistics");
+                });
+
+            modelBuilder.Entity("ProtoLib.Model.ProductionLine", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductionLines");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.Role", b =>
@@ -462,7 +515,7 @@ namespace ProtoLib.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
-                    b.Property<string>("ProductLine")
+                    b.Property<string>("ProductLineId")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
@@ -657,6 +710,25 @@ namespace ProtoLib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WorkStatusLogs");
+                });
+
+            modelBuilder.Entity("ProtoLib.Model.DailySource", b =>
+                {
+                    b.HasOne("ProtoLib.Model.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProtoLib.Model.ProductionLine", "ProductLine")
+                        .WithMany()
+                        .HasForeignKey("ProductLineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("ProductLine");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.PostCreationKey", b =>

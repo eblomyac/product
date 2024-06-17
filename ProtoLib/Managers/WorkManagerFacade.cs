@@ -122,7 +122,7 @@ namespace ProtoLib.Managers
                 else
                 {
                     var prevWork = c.Works.FirstOrDefault(x =>
-                        x.Article == work.Article && 
+                        x.Article == work.Article && x.OrderLineNumber == work.OrderLineNumber &&
                         x.OrderNumber == work.OrderNumber && 
                         x.MovedTo == work.PostId && 
                         x.Count == work.Count && 
@@ -132,6 +132,7 @@ namespace ProtoLib.Managers
                         throw new Exception("Prevo work not found");
                     }
 
+                   
                     _statusChanger.ChangeStatus(prevWork, WorkStatus.waiting, _accName);
                     prevWork.MovedTo = "";
                     work.Status = WorkStatus.hidden;

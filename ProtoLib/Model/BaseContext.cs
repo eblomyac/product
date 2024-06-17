@@ -42,6 +42,8 @@ namespace ProtoLib.Model
         
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<TransferLine> TransferLines { get; set; }
+        public DbSet<DailySource> DailySources { get; set; }
+        public DbSet<ProductionLine> ProductionLines { get; set; }
 
         public BaseContext()
         {
@@ -63,9 +65,9 @@ namespace ProtoLib.Model
               
                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
               //  #else
-               optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
+           optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
                #if DEBUG
-                  optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
+          //        optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
                 #endif
                 
                
@@ -77,6 +79,7 @@ namespace ProtoLib.Model
             if (exist == null)
             {
                 exist = new User();
+                
                 exist.AccName = "system";
                 exist.Name = "Система";
                 exist.Mail = "product_post@ksk.ru";

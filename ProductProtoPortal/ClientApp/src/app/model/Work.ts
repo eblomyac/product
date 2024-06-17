@@ -23,7 +23,7 @@ export interface IWork {
   status: number;
   statusString: string;
   description: string;
-  productLine: string;
+  productLineId: string;
   createdStamp: Date;
   forwardMoves: string[];
   backwardMoves: string[];
@@ -224,7 +224,8 @@ export class Work {
     let splitCount = await DialogHandlerService.Singleton.ask(NumberDialogComponent, {
       data: {
         caption: 'Укажите отделяемое количество',
-        currentValue: this.structure.count
+        currentValue: this.structure.count,
+        minValue: 1
       }
     })
     if (splitCount != null) {

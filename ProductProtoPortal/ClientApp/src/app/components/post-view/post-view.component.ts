@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
 import {SessionService} from "../../services/session.service";
 import {IWork, Work} from "../../model/Work";
 import {moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {Observable, firstValueFrom} from "rxjs";
+import {Observable, firstValueFrom, lastValueFrom, Subscription} from "rxjs";
 
 import {PostDialogComponent} from "../../dialogs/post-dialog/post-dialog.component";
 import {WorkEventService} from "../../services/work-event.service";
@@ -12,13 +12,18 @@ import {Router} from "@angular/router";
 import {TransferCreateComponent} from "../../dialogs/transfer-create/transfer-create.component";
 import {Transfer} from "../../model/Transfer";
 import {TransferListComponent} from "../../dialogs/transfer-list/transfer-list.component";
+import {DialogHandlerService} from "../../services/dialog-handler.service";
+import {NumberDialogComponent} from "../../dialogs/number-dialog/number-dialog.component";
+import {addWarning} from "@angular-devkit/build-angular/src/utils/webpack-diagnostics";
+import {DailySource} from "../../model/DailySource";
+import {DailySourceDialogComponent} from "../../dialogs/daily-source-dialog/daily-source-dialog.component";
 
 @Component({
   selector: 'app-post-view',
   templateUrl: './post-view.component.html',
   styleUrls: ['./post-view.component.css']
 })
-export class PostViewComponent implements OnInit {
+export class PostViewComponent implements OnInit, OnDestroy {
 
   selectedPost = '';
   isLoading = false;
@@ -26,6 +31,7 @@ export class PostViewComponent implements OnInit {
   filteredWorks: Work[] = [];
   incomeWorks: Work[] = [];
   waitWorks: Work[] = [];
+
   runningWorks: Work[] = [];
   endedWorks: Work[] = [];
 
@@ -33,14 +39,36 @@ export class PostViewComponent implements OnInit {
   newIncomeTransfers:Transfer[]=[];
   outcomeTransfers:Transfer[]=[];
 
-  showReturnedWorks = false;
+  todayDailySource:DailySource[] = [];
+
+  showReturnedWorks = true;
   showSendedWorks = true;
 
   orderFilter: number[] = [];
   articleFilter: string = '';
 
+  //dailySource:number|null=null;
+  subsToDel:Subscription[]=[];
+
+
+  get endedWorksFiltered(): Work[]{
+    if(this.showSendedWorks){
+      return this.endedWorks;
+    }else{
+      return this.endedWorks.filter(x=>x.structure.movedTo.length==0)
+    }
+  }
+  get waitWorksFiltered(): Work[]{
+    if(this.showReturnedWorks){
+      return this.waitWorks;
+    }else{
+      return  this.waitWorks.filter(x => x.structure.issues.filter(z => z.returnBackPostId.length > 0).length == 0)
+    }
+  }
   selectedPostChange() {
 
+   this.todayDailySource = [];
+    this.checkResource();
     this.loadWorks();
     this.transfers();
   }
@@ -94,6 +122,14 @@ export class PostViewComponent implements OnInit {
   }
 
   getTotalCost(works: Work[]): number {
+
+    let n = 0;
+    works.forEach(x=>{
+      n += x.structure.totalCost;
+    })
+    n= Math.floor(n);
+   // console.log(n);
+//    console.log(Math.floor(works.reduce((p, c) => p + c.structure.totalCost, 0)));
     return Math.floor(works.reduce((p, c) => p + c.structure.totalCost, 0));
   }
 
@@ -123,7 +159,38 @@ export class PostViewComponent implements OnInit {
       }
     })
   }
-
+  async fillResource(){
+    let sourceDialog = await DialogHandlerService.Singleton.ask(DailySourceDialogComponent, {
+      data:{
+        productionLines: this.todayDailySource
+      }
+    })
+  //  console.log(sourceDialog);
+    if(sourceDialog!=null){
+      let ds =  await lastValueFrom(this.data.DailySource.FillValues(this.todayDailySource));
+      if(ds){
+        this.todayDailySource = ds;
+      }
+      await this.checkResource();
+    }else{
+      await this.fillResource();
+    }
+  }
+  async checkResource(){
+    let s = this.data.DailySource.TodayValues(this.selectedPost).subscribe( async x=>{
+      if(x){
+        this.todayDailySource = x;
+        if(this.todayDailySource.findIndex(z=>z.value<0.01)>=0){
+          await this.fillResource();
+        }
+        //this.dailySource = x;
+        //if(this.dailySource==null || this.dailySource==-1){
+//         await this.fillResource();
+  //      }
+      }
+    });
+    this.subsToDel.push(s);
+  }
   constructor(private data: DataService, public session: SessionService,
               private matDialog: MatDialog, private workEvent: WorkEventService, private router: Router) {
     if (this.session.currentUser == null || this.session.currentUser?.structure?.postIdMaster == null) {
@@ -131,7 +198,7 @@ export class PostViewComponent implements OnInit {
     }
 
     this.selectedPost = this.session.currentUser?.structure?.postIdMaster[0]!;
-
+    this.checkResource();
     this.transfers();
     this.sendedUpdateTimer = setInterval(() => {
       this.transfers();
@@ -150,6 +217,10 @@ export class PostViewComponent implements OnInit {
       this.allWorks.unshift(x);
       this.getArrayByStatus(x.structure.status).unshift(x);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subsToDel.forEach(x=>x.unsubscribe());
   }
 
   ngOnInit(): void {
@@ -248,18 +319,9 @@ export class PostViewComponent implements OnInit {
 
   workDeselect() {
     this.incomeWorks = this.filteredWorks.filter(x => x.structure.status == 10);
-    if (this.showReturnedWorks) {
-      this.waitWorks = this.filteredWorks.filter(x => x.structure.status == 20);
-    } else {
-      this.waitWorks = this.filteredWorks.filter(x => x.structure.status == 20 && x.structure.issues.filter(z => z.returnBackPostId.length > 0).length == 0)
-    }
-
+    this.waitWorks = this.filteredWorks.filter(x => x.structure.status == 20);
     this.runningWorks = this.filteredWorks.filter(x => x.structure.status == 30);
-    if (this.showSendedWorks) {
-      this.endedWorks = this.filteredWorks.filter(x => x.structure.status == 40);
-    } else {
-      this.endedWorks = this.filteredWorks.filter(x => x.structure.status == 40 && x.structure.movedTo.length == 0);
-    }
+    this.endedWorks = this.filteredWorks.filter(x => x.structure.status == 40);
 
 
   }

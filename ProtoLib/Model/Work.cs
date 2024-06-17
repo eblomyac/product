@@ -58,8 +58,9 @@ namespace ProtoLib.Model
         public int Count { get; set; }
         public WorkStatus Status { get; set; }
         
+       
         [MaxLength(32)]
-        public string ProductLine { get; set; }
+        public string ProductLineId { get; set; }
         [MaxLength(256)]
         public string Description { get; set; }
         public DateTime DeadLine { get; set; }
@@ -173,7 +174,7 @@ namespace ProtoLib.Model
             w.SingleCost = this.SingleCost;
             w.Status = this.Status;
             w.Description = this.Description;
-            w.ProductLine = this.ProductLine;
+            w.ProductLineId = this.ProductLineId;
             w.CreatedStamp = DateTime.Now;
             w.MovedFrom = this.MovedFrom;
             w.MovedTo = this.MovedTo;

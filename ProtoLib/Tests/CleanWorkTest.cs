@@ -7,6 +7,13 @@ namespace ProtoLib.Tests;
 [TestFixture]
 public class CleanWorkTest
 {
+    [Test]
+    public async Task ErrorRemake()
+    {
+        WorkCleaner wc = new WorkCleaner();
+        wc.RemoveError();
+
+    }
 
     [Test]
     public async Task CleanTest()

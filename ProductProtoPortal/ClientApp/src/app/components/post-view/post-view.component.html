@@ -2,22 +2,51 @@
 
   <div class="row">
     <div class="col-12 text-center post-column-caption">
-      <div style="display: flex; justify-content: space-between">
-        <div class="post-column-title" style="margin-left: 50px">
-          <span class="pt-3" *ngIf="this.session.currentUser!.structure!.postIdMaster.length==1">{{this.session.currentUser!.structure!.postIdMaster[0]!}}</span>
-          <mat-form-field  *ngIf="this.session.currentUser!.structure!.postIdMaster.length>1" style="width: 300px">
+      <div style="display: flex; justify-content: space-between; column-gap: 10px">
+        <div class="post-column-title" style="margin-left: 30px">
+          <span class="pt-3"
+                *ngIf="this.session.currentUser!.structure!.postIdMaster.length==1">{{ this.session.currentUser!.structure!.postIdMaster[0]! }}</span>
+          <mat-form-field *ngIf="this.session.currentUser!.structure!.postIdMaster.length>1" style="width: 300px">
             <mat-label>Участок</mat-label>
             <mat-select [disabled]="isLoading" [(ngModel)]="this.selectedPost" (ngModelChange)="selectedPostChange()">
-              <mat-option *ngFor="let p of this.session.currentUser!.structure!.postIdMaster" [value]="p">{{p}}</mat-option>
+              <mat-option *ngFor="let p of this.session.currentUser!.structure!.postIdMaster" [value]="p">{{ p }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <span style="color: #ce456d;margin-left: 3px" *ngIf="allWorks.length!=filteredWorks.length">(АКТИВНЫЙ ФИЛЬТР)</span></div>
-        <div style="display: flex; justify-content: center">
-          <div class="mt-3">Работ: {{allWorks.length}}</div>
-          <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length"> ({{filteredWorks.length}})</div>
-          <div class="mt-3" style="margin-left: 20px">Норматив: {{getTotalCost(allWorks)}}</div>
-          <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length"> ({{getTotalCost(filteredWorks)}})</div>
+          <span style="color: #ce456d" *ngIf="allWorks.length!=filteredWorks.length">(АКТИВНЫЙ ФИЛЬТР)</span></div>
+        <div class="d-flex mt-2 flex-row">
+          <div>
+            <div class="d-flex mt-2">
+                  <span><mat-icon color="primary" style="font-size: 18px"
+                                  (click)="fillResource()">edit</mat-icon></span>
+              <span>Дневной ресурс </span>
+            </div>
+
+            <div class="d-flex flex-column column-gap-1 ">
+              <span *ngFor="let p of this.todayDailySource">
+                {{ p.productLineId }}: {{ p.value }}
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      <div style="display: flex; justify-content: center">
+        <div>
+          <div class="d-flex">
+            <div class="mt-3">Работ: {{ allWorks.length }}</div>
+            <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length">
+              ({{ filteredWorks.length }})
+            </div>
+            <div class="mt-3" style="margin-left: 20px">Норматив: {{ getTotalCost(filteredWorks) }}</div>
+            <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length">
+              ({{ getTotalCost(filteredWorks) }})
+            </div>
+          </div>
+
+        </div>
           <div style="margin-left: 30px">
             <mat-form-field>
               <mat-label>Фильтр по артикулу</mat-label>
@@ -28,7 +57,7 @@
             <mat-form-field style="width: 250px">
               <mat-label>Фильтр по заказу</mat-label>
               <mat-select multiple [(value)]="orderFilter">
-                <mat-option *ngFor="let order of this.getOrders(allWorks)" [value]="order">{{order}}</mat-option>
+                <mat-option *ngFor="let order of this.getOrders(allWorks)" [value]="order">{{ order }}</mat-option>
               </mat-select>
             </mat-form-field>
             <button style="margin-left: 10px" mat-raised-button color="primary" (click)="applyFilter()">ОК</button>
@@ -36,7 +65,6 @@
           </div>
         </div>
       </div>
-
 
 
     </div>
@@ -66,9 +94,13 @@
     <div class="col-4 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
         <div class="align-self-start">
-          <button mat-icon-button color="primary" [matMenuTriggerFor]="waitFilterMenu"><mat-icon>filter_list</mat-icon></button>
+          <button mat-icon-button color="primary" [matMenuTriggerFor]="waitFilterMenu">
+            <mat-icon>filter_list</mat-icon>
+          </button>
           <mat-menu #waitFilterMenu>
-            <mat-checkbox color="primary" [(ngModel)]="showReturnedWorks" (change)="workDeselect()">Показывать возвращенные работы</mat-checkbox>
+            <mat-checkbox color="primary" [(ngModel)]="showReturnedWorks" (change)="workDeselect()">Показывать
+              возвращенные работы
+            </mat-checkbox>
           </mat-menu>
         </div>
         <div class="align-self-center">
@@ -84,12 +116,19 @@
         <div class="d-flex justify-content-end align-items-center">
 
 
-          <button mat-button color="primary" (click)="showTransfers('in')" [matBadge]="this.newIncomeTransfers.length" [disabled]="this.newIncomeTransfers.length==0">Принять</button>
-          <button mat-icon-button color="primary" (click)="showTransfers('old-in')"  [disabled]="this.incomeTransfers.length==0"><mat-icon>list</mat-icon></button>
+          <button mat-button color="primary" (click)="showTransfers('in')" [matBadge]="this.newIncomeTransfers.length"
+                  [disabled]="this.newIncomeTransfers.length==0">Принять
+          </button>
+          <button mat-icon-button color="primary" (click)="showTransfers('old-in')"
+                  [disabled]="this.incomeTransfers.length==0">
+            <mat-icon>list</mat-icon>
+          </button>
         </div>
         <div>
-          <div class="text-start">Работ: {{waitWorks.length}}</div>
-          <div class="text-start">Норматив: {{getTotalCost(waitWorks)}}</div>
+          <div class="text-start">Работ: {{ waitWorks.length }}<span
+            *ngIf="!showReturnedWorks">, отображено: {{ waitWorksFiltered.length }}</span></div>
+          <div class="text-start">Норматив: {{ getTotalCost(waitWorks) }}<span
+            *ngIf="!showReturnedWorks">, отображено: {{ getTotalCost(waitWorksFiltered) }}</span></div>
         </div>
 
       </div>
@@ -97,7 +136,9 @@
     <div class="col-4 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
         <div class="align-self-start">
-          <button mat-icon-button color="primary" disabled="true"><mat-icon>filter_list</mat-icon></button>
+          <button mat-icon-button color="primary" disabled="true">
+            <mat-icon>filter_list</mat-icon>
+          </button>
 
         </div>
         <div class="align-self-center">
@@ -110,17 +151,21 @@
         </div>
       </div>
       <div style="display: flex; justify-content: center">
-        <div>Работ: {{runningWorks.length}}</div>
-        <div style="margin-left: 20px">Норматив: {{getTotalCost(runningWorks)}}</div>
+        <div>Работ: {{ runningWorks.length }}</div>
+        <div style="margin-left: 20px">Норматив: {{ getTotalCost(runningWorks) }}</div>
       </div>
 
     </div>
     <div class="col-4 text-center post-column-caption">
       <div class="mt-1 post-column-title d-flex justify-content-center">
         <div class="align-self-start">
-          <button mat-icon-button color="primary" [matMenuTriggerFor]="sendedFilterMenu"><mat-icon>filter_list</mat-icon></button>
+          <button mat-icon-button color="primary" [matMenuTriggerFor]="sendedFilterMenu">
+            <mat-icon>filter_list</mat-icon>
+          </button>
           <mat-menu #sendedFilterMenu>
-            <mat-checkbox color="primary" [(ngModel)]="showSendedWorks" (change)="workDeselect()">Показывать переденные работы</mat-checkbox>
+            <mat-checkbox color="primary" [(ngModel)]="showSendedWorks" (change)="workDeselect()">Показывать переденные
+              работы
+            </mat-checkbox>
           </mat-menu>
         </div>
         <div class="align-self-center">
@@ -135,13 +180,18 @@
       <div style="display: flex; justify-content: space-between">
 
         <div>
-          <div class="text-start">Работ: {{endedWorks.length}}</div>
-          <div class="text-start">Норматив: {{getTotalCost(endedWorks)}}</div>
+          <div class="text-start">Работ: {{ endedWorks.length }}<span
+            *ngIf="!showSendedWorks">, отображено: {{ endedWorksFiltered.length }}</span></div>
+          <div class="text-start">Норматив: {{ getTotalCost(endedWorks) }}<span
+            *ngIf="!showSendedWorks">, отображено: {{ getTotalCost(endedWorksFiltered) }}</span></div>
         </div>
         <div class="d-flex justify-content-end align-items-center">
-          <button mat-icon-button color="primary" (click)="showTransfers('out')" [matBadge]="notClosedTransfers" ><mat-icon>list</mat-icon></button>
+          <button mat-icon-button color="primary" (click)="showTransfers('out')" [matBadge]="notClosedTransfers">
+            <mat-icon>list</mat-icon>
+          </button>
 
-            <button mat-button color="primary"  (click)="createTransfer()" [disabled]="endedWorks.length==0">Передать</button>
+          <button mat-button color="primary" (click)="createTransfer()" [disabled]="endedWorks.length==0">Передать
+          </button>
 
 
         </div>
@@ -149,7 +199,7 @@
     </div>
   </div>
 
-  <div  *ngIf="isLoading" class="d-flex justify-content-center row">
+  <div *ngIf="isLoading" class="d-flex justify-content-center row">
     <mat-spinner diameter="80" class="mt-5" *ngIf="isLoading"></mat-spinner>
   </div>
   <div class="row post-column-container" *ngIf="!isLoading">
@@ -183,7 +233,7 @@
         class="post-column" id="20">
         <div
           class="post-dnd-item"
-          *ngFor="let w of this.waitWorks" [cdkDragData]="w" cdkDrag [cdkDragDisabled]="w.isLoading">
+          *ngFor="let w of this.waitWorksFiltered" [cdkDragData]="w" cdkDrag [cdkDragDisabled]="w.isLoading">
           <app-work-compact-view [Work]="w"></app-work-compact-view>
         </div>
 
@@ -214,7 +264,7 @@
         class="post-column" id="40">
         <div
           class="post-dnd-item"
-          *ngFor="let w of this.endedWorks" [cdkDragData]="w" cdkDrag [cdkDragDisabled]="w.isLoading">
+          *ngFor="let w of this.endedWorksFiltered" [cdkDragData]="w" cdkDrag [cdkDragDisabled]="w.isLoading">
           <app-work-compact-view [Work]="w"></app-work-compact-view>
         </div>
 

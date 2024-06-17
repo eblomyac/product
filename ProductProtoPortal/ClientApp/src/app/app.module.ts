@@ -72,6 +72,7 @@ import {MatChipsModule} from "@angular/material/chips";
 import {TransferCreateComponent} from "./dialogs/transfer-create/transfer-create.component";
 import {TransferListComponent} from "./dialogs/transfer-list/transfer-list.component";
 import {MatBadgeModule} from "@angular/material/badge";
+import {DailySourceDialogComponent} from "./dialogs/daily-source-dialog/daily-source-dialog.component";
 
 
 
@@ -94,7 +95,7 @@ import {MatBadgeModule} from "@angular/material/badge";
         AnalyticComponent,
         IssueSettingsComponent,
         IssueCreateDialogComponent,
-        PostStatisticComponent,
+        PostStatisticComponent, DailySourceDialogComponent,
         OrderStatisticComponent, TransferListComponent,
         RetroPostStatisticComponent, TransferCreateComponent,
         OrderTimeLineComponent, ReportComponent,
@@ -151,7 +152,7 @@ import {MatBadgeModule} from "@angular/material/badge";
 
 
   ],
-    providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService,
+    providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService,{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
       { provide: DateAdapter, useClass: CustomDateAdapter },DatePipe],
     bootstrap: [AppComponent]
 })

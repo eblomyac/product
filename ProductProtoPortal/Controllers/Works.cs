@@ -121,6 +121,16 @@ namespace ProductProtoPortal.Controllers
             var result = waf.StartWorkOperator(suggestions, user.SAM);
             return new OkObjectResult(new ApiAnswer(result,"",result));
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult ReturnPostList(long orderNumber, int orderLineNumber)
+        {
+            WorkAnalyticFacade waf = new WorkAnalyticFacade();
+            var result = waf.ReturnedAllow(orderNumber, orderLineNumber);
+            return new OkObjectResult(new ApiAnswer(result));
+            
+        }
         
         [HttpPost]
         [Route("[action]")]

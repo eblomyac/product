@@ -14,8 +14,14 @@ export class ReportComponent {
 
   fromDate= new Date();
   toDate= new Date();
+  minDate:Date=new Date();
+
   constructor(private data:DataService) {
     this.fromDate.setDate(this.fromDate.getDate()-7);
+    this.minDate=(new Date(2024,5,15));
+    if (this.fromDate<this.minDate){
+      this.fromDate = this.minDate;
+    }
   }
   makeDailyReport(){
 

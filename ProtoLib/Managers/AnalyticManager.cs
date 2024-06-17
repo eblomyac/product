@@ -218,7 +218,7 @@ namespace ProtoLib.Managers
                 }
                 var completedWorks = orderWorks.Where(x => x.Status == WorkStatus.ended).ToList();
                 result.Order = orderId;
-                result.Line = orderWorks.FirstOrDefault()?.ProductLine;
+                result.Line = orderWorks.FirstOrDefault()?.ProductLineId;
                 result.TotalCost = orderWorks.Sum(x => x.TotalCost);
                 result.TotalWorks = orderWorks.Count;
                 result.TotalArticles = orderWorks.Select(x => x.Article).Distinct().Count();
@@ -543,7 +543,7 @@ namespace ProtoLib.Managers
                         if (articleWorks.Count > 0)
                         {
                             articleStat.DeadLine = articleWorks.FirstOrDefault().DeadLine; 
-                            articleStat.ProductLine = articleWorks.FirstOrDefault().ProductLine;
+                            articleStat.ProductLine = articleWorks.FirstOrDefault().ProductLineId;
                             articleStat.Comment = articleWorks.FirstOrDefault().Description;
                         }
 

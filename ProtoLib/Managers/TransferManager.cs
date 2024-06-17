@@ -58,7 +58,7 @@ public class TransferManager
                 tl.IsTransfered = false;
                 tl.Count = w.Count;
                 tl.Remark = "";
-                tl.ProductionLine = w.ProductLine;
+                tl.ProductionLine = w.ProductLineId;
                 tl.TransferedCount = 0;
                 tl.SourceWorkId = w.Id;
                 tl.SourceWorkCost = w.TotalCost;

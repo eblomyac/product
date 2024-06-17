@@ -2,9 +2,9 @@
   <div class="mt-3 row">
     <mat-form-field class="col-4">
       <mat-label>Отчет по призводству (1 день)</mat-label>
-      <input matInput [matDatepicker]="picker" [(ngModel)]="date">
+      <input matInput [matDatepicker]="picker" [(ngModel)]="date" [min]="this.minDate">
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
+      <mat-datepicker #picker ></mat-datepicker>
     </mat-form-field>
     <div class="col-1">
       <button class="mt-3" mat-raised-button color="primary" (click)="makeDailyReport()" [disabled]="isLoading">Выполнить</button>
@@ -15,7 +15,7 @@
     <mat-form-field class="col-4">
       <mat-label>Отчет по производству (период)</mat-label>
       <mat-date-range-input [rangePicker]="periodPicker">
-        <input matStartDate placeholder="Начало" [(ngModel)]="fromDate" [max]="toDate">
+        <input matStartDate placeholder="Начало" [(ngModel)]="fromDate" [max]="toDate" [min]="this.minDate">
         <input matEndDate placeholder="Конец" [(ngModel)]="toDate" [min]="fromDate">
       </mat-date-range-input>
       <mat-datepicker-toggle matIconSuffix [for]="periodPicker"></mat-datepicker-toggle>

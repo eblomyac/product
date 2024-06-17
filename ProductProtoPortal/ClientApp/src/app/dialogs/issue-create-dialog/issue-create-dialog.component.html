@@ -14,9 +14,16 @@
       <textarea matInput [(ngModel)]="issue.description" rows="3"></textarea>
     </mat-form-field>
 
-    <mat-checkbox [(ngModel)]="isReturn" class="mb-2 mt-2" color="primary" *ngIf="linkWork"
-                  [disabled]="linkWork.structure.movedFrom=='ИТР'">
-      Вернуть на участок {{linkWork.structure.movedFrom}}</mat-checkbox>
+
+      <mat-form-field class="w-100" >
+        <mat-label>Вернуть на участок</mat-label>
+        <mat-select  [disabled]="linkWork?.structure?.movedFrom=='ИТР'" [(ngModel)]="returnPost">
+          <mat-option [value]="null">Нет</mat-option>
+          <mat-option *ngFor="let p of this.possiblePosts" [value]="p">{{p}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
   </div>
   <div mat-dialog-actions>
     <div  style="display: flex;justify-content: space-between; width: 100%">

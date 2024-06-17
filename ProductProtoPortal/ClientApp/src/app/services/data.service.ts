@@ -8,6 +8,7 @@ import {StatisticData} from "./dataSubServices/StatisticData";
 import {TechCardData} from "./dataSubServices/TechCardData";
 import {PriorityData} from "./dataSubServices/PriorityData";
 import {TransferData} from "./dataSubServices/TransferData";
+import {DailySourceData} from "./dataSubServices/DailySource";
 
 
 @Injectable({
@@ -24,6 +25,7 @@ export class DataService {
   TechCard:TechCardData;
   PriorityData:PriorityData;
   TransferData:TransferData;
+  DailySource:DailySourceData;
   constructor(public transport:TransportService) {
       this.User = new UserData(transport);
       this.Post = new PostData(transport,this);
@@ -33,5 +35,6 @@ export class DataService {
       this.TechCard = new TechCardData(transport,this);
       this.PriorityData = new PriorityData(transport,this);
       this.TransferData = new TransferData(transport,this);
+      this.DailySource = new DailySourceData(transport,this);
   }
 }

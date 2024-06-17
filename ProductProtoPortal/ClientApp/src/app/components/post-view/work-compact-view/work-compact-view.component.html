@@ -6,7 +6,7 @@
     <mat-spinner style="display: inline-block" color="primary" diameter="15"></mat-spinner>
   </div>
   <div ><a> {{work.structure.article}} х {{work.structure.count}} (приоритет:{{work.structure.priority}})</a> <div></div></div>
-  <div>{{work.structure.orderNumber}} ({{work.structure.orderLineNumber}}) - {{work.structure.productLine}}</div>
+  <div>{{work.structure.orderNumber}} ({{work.structure.orderLineNumber}}) - {{work.structure.productLineId}}</div>
   <div>Дата сдачи: {{work.structure.deadLine|date:'dd.MM.yyyy'}}</div>
 
   <div>Норма: {{work.structure.totalCost|number}}</div>

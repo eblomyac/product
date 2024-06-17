@@ -208,7 +208,7 @@ namespace ProtoLib.Managers
             w.SingleCost = template.SingleCost;
             w.Status = WorkStatus.hidden;
             w.Description = template.Description;
-            w.ProductLine = template.ProductLine;
+            w.ProductLineId = template.ProductLine;
             w.CreatedStamp = DateTime.Now;
             w.Comments = template.Comment.Split('\r',StringSplitOptions.RemoveEmptyEntries).Select(x=>x.Trim()).Where(x=>x.Length>0).ToList();
             w.MovedFrom = "";

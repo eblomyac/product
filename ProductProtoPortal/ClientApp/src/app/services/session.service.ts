@@ -20,6 +20,7 @@ export class SessionService {
       this.userEvent(x);
     }));
   }
+
   CheckRoles(){
     this.currentUser?.checkRoles();
   }

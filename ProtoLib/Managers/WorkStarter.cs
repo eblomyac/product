@@ -93,8 +93,9 @@ namespace ProtoLib.Managers
                     //JUST SET 50 status
                 }
 
-                var nextWorks = c.Works.AsNoTracking().Where(x =>
-                    x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber && x.Count==currentWork.Count && x.OrderLineNumber == currentWork.OrderLineNumber &&
+                var nextWorks = c.Works.AsNoTracking().Include(x=>x.Issues).Where(x =>
+                    x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber && 
+                    x.Count==currentWork.Count && x.OrderLineNumber == currentWork.OrderLineNumber &&
                     (startOnPosts.Contains(x.PostId)||x.PostId==toPostId)).ToList();
 
 
@@ -104,19 +105,20 @@ namespace ProtoLib.Managers
                         var sharedWork = new Work();
                         sharedWork.Article = currentWork.Article;
                         sharedWork.Status = WorkStatus.income;
-                        sharedWork.MovedTo = null;
+                        sharedWork.MovedTo = "";
                         sharedWork.OrderNumber = currentWork.OrderNumber;
                         sharedWork.OrderLineNumber = currentWork.OrderLineNumber;
                         sharedWork.Comments = new List<string>();
                         sharedWork.Description = currentWork.Description;
                         sharedWork.PostId = toPostId;
-                        sharedWork.ProductLine = currentWork.ProductLine;
+                        sharedWork.ProductLineId = currentWork.ProductLineId;
                         sharedWork.MovedFrom = currentWork.PostId;
                         sharedWork.CreatedStamp = DateTime.Now;
                         sharedWork.SingleCost = 0;
                         sharedWork.Count = currentWork.Count;
                         sharedWork.DeadLine = currentWork.DeadLine;
                         sharedWork.CommentMap = "Произв. плана не найдено";
+                    
                         c.Works.Add(sharedWork);
                         c.SaveChanges();
                     
@@ -125,6 +127,18 @@ namespace ProtoLib.Managers
                 foreach (var nextWork in nextWorks)
                 {
                     nextWork.MovedFrom = currentWork.PostId;
+                    if (nextWork.Issues.Count > 0)
+                    {
+                        IssueManager ism = new IssueManager();
+                        foreach (var workIssue in nextWork.Issues)
+                        {
+                            if (workIssue.Resolved == null)
+                            {
+                                ism.ResolveIssue(workIssue.Id, accName);
+                            }    
+                        }
+                        
+                    }
                     wss.ChangeStatus(nextWork, WorkStatus.income, accName);
                 }
                 

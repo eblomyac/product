@@ -13,12 +13,12 @@ namespace ProtoLib.Managers
         {
             var oldStatus = w.Status;
             w.Status = newStatus;
-            if (moveTo.Length > 0 && string.IsNullOrEmpty(w.MovedTo))
+            if (moveTo.Length > 0 && string.IsNullOrWhiteSpace(w.MovedTo))
             {
                 w.MovedTo = moveTo;
             }
 
-            if (moveFrom.Length > 0 && string.IsNullOrEmpty(w.MovedFrom))
+            if (moveFrom.Length > 0 && string.IsNullOrWhiteSpace(w.MovedFrom))
             {
                 w.MovedFrom = moveFrom;
             }
@@ -45,7 +45,7 @@ namespace ProtoLib.Managers
                 }
             }
 
-            if (newStatus == WorkStatus.sended && oldStatus == WorkStatus.running && !string.IsNullOrEmpty(w.MovedTo))
+            if (newStatus == WorkStatus.sended && oldStatus == WorkStatus.running && !string.IsNullOrWhiteSpace(w.MovedTo))
             {
                 // возвращенная работа: сразу в статус завершено и разрешить события
             

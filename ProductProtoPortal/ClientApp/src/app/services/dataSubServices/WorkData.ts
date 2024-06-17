@@ -5,6 +5,7 @@ import {IWork, Work} from "../../model/Work";
 import {ApiAnswer} from "../../model/ApiAnswer";
 import {map, Observable} from "rxjs";
 import {DataService} from "../data.service";
+import * as http from "http";
 
 export  class WorkData{
   constructor(private transport:TransportService, private dataService:DataService) {
@@ -14,6 +15,14 @@ export  class WorkData{
       if(x!=null){
         return x.result;
       }
+    }));
+  }
+  public ReturnPostList(orderNumber:number,orderLineNumber:number):Observable<string[]|null>{
+    return this.transport.Get('/works/ReturnPostList', new HttpParams().append('orderNumber', orderNumber).append('orderLineNumber', orderLineNumber)).pipe(map<ApiAnswer|null,string[]|null>(x=>{
+      if(x!=null){
+        return x.result as string[];
+      }
+      return null;
     }));
   }
   public PrintWorkList(worksIds:Array<number>):Observable<any|null>{

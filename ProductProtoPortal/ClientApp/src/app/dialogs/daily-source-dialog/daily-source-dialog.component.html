@@ -1,13 +1,16 @@
 <div>
   <div mat-dialog-title>
-    {{ data.caption }}
-  </div>
-  <div style="width: 400px; display: flex; justify-content: center" mat-dialog-content>
 
-    <mat-form-field>
-      <mat-label>Значение</mat-label>
-      <input matInput type="number" [(ngModel)]="value" [min]="minValue">
-    </mat-form-field>
+  </div>
+  <div style="width: 400px" mat-dialog-content>
+
+    <div *ngFor = "let p of this.data.productionLines">
+      <mat-form-field style="width: 75%;" >
+        <mat-label>{{p.productLineId}}</mat-label>
+        <input matInput type="number" [(ngModel)]="p.value" [min]="0">
+      </mat-form-field>
+    </div>
+
 
   </div>
 

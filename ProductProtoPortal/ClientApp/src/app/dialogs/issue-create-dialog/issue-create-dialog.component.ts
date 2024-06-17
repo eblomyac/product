@@ -18,6 +18,8 @@ export class IssueCreateDialogComponent implements OnInit {
   linkWork:Work|null=null;
   isReturn = false;
 
+  possiblePosts:string[] = [];
+  returnPost:string|null=null;
   constructor(private dataService:DataService,private dialogRef:MatDialogRef<IssueCreateDialogComponent>,@Inject(MAT_DIALOG_DATA)
   public data: {forWork:Work}) {
     this.linkWork = data.forWork;
@@ -25,6 +27,11 @@ export class IssueCreateDialogComponent implements OnInit {
    this.dataService.Issue.ListTemplates().subscribe(x=>{
      if(x!=null){
        this.templates = x;
+     }
+   });
+   this.dataService.Work.ReturnPostList(this.linkWork.structure.orderNumber, this.linkWork.structure.orderLineNumber).subscribe(x=>{
+     if(x){
+       this.possiblePosts = x;
      }
    });
   }
@@ -35,8 +42,8 @@ export class IssueCreateDialogComponent implements OnInit {
   cancel(){
     this.dialogRef.close(null);}
   ok(){
-    if(this.isReturn && this.linkWork){
-      this.issue.returnBackPostId = this.linkWork?.structure.movedFrom;
+    if(this.returnPost){
+      this.issue.returnBackPostId = this.returnPost;
     }
     this.dialogRef.close(this.issue);
   }
