@@ -8,7 +8,7 @@ namespace ProtoLib.Managers
     {
         public string? GetImagePath(Guid GUID)
         {
-            using (BaseContext c = new BaseContext())
+            using (BaseContext c = new BaseContext(""))
             {
                 return c.Images.FirstOrDefault(x => x.Id == GUID)?.LocalPath;
             }
@@ -16,7 +16,7 @@ namespace ProtoLib.Managers
 
         public string? GetImagePath(string GUID)
         {
-            using (BaseContext c = new BaseContext())
+            using (BaseContext c = new BaseContext(""))
             {
                 return c.Images.FirstOrDefault(x => x.Id == Guid.Parse(GUID))?.LocalPath;
             }

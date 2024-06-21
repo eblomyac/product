@@ -1,14 +1,18 @@
 <body class="mat-typography mat-app-background" style="min-height: 100vh; height: 100vh">
 
-<mat-toolbar style="background: linear-gradient(to right,#c2185b,#303030); height: 4vh">
+<mat-toolbar class="main-toolbar">
   <button mat-icon-button (click)="drawer.toggle()"><mat-icon>menu</mat-icon></button>
   <h1>Производство</h1>
+  <div style="margin-right: 20px;margin-left: auto">
+    <mat-icon *ngIf="themeService.theme=='dark'" (click)="this.themeService.setLight()">light_mode</mat-icon>
+    <mat-icon *ngIf="themeService.theme=='light'" (click)="this.themeService.setDark()">dark_mode</mat-icon>
+  </div>
   <!-- <app-notify style="margin-left: auto;margin-right: 20"></app-notify> -->
 </mat-toolbar>
 
 
 <mat-sidenav-container  class="sidenav-container" style="min-height: 96vh; height: 96vh; ">
-  <mat-sidenav #drawer mode="side" style="background: linear-gradient(to top,rgba(86,86,86,0.31),#303030)">
+  <mat-sidenav #drawer mode="side" class="side-bar">
     <mat-nav-list>
 
       <mat-list-item [routerLink]="am.route" *ngFor="let am of this.availableMenu" (click)="drawer.close()">{{am.caption}}</mat-list-item>

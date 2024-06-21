@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 
 import {DialogHandlerService} from "./services/dialog-handler.service";
 import {Location} from "@angular/common";
+import {ThemeService} from "./services/ThemeService";
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ export class AppComponent {
 
   availableMenu:any[]=[]
 
-  constructor(private session:SessionService, public router:Router, private dialogHandler:DialogHandlerService, private locate:Location) {
+  constructor(private session:SessionService, public router:Router, private dialogHandler:DialogHandlerService, private locate:Location, public themeService:ThemeService) {
 
 
     this.router.events.subscribe(event => {

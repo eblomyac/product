@@ -14,7 +14,7 @@ public class PrinterTest
     public void TestPDFTransfer()
     {
         TransferPrinter tp = new TransferPrinter(Environment.CurrentDirectory);
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             tp.MakeTransferPdf(c.Transfers.Include(x => x.Lines).First());
         }

@@ -12,7 +12,7 @@ namespace ProtoLib.Managers
     {
         public TechCard? Get(string identity)
         {
-            using (BaseContext c = new BaseContext())
+            using (BaseContext c = new BaseContext(""))
             {
                 return c.TechCards
                     .Include(x => x.PostParts).ThenInclude(x => x.Lines)
@@ -91,7 +91,7 @@ namespace ProtoLib.Managers
             tc.Article = article;
             tc.PostParts = new List<TechCardPost>();
 
-            using (BaseContext d = new BaseContext())
+            using (BaseContext d = new BaseContext(""))
             {
                 foreach (var postKey in CrpLines.Keys)
                 {

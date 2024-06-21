@@ -11,6 +11,7 @@ import {
   ApexTitleSubtitle, ChartComponent
 } from "ng-apexcharts";
 import {ApexChartOption, ChartOptions} from "../../../services/charts/ChartOptions";
+import {ThemeService} from "../../../services/ThemeService";
 
 
 @Component({
@@ -25,7 +26,7 @@ export class OrderStatisticComponent implements OnInit {
   stat:any;
   articleStat:any;
   orderFilter=0;
-  chartOptions:ChartOptions=new ChartOptions();
+  chartOptions:ChartOptions=new ChartOptions(this.themeService);
   orderChartOptions:ApexChartOption = this.chartOptions.getOrderStatisticChartOptions();
   postsChartOptions:ApexChartOption = this.chartOptions.getOrderByPostsChartOptions();
 
@@ -54,8 +55,7 @@ export class OrderStatisticComponent implements OnInit {
   }
 
 
-  constructor(private data:DataService) {
-
+  constructor(private data:DataService, private themeService:ThemeService) {
 
   }
   redrawCharts(){

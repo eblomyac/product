@@ -2,6 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataService} from "../../../services/data.service";
 
 import {ApexChartOption, ChartOptions} from "../../../services/charts/ChartOptions";
+import {ThemeService} from "../../../services/ThemeService";
 
 @Component({
   selector: 'app-post-statistic',
@@ -12,13 +13,13 @@ export class PostStatisticComponent implements OnInit {
 
   stat: any | null = null;
   isLoading = false;
-  ChartOptions: ChartOptions = new ChartOptions();
+  ChartOptions: ChartOptions = new ChartOptions(this.themeService);
   byPostStatus: ApexChartOption = this.ChartOptions.getPostStatByStatusChartOptions();
   byOrderStatus: ApexChartOption = this.ChartOptions.getPostByOrdersChartOptions();
   byOrderTotal: ApexChartOption = this.ChartOptions.getPostByOrdersTotalChartOptions();
 
 
-  constructor(private data: DataService) {
+  constructor(private data: DataService,private themeService:ThemeService) {
   }
 
 

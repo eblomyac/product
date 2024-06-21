@@ -9,7 +9,7 @@ public class TransferManager
 {
     public string Print(long id)
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             var t  = c.Transfers.Include(x=>x.Lines).FirstOrDefault(x => x.Id == id);
             if (t!=null)
@@ -34,7 +34,7 @@ public class TransferManager
         t.Lines = new System.Collections.Generic.List<TransferLine>();
         
         int seed = 0;
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             seed=c.Transfers.Count(x => x.Created == DateTime.Today && x.PostFromId == postIdFrom && x.PostToId == postIdTo)+1;
             string fromShortName = c.Posts.FirstOrDefault(x => x.Name == postIdFrom).TableName;
@@ -173,7 +173,7 @@ public class TransferManager
     }
 
     public List<Transfer> ListIn(string postId){
-        using(BaseContext c = new BaseContext())
+        using(BaseContext c = new BaseContext(""))
         {
             var result  = c.Transfers.Include(x=>x.Lines).
                 Where(x => x.Closed.HasValue==false && x.PostToId == postId).ToList().OrderByDescending(x=>x.Id).ToList();
@@ -191,7 +191,7 @@ public class TransferManager
         }
     } 
     public List<Transfer> ListOut(string postId){
-        using(BaseContext c = new BaseContext())
+        using(BaseContext c = new BaseContext(""))
         {
             var notClosed= c.Transfers.Include(x=>x.Lines)
                 .Where(x => x.Closed.HasValue==false && x.PostFromId == postId).ToList().OrderByDescending(x=>x.CreatedStamp).ToList();

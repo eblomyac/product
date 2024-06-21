@@ -9,7 +9,7 @@ public class DailySourceManager
     public List<DailySource> DateValue(string postId, DateTime date)
     {
 
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             var result = c.DailySources.Where(x =>
                 x.PostId == postId && x.Year == date.Year && x.Month == date.Month && x.Day == date.Day).ToList();
@@ -36,7 +36,7 @@ public class DailySourceManager
     public Dictionary<string, decimal?> DateValues(DateTime date)
     {
         Dictionary<string, decimal?> result = new();
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             var posts = c.Posts.ToList().Select(x=>x.Name).ToList();
             var values = c.DailySources.Where(x => x.Year == date.Year && x.Month == date.Month && x.Day == date.Day).ToList();
@@ -53,7 +53,7 @@ public class DailySourceManager
 
     public List<DailySource> TodayValues(string postId)
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             int year = DateTime.Today.Year;
             int month = DateTime.Today.Month;
@@ -91,7 +91,7 @@ public class DailySourceManager
 
     public DailySource FillValue(string postId, DateTime date, decimal value, string filledBy, string productionLine)
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             var result = c.DailySources.FirstOrDefault(x =>
                 x.PostId == postId && x.Year == date.Year && x.Month == date.Month && x.Day == date.Day && x.ProductLineId == productionLine);

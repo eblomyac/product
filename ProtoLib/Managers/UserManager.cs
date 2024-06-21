@@ -17,7 +17,7 @@ namespace ProtoLib.Managers
         }
         public User? Login(string accName, string mail,string name)
         {
-            using (BaseContext c = new BaseContext())
+            using (BaseContext c = new BaseContext(""))
             {
                return c.Users.AsNoTracking().Include(x=>x.Roles).FirstOrDefault(x => x.AccName == accName);
                

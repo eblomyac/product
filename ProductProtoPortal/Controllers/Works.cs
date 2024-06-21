@@ -9,6 +9,7 @@ using KSK_LIB.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
+using ProtoLib;
 using ProtoLib.Managers;
 using ProtoLib.Model;
 
@@ -191,6 +192,23 @@ namespace ProductProtoPortal.Controllers
             WorkManagerFacade wmf = new WorkManagerFacade(user.SAM);
             var result = wmf.MoveToPostRequest(id, mainPost, additional,comment);
             return new OkObjectResult(new ApiAnswer(result, "", result).ToString());
+        }
+        [HttpGet]
+        [Route("{id}/[action]")]
+        public IActionResult EndProduction([FromRoute] long id)
+        {
+            var user = AuthHelper.GetADUser(this.HttpContext);
+            WorkManagerFacade wmf = new WorkManagerFacade(user.SAM);
+            if (wmf.CanBeEnd(id, user.SAM))
+            {
+                var result = wmf.MoveToPostRequest(id, Constants.Work.EndPosts.TotalEnd, new List<string>(),"");
+                return new OkObjectResult(new ApiAnswer(result, "", result).ToString());
+            }
+            else
+            {
+                return new OkObjectResult(new ApiAnswer(false, "", false).ToString());
+            }
+            
         }
     }
 }

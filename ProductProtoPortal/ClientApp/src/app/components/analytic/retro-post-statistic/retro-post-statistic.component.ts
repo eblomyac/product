@@ -3,6 +3,7 @@ import {DataService} from "../../../services/data.service";
 
 import {ApexChartOption, ChartOptions} from "../../../services/charts/ChartOptions";
 import {DatePipe} from "@angular/common";
+import {ThemeService} from "../../../services/ThemeService";
 
 
 
@@ -15,7 +16,7 @@ export class RetroPostStatisticComponent implements OnInit {
 
   from:Date;
   to:Date=new Date();
-  chartOptions:ChartOptions = new ChartOptions();
+  chartOptions:ChartOptions = new ChartOptions(this.themeService);
   isChange3d=false;
 
   totalChartOptions = this.chartOptions.getRetroPostTotal();
@@ -32,14 +33,14 @@ export class RetroPostStatisticComponent implements OnInit {
   statuses:Array<string>=['Прогноз',"Вх. буфер", "Ожидание","Выполнение","Исх. буфер"];
 
 
-  constructor(private data:DataService, private datePipe:DatePipe) {
+  constructor(private data:DataService, private datePipe:DatePipe,private themeService:ThemeService) {
     this.from=new Date();
     this.from.setDate(this.to.getDate()-7);
     this.bar3dChart = {
-      darkMode:true,
+
       color:['#15858c','#8c59a9','#e0be1c','#00a200','#1d428f'],
       textStyle:{
-        color:'#ffffff'
+        color:this.themeService.theme=='light'?'#000000':'#ffffff'
       },
 
       grid3D: {
@@ -58,11 +59,11 @@ export class RetroPostStatisticComponent implements OnInit {
         },
         axisPointer:{
           lineStyle:{
-            color:'#ffffff'
+            color:this.themeService.theme=='light'?'#000000':'#ffffff'
           },
           label:{
             textStyle:{
-              color:'#ffffff'
+              color:this.themeService.theme=='light'?'#000000':'#ffffff'
             }
           }
         },
@@ -74,13 +75,13 @@ export class RetroPostStatisticComponent implements OnInit {
         type: 'category',
         name: 'Дата',
         nameTextStyle:{
-          color:'#ffffff',
+          color:this.themeService.theme=='light'?'#000000':'#ffffff'
 
         },
         nameGap:25,
         axisLabel:{
           textStyle:{
-            color:'#ffffff'
+            color:this.themeService.theme=='light'?'#000000':'#ffffff'
           }
         }
       },
@@ -88,13 +89,13 @@ export class RetroPostStatisticComponent implements OnInit {
         type: 'category',
         name: 'Участок',
         nameTextStyle:{
-          color:'#ffffff',
+          color:this.themeService.theme=='light'?'#000000':'#ffffff'
 
         },
         nameGap:30,
         axisLabel:{
           textStyle:{
-            color:'#ffffff'
+            color:this.themeService.theme=='light'?'#000000':'#ffffff'
           }
         }
       },
@@ -102,12 +103,12 @@ export class RetroPostStatisticComponent implements OnInit {
         type: 'value',
         name:'Норматив',
         nameTextStyle:{
-          color:'#ffffff'
+          color:this.themeService.theme=='light'?'#000000':'#ffffff'
         },
         nameGap:25,
         axisLabel:{
           textStyle:{
-            color:'#ffffff'
+            color:this.themeService.theme=='light'?'#000000':'#ffffff'
           }
         }
       },
@@ -163,7 +164,7 @@ export class RetroPostStatisticComponent implements OnInit {
 
   push3dDataBar(array:Array<any>,name:string){
     if(this.isStatus3dSelected(name)) {
-      console.log(name);
+     // console.log(name);
 
       this.bar3dChart.series.push(
         {

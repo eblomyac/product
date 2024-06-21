@@ -314,7 +314,7 @@ namespace ProtoLib.Managers
 
         public object PostRetroStatus(DateTime from, DateTime to)
         {
-            using (BaseContext c = new BaseContext())
+            using (BaseContext c = new BaseContext(""))
             {
                 dynamic result = new ExpandoObject();
                 var statistics = c.PostStatistics.Where(x => x.Stamp > from && x.Stamp < to).ToList();

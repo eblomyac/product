@@ -9,6 +9,11 @@ namespace ProtoLib.Managers
 {
     public class WorkSplitter
     {
+        private BaseContext? _c = null;
+        public WorkSplitter(BaseContext? c = null)
+        {
+            _c = c;
+        }
         public List<Work> SplitWork(Work w, int splitCount, string accName)
         {
             List<Work> changedWorks = new List<Work>();
@@ -25,7 +30,7 @@ namespace ProtoLib.Managers
             if (w.Status == WorkStatus.income)
             {
                 //если работа сплититься при приемке расплитим ее и на сдаче
-                using (BaseContext c = new BaseContext(accName))
+                BaseContext c = _c ?? new BaseContext(accName);
                 {
                     var prevWork = c.Works.AsNoTracking().FirstOrDefault(x =>
                         x.Article == w.Article &&
@@ -39,6 +44,10 @@ namespace ProtoLib.Managers
                         changedWorks.AddRange(SplitWork(prevWork, splitCount,accName));
                     }
                 }
+                if (_c == null)
+                {
+                    c.Dispose();
+                }
             }
 
             return changedWorks;
@@ -50,9 +59,23 @@ namespace ProtoLib.Managers
     public class WorkSaveManager
     {
         private string _accName;
+        private BaseContext? _c = null;
         public WorkSaveManager(string accName="")
         {
             _accName = accName;
+        }
+
+        public WorkSaveManager(BaseContext? c)
+        {
+            _c = c;
+            if (_c != null)
+            {
+                this._accName = _c.accName;
+            }
+            else
+            {
+                _accName = "";
+            }
         }
 
         public List<Work> AggregateByPosts(List<Work> works)
@@ -62,7 +85,7 @@ namespace ProtoLib.Managers
         public List<Work> SaveWorks(List<Work> works)
         {
             List<Work> result = new List<Work>();
-            using (BaseContext c = new BaseContext(_accName))
+            BaseContext c = _c ?? new BaseContext(_accName);
             {
                 foreach (var work in works)
                 {
@@ -90,6 +113,10 @@ namespace ProtoLib.Managers
                 }
 
                 c.SaveChanges();
+            }
+            if (_c == null)
+            {
+                c.Dispose();
             }
             return result;
         }
@@ -140,15 +167,22 @@ namespace ProtoLib.Managers
     
     public class WorkCreateManager
     {
+        private BaseContext? _c = null;
         private List<PostCreationKey> _postCreationKeys;
 
-        public WorkCreateManager(List<PostCreationKey> post_key_cache = null)
+        
+        public WorkCreateManager(List<PostCreationKey>? post_key_cache = null, BaseContext? c=null)
         {
+            _c = c;
             if (post_key_cache == null)
             {
-                using (BaseContext c = new BaseContext(""))
+                BaseContext bc = _c ?? new BaseContext("");
                 {
-                 _postCreationKeys = c.PostKeys.AsNoTracking().ToList();
+                 _postCreationKeys = bc.PostKeys.AsNoTracking().ToList();
+                }
+                if (_c == null)
+                {
+                    bc.Dispose();
                 }
             }
             else
@@ -170,7 +204,7 @@ namespace ProtoLib.Managers
 
             if (exceptExist)
             {
-                using (BaseContext c = new BaseContext(""))
+                BaseContext c = _c ?? new BaseContext("");
                 {
                     List<Work> filtered = new List<Work>();
                     foreach (var w in works)
@@ -183,6 +217,10 @@ namespace ProtoLib.Managers
                         }
                     }
                     works = filtered;
+                }
+                if (_c == null)
+                {
+                    c.Dispose();
                 }
             }
             var aggregated = works.AggregateWorksByPosts();

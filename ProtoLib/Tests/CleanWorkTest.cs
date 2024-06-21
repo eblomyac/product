@@ -1,4 +1,5 @@
-﻿using KSK_LIB.DataStructure.MQRequest;
+﻿using System.Diagnostics;
+using KSK_LIB.DataStructure.MQRequest;
 using NUnit.Framework;
 using ProtoLib.Managers;
 
@@ -13,6 +14,22 @@ public class CleanWorkTest
         WorkCleaner wc = new WorkCleaner();
         wc.RemoveError();
 
+    }
+
+    [Test]
+    public void CleanTest2()
+    {
+        WorkCleaner wc = new WorkCleaner();
+        var s = wc.CleanByMovement(new DateTime(2024, 6, 18));
+        string path = Path.Combine(Environment.CurrentDirectory, "clean", Guid.NewGuid().ToString() + ".log");
+        Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "clean")); ;
+        using (StreamWriter sw = new StreamWriter(path))
+        {
+            sw.WriteLine(s);    
+        }
+        
+        Debug.WriteLine(path);
+        Console.WriteLine(path);
     }
 
     [Test]

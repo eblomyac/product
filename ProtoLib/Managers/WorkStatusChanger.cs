@@ -8,6 +8,11 @@ namespace ProtoLib.Managers
 {
     public class WorkStatusChanger
     {
+        private BaseContext? _c = null;
+        public WorkStatusChanger(BaseContext? c=null)
+        {
+            _c = c;
+        }
         public void ChangeStatus(Work w, WorkStatus newStatus, string accName, string moveTo = "",
             string moveFrom = "")
         {
@@ -25,7 +30,7 @@ namespace ProtoLib.Managers
             if (newStatus == WorkStatus.waiting && oldStatus == WorkStatus.income)
             {
                 //перевести переднные работы в завершенные
-                using (BaseContext c = new BaseContext(accName))
+                BaseContext c = _c ?? new BaseContext(accName);
                 {
                     //только на предыдущий
                     
@@ -43,6 +48,10 @@ namespace ProtoLib.Managers
                     //this.ChangeStatus(endedWorks)
                     c.SaveChanges();
                 }
+                if (_c == null)
+                {
+                    c.Dispose();
+                }
             }
 
             if (newStatus == WorkStatus.sended && oldStatus == WorkStatus.running && !string.IsNullOrWhiteSpace(w.MovedTo))
@@ -51,7 +60,7 @@ namespace ProtoLib.Managers
             
                 w.Status = WorkStatus.ended;
 
-                using (BaseContext c = new BaseContext())
+                BaseContext c = _c ?? new BaseContext(accName);
                 {
                    var nextPostIssue= c.Issues.AsNoTracking().FirstOrDefault(x => x.Work.Article == w.Article 
                        && x.Work.OrderNumber == w.OrderNumber
@@ -63,25 +72,31 @@ namespace ProtoLib.Managers
                        im.ResolveIssue(nextPostIssue.Id, accName);
                    }
                 }
+                if (_c == null)
+                {
+                    c.Dispose();
+                }
 
             }
             
         }
+        
 
         public bool ChangeStatus(long id, WorkStatus newStatus,string accName, string moveTo="",string moveFrom="")
         {
-            using (BaseContext c = new BaseContext(accName))
+            BaseContext c = _c ?? new BaseContext(accName);
+            try
             {
-                var work = c.Works.Include(x=>x.Issues).FirstOrDefault(x => x.Id == id);
+                var work = c.Works.Include(x => x.Issues).FirstOrDefault(x => x.Id == id);
                 if (work == null)
                 {
                     //
                 }
                 else
                 {
-                    ChangeStatus(work,newStatus,accName, moveTo, moveFrom);
-                    var actualIssues = work.Issues.Where(x => x.Resolved == null); 
-                    if (actualIssues.Count()>0 && newStatus==WorkStatus.running)
+                    ChangeStatus(work, newStatus, accName, moveTo, moveFrom);
+                    var actualIssues = work.Issues.Where(x => x.Resolved == null);
+                    if (actualIssues.Count() > 0 && newStatus == WorkStatus.running)
                     {
 
                         IssueManager im = new IssueManager();
@@ -89,12 +104,23 @@ namespace ProtoLib.Managers
                         {
                             im.ResolveIssue(issue.Id, accName);
                         }
-                        
+
                     }
                 }
 
                 int r = c.SaveChanges();
                 return r > 0;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                if (_c == null)
+                {
+                    c.Dispose();
+                }
             }
         }
         public void ChangeStatus(List<Work> w, WorkStatus newStatus, string accName)

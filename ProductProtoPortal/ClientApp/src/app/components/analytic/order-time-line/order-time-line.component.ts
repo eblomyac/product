@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../../../services/data.service";
 import {ApexChartOption, ChartOptions} from "../../../services/charts/ChartOptions";
+import {ThemeService} from "../../../services/ThemeService";
 
 
 @Component({
@@ -13,8 +14,8 @@ export class OrderTimeLineComponent implements OnInit {
   orderNumber = 0;
   isLoading = false;
   stat: any = null;
-  chartOptions: ChartOptions = new ChartOptions();
-  timeLineChart: ApexChartOption = this.chartOptions.getOrderTimeLineChart(0);
+  chartOptions: ChartOptions = new ChartOptions(this.themeService);
+  timeLineChart: ApexChartOption = this.chartOptions.getOrderTimeLineChart(0, this.themeService.theme);
   issueLineChart: ApexChartOption = this.chartOptions.getIssueTimeLineChart();
 
   selectedArticles:string[]=[];
@@ -37,7 +38,7 @@ export class OrderTimeLineComponent implements OnInit {
     return 'rgba(66,66,66,0)';
   }
 
-  constructor(private data: DataService) {
+  constructor(private data: DataService,private themeService:ThemeService) {
   }
 
   ngOnInit(): void {
@@ -78,7 +79,7 @@ export class OrderTimeLineComponent implements OnInit {
   }
 
   makeData() {
-    this.timeLineChart = this.chartOptions.getOrderTimeLineChart(this.stat.OrderNumber);
+    this.timeLineChart = this.chartOptions.getOrderTimeLineChart(this.stat.OrderNumber,this.themeService.theme);
 
 
     this.stat.Articles.forEach((article: any) => {

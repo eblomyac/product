@@ -120,12 +120,15 @@ namespace ProtoLib.Managers
                 {
                     return new List<Work>();
                 }
+
+                var post = c.Posts.First(x => x.Name == selectedPost);
                 if (user.IsMaster)
                 {
                     var works = c.Works.Include(x=>x.Issues.Where(x=>x.Resolved==null)).Where(x => x.PostId ==selectedPost &&
                                        x.Status != WorkStatus.ended &&
                                        x.Status != WorkStatus.hidden &&
                                        x.Status != WorkStatus.unkown).ToList();
+                    works.ForEach(x=>x.CanClosed= post.CanEnd);
                     List<long> orders = works.Select(x => x.OrderNumber).Distinct().ToList();
                     WorkPriorityManager wpm = new WorkPriorityManager();
                     var pr = wpm.WorkPriorityList(orders);
@@ -200,7 +203,7 @@ namespace ProtoLib.Managers
 
         public List<string> ReturnedAllow(long orderNumber,  int lineNumber)
         {
-            using (BaseContext c = new BaseContext())
+            using (BaseContext c = new BaseContext(""))
             {
                 var posts = c.Works.Where(x => x.OrderNumber == orderNumber && x.OrderLineNumber == lineNumber && x.Status== WorkStatus.ended)
                     .Select(x => x.PostId).Distinct().ToList();

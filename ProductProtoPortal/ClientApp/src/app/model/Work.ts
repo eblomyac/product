@@ -34,6 +34,7 @@ export interface IWork {
   commentMap:string;
   priority:number;
   deadLine:Date;
+  canClosed:boolean;
 }
 
 export class Work {
@@ -81,6 +82,10 @@ export class Work {
     let result: string[] = [];
     if (this.structure) {
 
+      if(this.structure.canClosed && this.structure.status>20){
+        result.push('[ЗАВЕРШИТЬ ПРОИЗВОДСТВО]')
+      }
+
       if (this.structure.status < 40) {
         result.push('Разделить');
 
@@ -116,9 +121,25 @@ export class Work {
     return result;
 
   }
+  endProduction(){
+    this.isLoading=true;
+    this.dataService.Work.EndProduction(this).subscribe(x=>{
+      if(x!=null){
+        this.isLoading=false;
+        if(x==true){
+          let os = this.structure.status;
+          this.structure.status=50;
+          this.workEventService.WorkStatusChange(this,os,50,true);
+        }
+      }
+    });
+  }
 
   async runAction(action: string) {
     switch (action) {
+      case '[ЗАВЕРШИТЬ ПРОИЗВОДСТВО]':
+        this.endProduction();
+        break;
       case 'Вернуть':
         //this.changeStatus(0);
         this.moveToPosts();

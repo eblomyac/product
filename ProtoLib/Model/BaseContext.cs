@@ -20,8 +20,24 @@ namespace ProtoLib.Model
 
         public static event postChanged PostWorkStatusChanged;
        
-        private User ContextOwner;
-         public DbSet<Work> Works { get; set; }
+        private User? ContextOwner;
+
+        public string accName
+        {
+            get
+            {
+                if (this.ContextOwner != null)
+                {
+                    return this.ContextOwner.AccName;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
+        public DbSet<Work> Works { get; set; }
          public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -44,6 +60,7 @@ namespace ProtoLib.Model
         public DbSet<TransferLine> TransferLines { get; set; }
         public DbSet<DailySource> DailySources { get; set; }
         public DbSet<ProductionLine> ProductionLines { get; set; }
+        public DbSet<MaconomyMovementTransaction> MaconomyMovementTransactions { get; set; }
 
         public BaseContext()
         {
@@ -65,9 +82,9 @@ namespace ProtoLib.Model
               
                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
               //  #else
-           optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
+                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
                #if DEBUG
-          //        optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
+                  optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
                 #endif
                 
                

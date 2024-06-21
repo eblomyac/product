@@ -89,7 +89,7 @@ namespace ProtoLib.Managers
         {
             using (MaconomyBase mb = new())
             {
-                using (BaseContext c = new())
+                using (BaseContext c = new(""))
                 {
                     
                     var orders = c.Works.Where(x => x.Status != WorkStatus.ended).Select(x => x.OrderNumber).ToList().Distinct();

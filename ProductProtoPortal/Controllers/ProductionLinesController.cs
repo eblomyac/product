@@ -13,7 +13,7 @@ public class ProductionLinesController : Controller
     [Route("[action]")]
     public IActionResult List()
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             return new OkObjectResult(new ApiAnswer(c.ProductionLines.ToList()).ToString());
         }

@@ -99,7 +99,7 @@ namespace ProtoLib.Managers
                     (startOnPosts.Contains(x.PostId)||x.PostId==toPostId)).ToList();
 
 
-                if (nextWorks.Count == 0)
+                if (nextWorks.Count == 0 && toPostId!=Constants.Work.EndPosts.TotalEnd)
                 {
                    
                         var sharedWork = new Work();

@@ -78,11 +78,40 @@ namespace ProtoLib.Migrations
                     b.ToTable("ImageSet");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.MaconomyMovementTransaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LogFile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Stamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("TransactionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaconomyMovementTransactions");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.Post", b =>
                 {
                     b.Property<string>("Name")
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
+
+                    b.Property<bool>("CanEnd")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("Disabled")
                         .HasColumnType("bit");

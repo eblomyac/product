@@ -73,6 +73,8 @@ import {TransferCreateComponent} from "./dialogs/transfer-create/transfer-create
 import {TransferListComponent} from "./dialogs/transfer-list/transfer-list.component";
 import {MatBadgeModule} from "@angular/material/badge";
 import {DailySourceDialogComponent} from "./dialogs/daily-source-dialog/daily-source-dialog.component";
+import {StyleManagerService} from "./services/style-manager.service";
+import {ThemeService} from "./services/ThemeService";
 
 
 
@@ -152,7 +154,7 @@ import {DailySourceDialogComponent} from "./dialogs/daily-source-dialog/daily-so
 
 
   ],
-    providers: [TransportService, DataService, SessionService, WorkEventService, DialogHandlerService,{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
+    providers: [TransportService, DataService, SessionService, WorkEventService, StyleManagerService,ThemeService, DialogHandlerService,{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
       { provide: DateAdapter, useClass: CustomDateAdapter },DatePipe],
     bootstrap: [AppComponent]
 })

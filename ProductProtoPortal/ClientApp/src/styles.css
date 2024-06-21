@@ -1,6 +1,33 @@
+
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
+:root{
+  --scroll-color: rgb(2, 2, 2);
+  --post-column-caption-color:rgba(68, 68, 68, 0.3);
+  --drag-preview-color:rgb(255,255,255);
+  --drag-placeholder-bg-color: rgba(108, 108, 108, 0.35);
+  --post-bg-grad-from-color: rgba(50, 50, 50, 1);
+  --post-bg-grad-to-color:rgba(0, 0, 0, 0.00);
+  --post-bg-item-color:rgba(79, 79, 79, 0.18);
+  --post-item-color: rgb(255, 255, 255);
+
+  --table-hover-bg-color:rgb(2,2,2,0.2);
+  --table-even-bg-color:rgb(2,2,2,0.2);
+  --table-sticky-bg-color:rgba(2,2,2,1);
+}
+
+
+.main-toolbar{
+  background: linear-gradient(to right,
+  var(--scroll-color),
+  #010101)!important;
+  height: 4vh!important;
+  color:white!important;
+}
+.side-bar{
+  background: var(--post-bg-item-color)!important;
+}
 a {
   color: #0366d6;
 }
@@ -22,20 +49,12 @@ a {
 
 ::-webkit-scrollbar-thumb
 {
+  background-color: var(--scroll-color);
 
-
-  background-color: #a22d5d;
-  overflow-x: auto;
-}
-code {
-  color: #e01a76;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
+
+
 .item-text:hover{
   background-color: rgba(128,128,128,0);
   color: rgba(128,128,128,0);
@@ -59,8 +78,10 @@ code {
   border-radius: 8px;
 
 }
+
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #ffffff }
+body {
+  margin: 0; font-family: Comfortaa, sans-serif; font-weight: 600; color: #ffffff }
 .error{
   background-color: rgba(134,0,32,0.51);
 }
@@ -87,7 +108,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
   box-shadow: 0 5px 5px -3px rgba(105, 105, 105, 0.28),
   0 8px 10px 1px rgba(37, 37, 37, 0.25),
   0 3px 14px 2px rgba(0, 0, 0, 0.12);
-  color: white;
+  color: var(--drag-preview-color);
   font-size: 10px;
 }
 
@@ -105,14 +126,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
 
   border: 1px solid #4f4f4f;
   min-height: 50px;
-  background-color: rgba(108, 108, 108, 0.35);
+  background-color: var(--drag-placeholder-bg-color);
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 .post-column.cdk-drop-list-dragging .post-dnd-item:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 .post-column-caption{
-  background: rgba(68, 68, 68, 0.3);
+  background: var(--post-column-caption-color);
   border-bottom: 1px dotted rgba(0, 0, 0, 0.79);
   border-left: 1px dotted rgba(0, 0, 0, 0.79);
   border-right: 1px dotted rgba(0, 0, 0, 0.79);
@@ -122,10 +143,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
   font-weight: bold;
 }
 .post-column-container{
-  background: linear-gradient(to bottom, rgba(50, 50, 50, 1),rgba(0, 0, 0, 0.00));
+  background: linear-gradient(to bottom,
+  var(--post-bg-grad-from-color),
+  var(--post-bg-grad-to-color));
 }
 .post-column{
-  background: linear-gradient(to bottom, rgba(255, 255, 255,0.05),rgba(0, 0, 0, 0.00));
+  background: linear-gradient(to bottom,
+  rgba(255, 255, 255,0.05),
+  rgba(0, 0, 0, 0.00));
   min-height: 80vh;
   border-radius: 4px;
   overflow: hidden;
@@ -135,10 +160,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
   margin: 5px 5px 5px 5px;
   border-radius: 4px;
   border: dotted 1px rgba(35, 35, 35, 0.6);
-  color: rgb(255, 255, 255);
+  color: var(--post-item-color);
   box-sizing: border-box;
   cursor: move;
-  background: rgba(79, 79, 79, 0.18);
+  background: var(--post-bg-item-color);
   font-size: 14px;
 }
 .priority-item{
@@ -146,16 +171,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
   margin: 5px 5px 5px 5px;
   border-radius: 4px;
   border: dotted 1px rgba(35, 35, 35, 0.6);
-  color: rgb(255, 255, 255);
+  color:  var(--post-item-color);
   box-sizing: border-box;
-  background: rgba(79, 79, 79, 0.18);
+  background:var(--post-bg-item-color);
   font-size: 14px;
 
 }
 .priority-filter-link{
   cursor: pointer;
   text-decoration-line: underline;
-  color: rgb(255, 255, 255);
+  color: var(--post-item-color);
 }
 .priority-filter-link:hover{
 
@@ -169,15 +194,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
   height: 48px;
 }
 .work-prepare-row:nth-child(odd){
-  background-color: rgba(64,64,64,0.5);
+  background-color: var(--table-even-bg-color);
 }
 .work-prepare-row:hover:nth-child(odd){
 
-  background-color: rgba(96, 96, 96, 0.5);
+  background-color: var(--table-hover-bg-color);
 }
-.work-prepare-row:hover:nth-child(even){
-  background-color: rgba(32, 32, 32, 0.5);
-}
+
 .order-stat-table-header{
   height: 40px;
   vertical-align: center;
@@ -188,35 +211,40 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; color: #fff
 }
 
 .order-stat-table-row:nth-child(odd){
-  background-color: rgba(64,64,64,0.5);
+  background-color: var(--table-even-bg-color);
 
 }
 .order-stat-table-row:hover{
-  background-color: rgba(92,92,92,0.5);
+  background-color: var(--table-hover-bg-color);
 
 }
 table, th, td {
   border: 1px dotted rgba(178, 178, 178, 0.15);
   border-collapse: collapse;
+  color: var(--post-item-color);
 }
 th.sticky{
   top:0;
   position: sticky;
-  background-color: #575757;
-  border: #201e1f 2px dotted;
+  background-color: var(--table-sticky-bg-color);
+  border: #201e1f 1px dotted;
 }
 .html-tooltip {
   position: relative;
   display: inline-block;
   border-bottom: 1px dotted black;
 }
+.theme-tooltip{
+  background-color: var(--post-bg-item-color)!important;
+  color: var(--post-item-color)!important;
+}
 
 .html-tooltip .html-tooltiptext {
   visibility: hidden;
   width: 500px;
   font-size: 12px;
-  background-color: #555;
-  color: #fff;
+  background-color: var(--post-bg-item-color);
+  color: var(--post-item-color);
   text-align: left;
   border-radius: 6px;
   padding-left: 5px;

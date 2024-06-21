@@ -83,6 +83,7 @@ namespace ProtoLib.Managers
                         dbPost.Disabled = post.Disabled;
                         dbPost.Keys = post.Keys;
                         dbPost.TableName = post.TableName;
+                        dbPost.CanEnd = post.CanEnd;
                     }
 
                     c.SaveChanges();

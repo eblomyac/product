@@ -13,7 +13,7 @@ public class mactest
     [Test]
     public void FillOrderLine()
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             using (MaconomyBase mb = new MaconomyBase())
             {

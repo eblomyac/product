@@ -23,14 +23,14 @@ public class WorkPriorityManager
 
     public List<WorkPriority> WorkPriorityList(List<long> orders)
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             return c.WorkPriorities.AsNoTracking().Where(x => orders.Contains(x.OrderNumber)).ToList();
         }
     }
     public List<OrderPriority> PriorityList()
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             var actualWorks = c.Works.AsNoTracking().Where(x => x.Status != WorkStatus.ended).ToList();
             var orderGroup = actualWorks.GroupBy(x => x.OrderNumber);
@@ -77,7 +77,7 @@ public class WorkPriorityManager
 
     public string SaveList(List<OrderPriority> orderPriorities)
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             List<long> orders = orderPriorities.Select(x => x.OrderNumber).ToList();
             var existPriorities = c.WorkPriorities.Where(x => orders.Contains(x.OrderNumber)).ToList();

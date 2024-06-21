@@ -17,6 +17,7 @@ namespace ProtoLib.Model
         public bool Disabled { get; set; }
         public int ProductOrder { get; set; }
         public bool IsShared { get; set; }
+        public bool CanEnd { get; set; }
         
         public virtual ICollection<PostCreationKey> PostCreationKeys { get; set; }
 

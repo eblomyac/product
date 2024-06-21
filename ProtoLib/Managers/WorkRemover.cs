@@ -6,7 +6,7 @@ public class WorkRemover
 {
     public void RemoveWorks(List<Tuple<long,string>> toRemove)
     {
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             foreach (var tuple in toRemove)
             {

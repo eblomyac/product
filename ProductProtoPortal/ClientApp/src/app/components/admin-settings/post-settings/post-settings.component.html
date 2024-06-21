@@ -10,18 +10,16 @@
       <col span="1" style="width: 15%;">
       <col span="1" style="width: 8%;">
       <col span="1" style="width: 30%;">
-      <col span="1" style="width: 8%;">
-      <col span="1" style="width: 8%;">
-      <col span="1" style="width: 11%;">
+      <col span="1" style="width: 13%;">
+      <col span="1" style="width: 13%;">
 
     </colgroup>
     <tbody>
     <tr>
       <th>Название участка</th>
-      <th>Карткое название</th>
+      <th>Краткое название</th>
       <th class="text-center">Сокращения в CRP</th>
-      <th class="text-center">Деактивирован</th>
-      <th class="text-center">Публичный пост  <mat-icon style="color: #8f8f8f;" [matTooltip]="'Позволяет передавать работу на пост при отсуствии поста в цепочке производства'">info</mat-icon></th>
+      <th class="text-center">Конечный участок</th>
       <th class="text-end">Этап производства</th>
     </tr>
     <tr *ngFor="let p of this.posts">
@@ -41,9 +39,7 @@
         </mat-form-field>
       </td>
       <td class="text-center">
-        <mat-checkbox [(ngModel)]="p.disabled" color="primary"></mat-checkbox>
-      </td><td class="text-center">
-        <mat-checkbox [(ngModel)]="p.isShared" color="primary"></mat-checkbox>
+        <mat-checkbox [(ngModel)]="p.canEnd" color="primary"></mat-checkbox>
       </td>
       <td class="text-end">{{p.productOrder}}</td>
     </tr>

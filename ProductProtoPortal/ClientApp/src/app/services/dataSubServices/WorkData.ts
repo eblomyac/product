@@ -10,6 +10,15 @@ import * as http from "http";
 export  class WorkData{
   constructor(private transport:TransportService, private dataService:DataService) {
   }
+  public EndProduction(work:Work):Observable<boolean|null>{
+    return this.transport
+      .Get(`/works/${work.structure.id}/endProduction`, new HttpParams())
+      .pipe(map<ApiAnswer|null,boolean>(x=>{
+        if(x!=null){
+          return x.result;
+        }
+      }));
+  }
   public MaconomySyncClose():Observable<any>{
     return this.transport.Get('/transfer/MaconomyOrderSync', new HttpParams()).pipe(map<ApiAnswer|null,any|null>(x=>{
       if(x!=null){

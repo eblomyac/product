@@ -30,6 +30,7 @@
       <Folder Include="ClientApp\.angular\cache\13.3.4\babel-webpack" />
       <Folder Include="ClientApp\src\app\components\TechCard" />
       <Folder Include="download\" />
+      <Folder Include="pdf\" />
     </ItemGroup>
 
     <ItemGroup>

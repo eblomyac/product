@@ -13,6 +13,8 @@
 } from "ng-apexcharts";
 import {F} from "@angular/cdk/keycodes";
 import {DateFormat} from "../../model/DateLocale";
+import {ThemeService} from "../ThemeService";
+import {Inject} from "@angular/core";
 
 export type ApexChartOption = {
   series: any[];
@@ -34,6 +36,8 @@ export type ApexChartOption = {
 };
 
 export class ChartOptions {
+  constructor(private themeService:ThemeService) {
+  }
 
 
   dataLabelTopOption: ApexPlotOptions = {
@@ -99,7 +103,7 @@ export class ChartOptions {
         type: 'bar', height: 400, width: '100%',
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: []
@@ -132,7 +136,7 @@ export class ChartOptions {
         type: 'bar', height: 400, width: '100%', stackType: "normal", stacked: true
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: []
@@ -169,7 +173,7 @@ export class ChartOptions {
         type: 'bar', stackType: "normal", stacked: true, height: 600, width: '100%',
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: []
@@ -205,7 +209,7 @@ export class ChartOptions {
         type: 'bar', stackType: "normal", stacked: true, height: 600, width: '100%',
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: [],
@@ -246,7 +250,7 @@ export class ChartOptions {
         type: 'bar', stackType: "normal", stacked: true, height: 600, width: '100%',
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: [],
@@ -279,7 +283,7 @@ export class ChartOptions {
         group:'retroPostByOrder',id:post
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: [],
@@ -331,7 +335,7 @@ export class ChartOptions {
         group:'retroPostByOrder',id:post
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
 
       xaxis: {
@@ -387,7 +391,7 @@ export class ChartOptions {
         }
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: [],
@@ -422,13 +426,13 @@ export class ChartOptions {
     }
   }
 
-  getOrderTimeLineChart(order:number):ApexChartOption{
+  getOrderTimeLineChart(order:number, theme:'dark'|'light'):ApexChartOption{
     return {
       chart: {
         type: 'rangeBar', height: 800, width: '100%', group:'timeline', id:'main'
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: [],
@@ -465,8 +469,7 @@ export class ChartOptions {
           highlightDataSeries: true,
         },
         custom: function (opts):string {
-          console.log(opts);
-          console.log(opts.w.config.series[opts.seriesIndex].data);
+
           const from = DateFormat.toString(new Date(opts.y1));
           const to = DateFormat.toString(new Date(opts.y2));
           const delta = Math.floor(opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].dMin)
@@ -482,9 +485,9 @@ export class ChartOptions {
             '">' +
             opts.w.config.series[opts.seriesIndex].name + ":" +
             "</span></div>" +
-            '<div> <span class="category" style="color: #ffffff">' +
+            '<div> <span class="category" style="color: '+ (theme=='dark'?'#fff':'#000') +'">' +
             opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].x + ' (' +
-            `<span style="color: #ffffff"'>${opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].comment}</span>` +
+            `<span style="color: `+(theme=='dark'?'#fff':'#000')+`"'>${opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].comment}</span>` +
             ')'+
             //values.ylabel + '( ' + (opts.comment?opts.comment:'') + ')'+
             ' </span> <span class="value start-value">' +
@@ -493,7 +496,7 @@ export class ChartOptions {
             to + ` (Δ: ${delta} минут)` +
             "</span></div>" +
             '<div>' +
-              '<span class="category" style="color: #ffffff">Общий:' +
+              '<span class="category" style="color: '+(theme=='dark'?'#fff':'#000')+'">Общий:' +
             ' </span> <span class="value start-value">' +
             totalFrom +
             '</span> <span class="separator">-</span> <span class="value end-value">' +
@@ -539,7 +542,7 @@ export class ChartOptions {
         type: 'rangeBar',  height: 200, width: '100%', group:'timeline',id:'issues'
       },
       theme: {
-        mode: 'dark'
+        mode: this.themeService.theme
       },
       xaxis: {
         categories: [],

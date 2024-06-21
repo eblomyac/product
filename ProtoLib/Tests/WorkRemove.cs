@@ -15,7 +15,7 @@ public class WorkRemove
     public void takeAllWorksFromIncBuffer()
     {
         WorkStatusChanger wss = new WorkStatusChanger();
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             var works = c.Works.AsNoTracking().Where(x => x.Status == WorkStatus.income).Select(x=>x.Id).ToList();
             foreach (var work in works)
@@ -31,7 +31,7 @@ public class WorkRemove
         string FilePath = @"C:\Users\yande\OneDrive\Desktop\Новый текстовый документ.txt";
         string s = File.ReadAllText(FilePath);
         var orders = s.Split(',');
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             foreach (var order in orders)
             {
@@ -83,7 +83,7 @@ public class WorkRemove
         string FilePath = @"C:\Users\yande\OneDrive\Desktop\Книга1.xlsx";
         ExcelReader er = new ExcelReader();
         var t = er.ReadTable(FilePath);
-        using (BaseContext c = new BaseContext())
+        using (BaseContext c = new BaseContext(""))
         {
             int d = 0;
             int e = 0;

@@ -5,4 +5,5 @@
   disabled:boolean;
   productOrder:number;
   isShared:boolean;
+  canEnd:boolean;
 }
