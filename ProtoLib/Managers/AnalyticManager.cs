@@ -101,6 +101,7 @@ namespace ProtoLib.Managers
                 }
 
                 row["События"] = sb.ToString();
+                /*
                 if (lastPosts.Count == 0)
                 {
                     row["Текущий участок"] = "[завершено]";    
@@ -108,7 +109,8 @@ namespace ProtoLib.Managers
                 else
                 {
                     row["Текущий участок"] = lastPosts.First();
-                }
+                }/*/
+                row["Текущий участок"] = line.CurrentPost;
                 
                 dt.Rows.Add(row);
             }
@@ -578,9 +580,13 @@ namespace ProtoLib.Managers
                             postStat.IsCompleted = postStat.TotalCost == postStat.CompletedCost;
                             postStat.IsEmpty = articlePostWorks.Count() == 0;
 
-                            if (articleWorks.Count() != 0 && postStat.TotalCost != postStat.CompletedCost)
+                            if ( articlePostWorks.Count() != 0 && postStat.TotalCost != postStat.CompletedCost)
                             {
-                                postCurrent.Add(post.Name);
+                                if (articlePostWorks.Count(z => z.Status != WorkStatus.hidden)>0)
+                                {
+                                    postCurrent.Add(post.Name);    
+                                }
+                                
                             }
                             
                             postStat.Issues = articlePostWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
@@ -595,7 +601,7 @@ namespace ProtoLib.Managers
                         }
                         else
                         {
-                            articleStat.CurrentPost = "[завершено]";
+                            articleStat.CurrentPost = Constants.Work.EndPosts.TotalEnd;
                         }
                        
 
