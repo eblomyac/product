@@ -18,7 +18,7 @@ namespace ProtoLib
 
             public static class EndPosts
             {
-                public const string JustEnd = "[завершить]";
+              //  public const string JustEnd = "[завершить]";
                 public const string TotalEnd = "[артикул сдан]";
             }
         }

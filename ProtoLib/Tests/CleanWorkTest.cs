@@ -7,7 +7,14 @@ namespace ProtoLib.Tests;
 
 [TestFixture]
 public class CleanWorkTest
+
 {
+    [Test]
+    public void Resolve()
+    {
+        IssueManager im = new IssueManager();
+        im.ResolveIssue(692, "system");
+    }
     [Test]
     public async Task ErrorRemake()
     {

@@ -16,7 +16,8 @@ const PROXY_CONFIG = [
       "/techcard",
       "/priority",
       "/download",
-      "/DailySource"
+      "/DailySource",
+      "/AdditionalCost"
    ],
     target: target,
     secure: false,

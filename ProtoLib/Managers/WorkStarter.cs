@@ -83,11 +83,12 @@ namespace ProtoLib.Managers
                 
                 currentWork.MovedTo = toPostId;
 
-                if (toPostId == Constants.Work.EndPosts.JustEnd)
-                {
+                //if (toPostId == Constants.Work.EndPosts.JustEnd)
+                //{
                     //JUST SET 50 status
-                    wss.ChangeStatus(currentWork, WorkStatus.ended, accName);
-                }else if (toPostId == Constants.Work.EndPosts.TotalEnd)
+//                    wss.ChangeStatus(currentWork, WorkStatus.ended, accName);
+//                }
+                if (toPostId == Constants.Work.EndPosts.TotalEnd)
                 {
                     wss.ChangeStatus(currentWork, WorkStatus.ended, accName);
                     //JUST SET 50 status

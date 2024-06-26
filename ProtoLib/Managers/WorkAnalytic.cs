@@ -124,7 +124,10 @@ namespace ProtoLib.Managers
                 var post = c.Posts.First(x => x.Name == selectedPost);
                 if (user.IsMaster)
                 {
-                    var works = c.Works.Include(x=>x.Issues.Where(x=>x.Resolved==null)).Where(x => x.PostId ==selectedPost &&
+                    var works = c.Works
+                        .Include(x=>x.Issues.Where(x=>x.Resolved==null))
+                        .Include(x=>x.AdditionalCosts).ThenInclude(x=>x.AdditionalCostTemplate)
+                        .Where(x => x.PostId ==selectedPost &&
                                        x.Status != WorkStatus.ended &&
                                        x.Status != WorkStatus.hidden &&
                                        x.Status != WorkStatus.unkown).ToList();

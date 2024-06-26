@@ -75,6 +75,8 @@ namespace ProtoLib.Model
             get;
             set;
         }
+        
+        public virtual ICollection<AdditionalCost> AdditionalCosts { get; set; }
 
         [NotMapped]
         public int Priority { get; set; }

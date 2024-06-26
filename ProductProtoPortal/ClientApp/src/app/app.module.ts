@@ -75,6 +75,10 @@ import {MatBadgeModule} from "@angular/material/badge";
 import {DailySourceDialogComponent} from "./dialogs/daily-source-dialog/daily-source-dialog.component";
 import {StyleManagerService} from "./services/style-manager.service";
 import {ThemeService} from "./services/ThemeService";
+import {
+  AdditionalSourceSettingsComponent
+} from "./components/admin-settings/additional-source-settings/additional-source-settings.component";
+import {AdditionalCostDialogComponent} from "./dialogs/additional-cost-dialog/additional-cost-dialog.component";
 
 
 
@@ -95,8 +99,8 @@ import {ThemeService} from "./services/ThemeService";
         InfoViewComponent,
         NumberDialogComponent,
         AnalyticComponent,
-        IssueSettingsComponent,
-        IssueCreateDialogComponent,
+        IssueSettingsComponent, AdditionalCostDialogComponent,
+        IssueCreateDialogComponent, AdditionalSourceSettingsComponent,
         PostStatisticComponent, DailySourceDialogComponent,
         OrderStatisticComponent, TransferListComponent,
         RetroPostStatisticComponent, TransferCreateComponent,

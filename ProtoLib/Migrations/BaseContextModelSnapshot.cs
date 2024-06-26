@@ -22,6 +22,63 @@ namespace ProtoLib.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("ProtoLib.Model.AdditionalCost", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("AdditionalCostTemplateId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<long>("WorkId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdditionalCostTemplateId");
+
+                    b.HasIndex("WorkId");
+
+                    b.ToTable("AdditionalCosts");
+                });
+
+            modelBuilder.Entity("ProtoLib.Model.AdditionalCostTemplate", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<bool>("Disabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdditionalCostTemplates");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.DailySource", b =>
                 {
                     b.Property<long>("Id")
@@ -741,6 +798,25 @@ namespace ProtoLib.Migrations
                     b.ToTable("WorkStatusLogs");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.AdditionalCost", b =>
+                {
+                    b.HasOne("ProtoLib.Model.AdditionalCostTemplate", "AdditionalCostTemplate")
+                        .WithMany()
+                        .HasForeignKey("AdditionalCostTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProtoLib.Model.Work", "Work")
+                        .WithMany("AdditionalCosts")
+                        .HasForeignKey("WorkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AdditionalCostTemplate");
+
+                    b.Navigation("Work");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.DailySource", b =>
                 {
                     b.HasOne("ProtoLib.Model.Post", "Post")
@@ -914,6 +990,8 @@ namespace ProtoLib.Migrations
 
             modelBuilder.Entity("ProtoLib.Model.Work", b =>
                 {
+                    b.Navigation("AdditionalCosts");
+
                     b.Navigation("Issues");
                 });
 #pragma warning restore 612, 618

@@ -10,6 +10,8 @@ import {NumberDialogComponent} from "../dialogs/number-dialog/number-dialog.comp
 import {Issue} from "./Issue";
 import {IssueCreateDialogComponent} from "../dialogs/issue-create-dialog/issue-create-dialog.component";
 import {CardViewComponent} from "../components/TechCard/card-view/card-view.component";
+import {AdditionalCost} from "./AdditionalCost";
+import {AdditionalCostDialogComponent} from "../dialogs/additional-cost-dialog/additional-cost-dialog.component";
 
 export interface IWork {
   id: number;
@@ -35,6 +37,7 @@ export interface IWork {
   priority:number;
   deadLine:Date;
   canClosed:boolean;
+  additionalCosts:AdditionalCost[];
 }
 
 export class Work {
@@ -48,6 +51,12 @@ export class Work {
 
    // this.loadSuggestions();
    // this.loadIssues();
+  }
+  additionalCostValue():number{
+    if(this.structure.additionalCosts!=null && this.structure.additionalCosts.length>0){
+      return this.structure.additionalCosts.reduce((s,x)=>s+=x.cost,0);
+    }
+    return 0;
   }
   loadIssues(){
     this.isLoading=true;
@@ -88,6 +97,7 @@ export class Work {
 
       if (this.structure.status < 40) {
         result.push('Разделить');
+        result.push('Доп. работы');
 
       }
       if (this.structure.status == 10) {
@@ -134,6 +144,14 @@ export class Work {
       }
     });
   }
+  async openAdditionalCost(){
+    let sourceDialog = await DialogHandlerService.Singleton.ask(AdditionalCostDialogComponent, {
+      data:{
+        work:this,
+        dataService:this.dataService
+      },
+    })
+  }
 
   async runAction(action: string) {
     switch (action) {
@@ -143,6 +161,9 @@ export class Work {
       case 'Вернуть':
         //this.changeStatus(0);
         this.moveToPosts();
+        break;
+      case 'Доп. работы':
+        await this.openAdditionalCost();
         break;
       case 'Зарегистрировать событие':
         this.registerIssue();

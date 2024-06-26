@@ -83,7 +83,7 @@ public class ReportManager
             var startedOrders = startedWork.Select(x => x.OrderNumber).Distinct().ToList();
             var worksStartedIds = startedWork.Select(x => x.WorkId).ToList();
             var worksIds = records.Where(x => x.WorkId > 0).Select(x => x.WorkId).Distinct().ToList();
-            var works = bc.Works.AsNoTracking().Where(x=>worksIds.Contains(x.Id)).ToList();
+            var works = bc.Works.AsNoTracking().Include(x=>x.AdditionalCosts).Where(x=>worksIds.Contains(x.Id)).ToList();
 
             DataTable macInfo = null;
             DataTable macResult = null;
@@ -119,6 +119,7 @@ public class ReportManager
             decimal totalEndCost = 0;
             decimal totalEndCount = 0;
             decimal productionEnd = 0;
+            decimal totalAdditionalCosts = 0;
 
             result.MaconomyClosed = 0;
             if (macResult != null)
@@ -138,9 +139,9 @@ public class ReportManager
                 postStat.EndedWorkCount = worksPost.Count;
                 postStat.EndedCost = worksPost.Sum(x => x.SingleCost * x.Count);
                 postStat.EndedCount = worksPost.Sum(x => x.Count);
-
+                postStat.AdditionalCost = worksPost.Sum(x => x.AdditionalCosts.Sum(z => z.Cost));
                 postStat.Works = new List<object>();
-                
+                totalAdditionalCosts += postStat.AdditionalCost;
                 foreach (var wp in worksPost)
                 {
                     dynamic w = new ExpandoObject();
@@ -149,6 +150,7 @@ public class ReportManager
                     w.Article = wp.Article;
                     w.Count = wp.Count;
                     w.Cost = wp.TotalCost;
+                    w.AdditionalCost = wp.AdditionalCosts.Sum(x => x.Cost);
 
                     if (macInfo != null)
                     {
@@ -186,6 +188,7 @@ public class ReportManager
                 result.Posts.Add(postStat);
             }
 
+            result.AdditionalCost = totalAdditionalCosts;
             result.Date = stamp.Date;
             result.ProductionEnd = productionEnd;
             result.StartedWorksCount = startedWork.Count();
@@ -209,6 +212,7 @@ public class ReportManager
         t.Columns.Add("Линия");
         t.Columns.Add("Изделий завершено (шт.)", typeof(decimal));
         t.Columns.Add("Сумма выполненного норматива по участкам (мин)",typeof(decimal));
+        t.Columns.Add("Сумма норматива доп. работ по участкам (мин)",typeof(decimal));
         t.Columns.Add("Сумма норматива сданных на склад изделий (ДП) (мин)",typeof(decimal));
         t.Columns.Add("Сумма норматива принятых на склад изделий (Maconomy) (мин)",typeof(decimal));
         t.Columns.Add("Дневной ресурс (мин.)", typeof(decimal));
@@ -221,6 +225,7 @@ public class ReportManager
         t2.Columns.Add("Участок");
         t2.Columns.Add("Изделий передано (шт.)", typeof(decimal));
         t2.Columns.Add("Выполненный норматив (мин.)", typeof(decimal));
+        t2.Columns.Add("Выполненный норматив доп. работ (мин.)", typeof(decimal));
         t2.Columns.Add("Дневной ресурс (мин.)", typeof(decimal));
         t2.TableName = "По участкам";
 
@@ -236,6 +241,7 @@ public class ReportManager
         t3.Columns.Add("Количество выполнено",typeof(int));
         t3.Columns.Add("Количество в строке заказа",typeof(int));
         t3.Columns.Add("Норматив партии выполнено",typeof(decimal));
+        t3.Columns.Add("Норматив доп. работ", typeof(decimal));
         
         foreach (var report in reports)
         {
@@ -247,6 +253,7 @@ public class ReportManager
             total["Сумма выполненного норматива по участкам (мин)"] = report.EndedCost;
             total["Сумма норматива сданных на склад изделий (ДП) (мин)"] = report.ProductionEnd;
             total["Сумма норматива принятых на склад изделий (Maconomy) (мин)"] = report.MaconomyClosed;
+            total["Сумма норматива доп. работ по участкам (мин)"] = report.AdditionalCost;
 
 
             decimal dailySource = 0;
@@ -261,6 +268,7 @@ public class ReportManager
                 postRow["Изделий передано (шт.)"] = postReport.EndedCount;
                 postRow["Выполненный норматив (мин.)"] = postReport.EndedCost;
                 postRow["Дневной ресурс (мин.)"] = postReport.DailySource;
+                postRow["Выполненный норматив доп. работ (мин.)"] = postReport.AdditionalCost;
                 dailySource += postReport.DailySource;
 
                 foreach (var postWork in postReport.Works)
@@ -276,6 +284,7 @@ public class ReportManager
                     r[7] = postWork.Count;
                     r[8] = postWork.TotalCount;
                     r[9] = postWork.Cost;
+                    r[10] = postWork.AdditionalCost;
                     t3.Rows.Add(r);
                 }
                 
@@ -326,6 +335,7 @@ public class ReportManager
         t.Columns.Add("Количество выполнено",typeof(int));
         t.Columns.Add("Количество в строке заказа",typeof(int));
         t.Columns.Add("Норматив партии выполнено",typeof(decimal));
+        t.Columns.Add("Норматив доп. работ", typeof(decimal));
         foreach (dynamic p in DailyReport.Posts)
         {
             foreach (var w in p.Works)
@@ -340,6 +350,7 @@ public class ReportManager
                 r[6] = w.Count;
                 r[7] = w.TotalCount;
                 r[8] = w.Cost;
+                r[9] = w.AdditionalCost;
                 
                 t.Rows.Add(r);    
             }
@@ -356,6 +367,7 @@ public class ReportManager
         sb.AppendLine(
             $"<span>Запущено оператором <strong>{DailyReport.StartedWorksCount}</strong> заданий для <strong>{DailyReport.StartedOrderCount}</strong> заказов с суммарным нормативом <strong>{DailyReport.StartedCost}</strong></span><br>");
         sb.AppendLine($"<span>Cумма выполненного норматива всех участков: <strong>{DailyReport.EndedCost}</strong> (мин.)</span><br>");
+        sb.AppendLine($"<span>Cумма норматива доп. работ всех участков: <strong>{DailyReport.AdditionalCost}</strong> (мин.)</span><br>");
         sb.AppendLine($"<span>Cумма норматива изделий сданных на склад по ДП: <strong>{DailyReport.ProductionEnd}</strong> (мин.)</span><br>");
         sb.AppendLine($"<span>Cумма норматива изделий принятых на склад по Maconomy: <strong>{DailyReport.MaconomyClosed}</strong> (мин.)</span><br>");
         sb.AppendLine($"<span>Количество созданных событий <strong>{DailyReport.StartedIssuesCount}</strong>, количество разрешенных событий <strong>{DailyReport.EndedIssuesCount}</strong></span><br>");
@@ -364,27 +376,38 @@ public class ReportManager
                       $"<th>Участок</th>" +
                       $"<th>Количество сданных изделий (шт.)</th>" +
                       $"<th>Выполненный норматив (мин.)</th>" +
+                      $"<th>Доп. работы норматив (мин.)</th>" +
                       $"<th>Дневной ресурс (мин.)</th>" +
                       $"</tr>");
        // decimal totalWorkEnd = 0;
         decimal totalCostEnd = 0;
         decimal totalOperation = 0;
+        decimal totalAdditional = 0;
+        decimal totalDaily = 0;
         
         foreach (dynamic p in DailyReport.Posts)
         {
             totalOperation += p.EndedCount;
             totalCostEnd += p.EndedCost;
+            totalAdditional += p.AdditionalCost;
+            totalDaily += p.DailySource;
            // totalWorkEnd += p.EndedWorkCount;
             sb.AppendLine($"<tr>" +
                           $"<td><strong>{p.PostName}</strong></td>" +
                          // $"<td style='text-align: center;'>{p.EndedWorkCount}</td>" +
                           $"<td style='text-align: center;'>{p.EndedCount}</td>" +
                           $"<td style='text-align: center;'>{p.EndedCost}</td>" +
+                          $"<td style='text-align: center;'>{p.AdditionalCost}</td>" +
                           $"<td style='text-align: center;'>{p.DailySource}</td>" +
                           $"</tr>");
         }
 
-        sb.AppendLine($"<tr><td><strong>Сумма</strong></td><td style='text-align: center;'><strong>{totalOperation}</strong></td><td style='text-align: center;'><strong>{totalCostEnd}</strong></td>");
+        sb.AppendLine($"<tr><td><strong>Сумма</strong></td>" +
+                      $"<td style='text-align: center;'><strong>{totalOperation}</strong></td>" +
+                      $"<td style='text-align: center;'><strong>{totalCostEnd}</strong></td>"+
+                      $"<td style='text-align: center;'><strong>{totalAdditional}</strong></td>"+
+                      $"<td style='text-align: center;'><strong>{totalDaily}</strong></td>"
+                      );
         sb.AppendLine("</table>");
         sb.AppendLine("<br><span></span>");
         return sb.ToString();
@@ -435,7 +458,7 @@ result.Add(mr);
     {
         using (BaseContext c = new BaseContext(""))
         {
-            var works = c.Works.Where(x => ids.Contains(x.Id)).ToList();
+            var works = c.Works.AsNoTracking().Include(x=>x.AdditionalCosts).Where(x => ids.Contains(x.Id)).ToList();
             DataTable dt = new DataTable();
             dt.Columns.Add("Заказ");
             dt.Columns.Add("Артикул");
@@ -444,6 +467,7 @@ result.Add(mr);
             dt.Columns.Add("Производство");
 
             dt.Columns.Add("Норматив");
+            dt.Columns.Add("Доп. норматив");
             
             dt.Columns.Add("Дата сдачи");
             dt.Columns.Add("Операции");
@@ -456,6 +480,7 @@ result.Add(mr);
                 r["Артикул"] = w.Article;
                 r["Количество"] = w.Count;
                 r["Норматив"] = w.TotalCost;
+                r["Доп. норматив"] = w.AdditionalCosts.Sum(x=>x.Cost);
                 r["Комментарий"] = w.Description;
                 r["Производство"] = w.ProductLineId;
                 r["Дата сдачи"] = w.DeadLine;

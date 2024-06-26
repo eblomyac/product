@@ -9,7 +9,9 @@
   <div>{{work.structure.orderNumber}} ({{work.structure.orderLineNumber}}) - {{work.structure.productLineId}}</div>
   <div>Дата сдачи: {{work.structure.deadLine|date:'dd.MM.yyyy'}}</div>
 
-  <div>Норма: {{work.structure.totalCost|number}}</div>
+  <div>Норма: {{work.structure.totalCost|number}}
+    <span *ngIf="work.structure.additionalCosts!=null && work.structure.additionalCosts.length>0"> (доп. работы: {{work.additionalCostValue()}}) </span>
+  </div>
   <div>{{work.structure.description}}</div>
 
 
