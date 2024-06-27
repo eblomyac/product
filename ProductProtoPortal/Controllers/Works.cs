@@ -74,9 +74,18 @@ namespace ProductProtoPortal.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public IActionResult Create(List<Work> works)
+        public async Task<IActionResult> Create()
         {
             var user = AuthHelper.GetADUser(this.HttpContext);
+            
+            string toParse = "";
+            using (StreamReader st = new StreamReader(this.Request.Body))
+            {
+                toParse= await st.ReadToEndAsync();
+            }
+
+            List<Work> works = JsonConvert.DeserializeObject<List<Work>>(toParse);
+            
             WorkManagerFacade wmf = new WorkManagerFacade(user.SAM);
             var result = wmf.CreateWorks(works);
             return new OkObjectResult(new ApiAnswer(result).ToString());
