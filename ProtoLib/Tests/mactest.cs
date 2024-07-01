@@ -2,14 +2,44 @@
 using DocumentFormat.OpenXml.ExtendedProperties;
 using iText.Kernel.Crypto.Securityhandler;
 using KSK_LIB.Maconomy;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProtoLib.Managers;
 using ProtoLib.Model;
 
 namespace ProtoLib.Tests;
 
 [TestFixture]
 public class mactest
+
 {
+    [Test]
+    public void FillComment()
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            var works  = c.Works.Include(x=>x.Post).ThenInclude(x=>x.PostCreationKeys).Where(x => x.CommentMap.Length <2).ToList();
+            var artilces = works.Select(x => x.Article).ToList();
+            CrpManager crp = new CrpManager();
+            var data = crp.LoadWorkData(artilces);
+            int lastIndexOfTwo = 0;
+            int index = 0;
+            foreach (var work in works)
+            {
+                var keys = work.Post.PostCreationKeys.Select(x=>x.Key).ToList();
+                var workCreateTemplates =data.Where(x => keys.Contains(x.PostKey) && x.Article==work.Article).ToList();
+                if (workCreateTemplates.Count > 1)
+                {
+                    lastIndexOfTwo = index;
+                }
+                work.Comments = workCreateTemplates.SelectMany(x => x.Comment.Split('\r', StringSplitOptions.RemoveEmptyEntries)).ToList();
+                index++;
+            }
+
+            c.SaveChanges();
+        }
+    }
+    
     [Test]
     public void FillOrderLine()
     {

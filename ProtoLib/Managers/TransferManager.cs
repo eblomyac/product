@@ -129,9 +129,10 @@ public class TransferManager
                  //   wsm.SaveWorks(new List<Work>() { currentWork });
                 }
             }
-            works = c.Works.AsNoTracking().Where(x => x.Status == WorkStatus.income && x.PostId == t.PostToId).ToList();
+            works = c.Works.AsNoTracking().Include(x=>x.Issues).Where(x => x.Status == WorkStatus.income && x.PostId == t.PostToId).ToList();
             var transfer = c.Transfers.Include(x=>x.Lines).FirstOrDefault(x => x.Id == t.Id);
             List<Work> toPost = new List<Work>();
+            IssueManager im = new IssueManager();
            
             foreach (var stl in t.Lines.Where(x=>x.TransferedCount!=0))
             {
@@ -147,6 +148,16 @@ public class TransferManager
                 {
                     existTl.TargetWorkId = work.Id;
                     toPost.Add(work);
+                    try
+                    {
+                        foreach (var issue in work.Issues.Where(z => z.Resolved == null))
+                        {
+                            im.ResolveIssue(issue.Id, accName);
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                    }
                 }
                 else
                 {
@@ -157,6 +168,9 @@ public class TransferManager
 
             
             wss.ChangeStatus(toPost, WorkStatus.waiting, accName);
+            
+            
+            
          
             wsm.SaveWorks(toPost);
            

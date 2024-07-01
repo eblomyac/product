@@ -13,7 +13,7 @@ public class CleanWorkTest
     public void Resolve()
     {
         IssueManager im = new IssueManager();
-        im.ResolveIssue(692, "system");
+        im.ResolveIssue(628, "system");
     }
     [Test]
     public async Task ErrorRemake()

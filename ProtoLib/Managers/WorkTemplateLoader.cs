@@ -35,6 +35,7 @@ namespace ProtoLib.Managers
                     wct.Count = macTemplate.Count;
                     wct.PostKey = articleDesign.PostKey;
                     wct.SingleCost = articleDesign.SingleCost;
+                    wct.Comment = articleDesign.Comment;
                     result.Add(wct);
                 }
             }
