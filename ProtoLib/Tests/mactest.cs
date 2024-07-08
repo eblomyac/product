@@ -18,7 +18,7 @@ public class mactest
     {
         using (BaseContext c = new BaseContext())
         {
-            var works  = c.Works.Include(x=>x.Post).ThenInclude(x=>x.PostCreationKeys).Where(x => x.CommentMap.Length <2).ToList();
+            var works  = c.Works.Include(x=>x.Post).ThenInclude(x=>x.PostCreationKeys).Where(x => x.CommentMap.Length <2 || x.SingleCost==0).ToList();
             var artilces = works.Select(x => x.Article).ToList();
             CrpManager crp = new CrpManager();
             var data = crp.LoadWorkData(artilces);
@@ -33,6 +33,7 @@ public class mactest
                     lastIndexOfTwo = index;
                 }
                 work.Comments = workCreateTemplates.SelectMany(x => x.Comment.Split('\r', StringSplitOptions.RemoveEmptyEntries)).ToList();
+                work.SingleCost = workCreateTemplates.Sum(x => x.SingleCost);
                 index++;
             }
 

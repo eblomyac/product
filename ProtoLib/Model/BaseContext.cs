@@ -87,7 +87,7 @@ namespace ProtoLib.Model
               //  #else
                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
                #if DEBUG
-               //   optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
+              //   optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
                 #endif
                 
                
@@ -129,6 +129,12 @@ namespace ProtoLib.Model
                     log.PostId = w.PostId;
                     log.OrderNumber = w.OrderNumber;
                     log.EditedBy = ContextOwner.AccName;
+                    log.SingleCost = w.SingleCost;
+                    log.Count = w.Count;
+                    log.ProductionLineId = w.ProductLineId;
+                    log.OrderLineNumber = w.OrderLineNumber;
+                    log.MovedFrom = w.MovedFrom;
+                    log.MovedTo = w.MovedTo;
                     if (change.State == EntityState.Modified && statusChange != null)
                     {
                         log.NewStatus = (WorkStatus)statusChange.CurrentValue;

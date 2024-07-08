@@ -83,6 +83,94 @@ export class ChartOptions {
       return '';
     },
   }
+  stackLabelTopMax: ApexDataLabels = {
+    enabled: true,
+    offsetY: -30,
+    style: {
+      fontSize: '14px',
+      colors: ["#414141"]
+    }, background: {
+      enabled: true,
+      foreColor: '#fff',
+      borderRadius: 2,
+      padding: 4,
+      opacity: 0.9,
+      borderWidth: 1,
+      borderColor: '#fff'
+    },
+
+    formatter: function (_val, opt) {
+      let max = 0;
+      let lastValuedIndex = 0
+      opt.config.series.forEach((x: any, i: number) => {
+        if (x.data.length > 0) {
+          if(x.data[opt.dataPointIndex]>max){
+            max = x.data[opt.dataPointIndex];
+          }
+          if (x.data[opt.dataPointIndex] > 0) {
+            lastValuedIndex = i;
+          }
+        }
+
+      });
+      if (opt.seriesIndex == lastValuedIndex && max > 0) {
+        return max;
+      }
+      return '';
+    },
+  }
+  stackLabelPercent: ApexDataLabels = {
+    enabled: true,
+    offsetY: -30,
+    style: {
+      fontSize: '14px',
+      colors: ["#414141"]
+    }, background: {
+      enabled: true,
+      foreColor: '#fff',
+      borderRadius: 2,
+      padding: 4,
+      opacity: 0.9,
+      borderWidth: 1,
+      borderColor: '#fff'
+    },
+
+    formatter: function (_val, opt) {
+
+
+
+
+      let val = 0;
+      if(opt.config.series[1].data.length>=opt.dataPointIndex && opt.config.series[0].data.length>=opt.dataPointIndex ){
+          val = Math.floor(opt.config.series[1].data[opt.dataPointIndex]/opt.config.series[0].data[opt.dataPointIndex]*100);
+      }
+
+      let max = 0;
+      let lastValuedIndex = 0
+      opt.config.series.forEach((x: any, i: number) => {
+        if (x.data.length > 0) {
+          if(x.data[opt.dataPointIndex]>max){
+            max = x.data[opt.dataPointIndex];
+          }
+          if (x.data[opt.dataPointIndex] > 0) {
+            lastValuedIndex = i;
+          }
+        }
+
+      });
+
+      if (opt.seriesIndex == lastValuedIndex && max > 0) {
+        if(val>0){
+          return val +'%';
+        }else{
+          return max;
+        }
+
+      }
+      return '';
+
+    },
+  }
   DarkTheme: ApexTheme = {
     mode: "dark",
 
@@ -112,7 +200,7 @@ export class ChartOptions {
         {name: 'Всего', data: [], color: '#c2185b'},
         {name: 'Выполнено', data: [], color: '#008100'}
       ],
-      dataLabels: this.stackLabelTopTotal,
+      dataLabels: this.stackLabelPercent,
       markers: {},
       fill: {},
       yaxis: {},
@@ -534,6 +622,7 @@ export class ChartOptions {
       }
     }
   }
+
 
   getIssueTimeLineChart():ApexChartOption{
     return {

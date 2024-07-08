@@ -769,11 +769,23 @@ namespace ProtoLib.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<int?>("Count")
+                        .HasColumnType("int");
+
                     b.Property<string>("EditedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MovedFrom")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MovedTo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NewStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrderLineNumber")
                         .HasColumnType("int");
 
                     b.Property<long>("OrderNumber")
@@ -786,6 +798,12 @@ namespace ProtoLib.Migrations
 
                     b.Property<int>("PrevStatus")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProductionLineId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("SingleCost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Stamp")
                         .HasColumnType("datetime2");

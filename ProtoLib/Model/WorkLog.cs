@@ -20,6 +20,28 @@ namespace ProtoLib.Model
         public string EditedBy { get; set; }
         
        
+        public decimal? SingleCost { get; set; }
+        public int? OrderLineNumber { get; set; }
+        public string? ProductionLineId { get; set; }
+        public int? Count { get; set; }
+        public string? MovedFrom { get; set; }
+        public string? MovedTo { get; set; }
+        
+        [NotMapped]
+        public decimal TotalCost {
+            get
+            {
+                if (Count == null || SingleCost == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return Count.Value * SingleCost.Value;
+                }
+            }
+            
+        }
         
 
         [NotMapped]

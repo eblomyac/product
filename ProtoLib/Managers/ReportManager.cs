@@ -30,7 +30,7 @@ public class ReportManager
         {
             foreach (var productionLine in lines)
             {
-                dynamic dateRep = DailyReportLineWithWork(date, productionLine);
+                dynamic dateRep = DailyReport(date, productionLine);
                 result.Add(dateRep);
                 
             }
@@ -38,6 +38,174 @@ public class ReportManager
         }
         
         return result;
+    }
+
+    public dynamic DailyReport(DateTime stamp, string productionLine)
+    {
+        using (BaseContext bc = new BaseContext(""))
+        {
+            DailySourceManager dsm = new DailySourceManager();
+
+            dynamic result = new ExpandoObject();
+            result.Date = stamp;
+            result.ProductionLine = productionLine;
+            List<string> operators = bc.Roles.AsNoTracking().Where(x => x.Type == RoleType.Operator)
+                .Select(x => x.UserAccName).Distinct().ToList();
+            List<string> masters = bc.Roles.AsNoTracking().Where(x => x.Type == RoleType.PostMaster).ToList()
+                .Where(x => x.MasterPosts.Count > 0)
+                .Select(x => x.UserAccName).Distinct().ToList();
+            if (!masters.Contains("system"))
+            {
+                masters.Add("system");
+            }
+
+            var records = bc.WorkStatusLogs.AsNoTracking()
+                .Where(x => x.Stamp.Date == stamp.Date && x.ProductionLineId == productionLine).ToList();
+
+            var issues = bc.WorkIssueLogs.AsNoTracking().Where(x =>
+                x.Start.Date == stamp.Date || (x.End != null && x.End.Value.Date == stamp.Date)).ToList();
+            //убрать логи событий по фильтру произв. линии
+            var sourceIssuesIds = issues.Select(x => x.SourceIssueId).Distinct().ToList();
+            var filteredIssuesIds = bc.Issues.AsNoTracking()
+                .Where(x => x.Work.ProductLineId == productionLine && sourceIssuesIds.Contains(x.Id)).Select(x => x.Id)
+                .Distinct().ToList();
+
+            issues = issues.Where(x => filteredIssuesIds.Contains(x.Id)).ToList();
+
+            //запущенные работы оператором
+            var startedWork = records.Where(x => x.Stamp.Date == stamp.Date &&
+                                                 x.NewStatus == WorkStatus.income &&
+                                                 x.PrevStatus == WorkStatus.hidden &&
+                                                 operators.Contains(x.EditedBy));
+            var startedOrders = startedWork.Select(x => x.OrderNumber).Distinct().ToList();
+            var worksStartedIds = startedWork.Select(x => x.WorkId).ToList();
+            var worksIds = records.Where(x => x.WorkId > 0).Select(x => x.WorkId).Distinct().ToList();
+            var works = bc.Works.AsNoTracking().Include(x => x.AdditionalCosts).Where(x => worksIds.Contains(x.Id))
+                .ToList();
+            var addCost = bc.AdditionalCosts.Where(x => worksIds.Contains(x.WorkId)).ToList();
+
+            DataTable macInfo = null;
+            DataTable macResult = null;
+            using (MaconomyBase mb = new MaconomyBase())
+            {
+                if (works.Count() > 0)
+                {
+                    string orders = string.Join(',', works.Select(x => x.OrderNumber).Distinct().Select(x => $"'{x}'"));
+                    macInfo =
+                        mb.getTableFromDB(
+                            $"SELECT ProductionLine.TransactionNumber, LINENUMBER, ITEMNUMBER, ENTRYTEXT, PRODUCTIONDATE, FINISHEDITEMLOCATION, NUMBEROF as numberof from ProductionLine left join ProductionVoucher on ProductionLine.TransactionNumber = ProductionVoucher.TransactionNumber where ProductionLine.TransactionNumber in ({orders}) ");
+
+
+
+                }
+
+                macResult = mb.getTableFromDB(
+                    $"SELECT SUM(NUMBEROF) FROM KSK.A___ITEMMOVEMENTSVIE WHERE APPROVALDATE='{stamp:yyyy.MM.dd}' AND ITEMNUMBER='{productionLine}' AND MOVEMENTVOUCHERTYPE='1'");
+            }
+
+            // var endedWorks = works.Where(x => x.Status == WorkStatus.ended).ToList();
+            // var EndedArticles = records.Where(x=>x.)
+            int articleEndedWorkCount = 0;
+            decimal articleEndedGoodsCount = 0;
+
+
+
+            //сданные работы
+            var endedWorks = records.Where(x => x.NewStatus == WorkStatus.ended && masters.Contains(x.EditedBy) && x.WorkId!=0);
+
+            //события-созданы 
+            var issueStarted = issues.Where(x => x.Start.Date == stamp);
+            //события-завершены
+            var issuesEnded = issues.Where(x => x.End != null && x.End.Value.Date == stamp);
+            decimal totalEndCost = 0;
+            decimal totalEndCount = 0;
+            decimal productionEnd = 0;
+            decimal totalAdditionalCosts = 0;
+
+            result.MaconomyClosed = 0;
+            if (macResult != null)
+            {
+                result.MaconomyClosed = macResult.Rows[0][0];
+            }
+
+            result.Posts = new List<object>();
+            foreach (var bcPost in bc.Posts.OrderBy(x => x.ProductOrder).AsNoTracking().ToList())
+            {
+                var dses = dsm.DateValue(bcPost.Name, stamp);
+                dynamic postStat = new ExpandoObject();
+                postStat.DailySource = dses.FirstOrDefault(x => x.ProductLineId == productionLine).Value;
+                postStat.PostName = bcPost.Name;
+                var postEndedWorks = endedWorks.Where(x => x.PostId == bcPost.Name).ToList();
+                // var worksIds = postEndedWorks.Select(x => x.WorkId).ToList();
+             //   var worksPost = works.Where(x => x.PostId == bcPost.Name && x.Status == WorkStatus.ended).ToList();
+                postStat.EndedWorkCount = postEndedWorks.Count;
+                postStat.EndedCost = postEndedWorks.Sum(x => x.TotalCost);
+                postStat.EndedCount = postEndedWorks.Sum(x => x.Count);
+                postStat.AdditionalCost = addCost.Where(x=>postEndedWorks.Select(z=>z.WorkId).Contains(x.WorkId))
+                    .Sum(z=>z.Cost);
+                postStat.Works = new List<object>();
+                totalAdditionalCosts += postStat.AdditionalCost;
+                foreach (var wp in postEndedWorks)
+                {
+                    dynamic w = new ExpandoObject();
+                    w.OrderNumber = wp.OrderNumber;
+                    w.OrderLineNumber = wp.OrderLineNumber;
+                    w.Article = wp.Article;
+                    w.Count = wp.Count;
+                    w.Cost = wp.TotalCost;
+                    w.AdditionalCost = addCost.Where(x=>x.Id==wp.WorkId).Sum(z=>z.Cost);
+
+                    if (macInfo != null)
+                    {
+                        DataRow[] thisOrderRows = macInfo.Select($"TransactionNumber='{wp.OrderNumber}'");
+                        int maxLineNumber = thisOrderRows.Length;
+
+                        DataRow[] thisOrderAndArticleRows =
+                            macInfo.Select(
+                                $"TransactionNumber='{wp.OrderNumber}' and LineNumber='{wp.OrderLineNumber}'");
+                        w.MaxLineNumber = maxLineNumber;
+                        w.TotalCount = thisOrderAndArticleRows[0]["numberof"];
+                    }
+                    else
+                    {
+                        w.MaxLineNumber = 0;
+                        w.TotalCount = 0;
+
+                    }
+
+
+
+                    postStat.Works.Add(w);
+
+                }
+
+                var articleEnded =
+                    postEndedWorks.Where(x => x.MovedTo != null && x.MovedTo == Constants.Work.EndPosts.TotalEnd);
+                articleEndedWorkCount += articleEnded.Count();
+                articleEndedGoodsCount += articleEnded.Sum(x => x.Count.Value);
+                productionEnd += articleEnded.Sum(x => x.TotalCost);
+
+
+                totalEndCost += postStat.EndedCost;
+                totalEndCount += postEndedWorks.Count();
+
+                result.Posts.Add(postStat);
+            }
+
+            result.AdditionalCost = totalAdditionalCosts;
+            result.Date = stamp.Date;
+            result.ProductionEnd = productionEnd;
+            result.StartedWorksCount = startedWork.Count();
+            result.StartedOrderCount = startedOrders.Count();
+            result.StartedIssuesCount = issueStarted.Count();
+            result.EndedIssuesCount = issuesEnded.Count();
+            result.EndedWorksCount = totalEndCount;
+            result.EndedCost = totalEndCost;
+            result.StartedCost = bc.Works.Where(x => worksStartedIds.Contains(x.Id)).Sum(x => x.SingleCost * x.Count);
+            result.ArticleEndCount = articleEndedWorkCount;
+            result.ArticleEndGoodsCount = articleEndedGoodsCount;
+            return result;
+        }
     }
     
      public dynamic DailyReportLineWithWork(DateTime stamp, string productionLine){
@@ -55,12 +223,12 @@ public class ReportManager
             {
                 masters.Add("system");
             }
-            var records = bc.WorkStatusLogs.AsNoTracking().Where(x => x.Stamp.Date == stamp.Date).ToList();
-            
+            var records = bc.WorkStatusLogs.AsNoTracking().Where(x => x.Stamp.Date == stamp.Date && x.ProductionLineId == productionLine).ToList();
+           
             //отфильтровать рекорды по работе - оставить только нужную произв. линию
-            var workIds = records.Select(x => x.WorkId).Distinct().ToList();
-            var lineWorksIds = bc.Works.AsNoTracking().Where(x => workIds.Contains(x.Id) && x.ProductLineId == productionLine).Select(x=>x.Id).Distinct().ToList();
-            records = records.Where(x => lineWorksIds.Contains(x.WorkId)).ToList();
+          
+        //    var lineWorksIds = bc.Works.AsNoTracking().Where(x => workIds.Contains(x.Id) && x.ProductLineId == productionLine).Select(x=>x.Id).Distinct().ToList();
+        //    records = records.Where(x => lineWorksIds.Contains(x.WorkId)).ToList();
             
             var issues = bc.WorkIssueLogs.AsNoTracking().Where(x =>
                 x.Start.Date == stamp.Date || (x.End != null && x.End.Value.Date == stamp.Date)).ToList();
@@ -69,13 +237,7 @@ public class ReportManager
             var filteredIssuesIds  = bc.Issues.AsNoTracking().Where(x => x.Work.ProductLineId == productionLine && sourceIssuesIds.Contains(x.Id)).Select(x=>x.Id).Distinct().ToList();
 
             issues = issues.Where(x => filteredIssuesIds.Contains(x.Id)).ToList();
-            
-            
-            
-            
-            
-            
-            
+         
             //запущенные работы оператором
             var startedWork = records.Where(x => x.Stamp.Date == stamp.Date &&
                 x.NewStatus == WorkStatus.income && x.PrevStatus == WorkStatus.hidden &&
@@ -83,7 +245,7 @@ public class ReportManager
             var startedOrders = startedWork.Select(x => x.OrderNumber).Distinct().ToList();
             var worksStartedIds = startedWork.Select(x => x.WorkId).ToList();
             var worksIds = records.Where(x => x.WorkId > 0).Select(x => x.WorkId).Distinct().ToList();
-            var works = bc.Works.AsNoTracking().Include(x=>x.AdditionalCosts).Where(x=>worksIds.Contains(x.Id)).ToList();
+                  var works = bc.Works.AsNoTracking().Include(x=>x.AdditionalCosts).Where(x=>worksIds.Contains(x.Id)).ToList();
 
             DataTable macInfo = null;
             DataTable macResult = null;
@@ -424,7 +586,7 @@ public class ReportManager
             var prodLine = bc.ProductionLines.Select(x => x.Id).Distinct().ToList();
             foreach (var line in prodLine)
             {
-                var report = DailyReportLineWithWork(stamp, line);
+                var report = DailyReport(stamp, line);
                 ExcelExporter ee = new ExcelExporter("workRep.xlsx");
                 ee.ExportTable(DailyWorksTable(report));
                 
@@ -447,6 +609,43 @@ public class ReportManager
 #endif
                
 result.Add(mr);
+            }
+            return result;
+        }
+        
+        
+    }
+    public List<MailRequest> DailyReportMail2(DateTime stamp)
+    {
+        using (BaseContext bc = new BaseContext(""))
+        {
+            List<MailRequest> result = new List<MailRequest>();
+            var prodLine = bc.ProductionLines.Select(x => x.Id).Distinct().ToList();
+            foreach (var line in prodLine)
+            {
+                var report = DailyReport(stamp, line);
+                ExcelExporter ee = new ExcelExporter("workRep.xlsx");
+                ee.ExportTable(DailyWorksTable(report));
+                
+                MailRequest mr = new MailRequest();
+                mr.Body = ReportToHtml(report);
+                mr.From = "product-report@ksk.ru";
+                mr.Subject = $"Отчет производства от {stamp:dd.MM.yyyy}; произв. линия: {line}";
+                mr.IsBodyHtml = true;
+                mr.MailAttachments = new List<MailAttachment>() { new MailAttachment("workRep.xlsx") };
+#if DEBUG
+                mr.To = new List<string>() {"po@ksk.ru"};
+                mr.Bcc = new List<string>();
+#endif
+#if RELEASE
+                mr.To = bc.Users.Select(x => x.Mail).ToList();//new List<string>() {"po@ksk.ru"};// 
+                //  mr.Bcc = new List<string>() {"artur.vagapov@ksk.ru"};
+#endif
+#if DEBUG
+                mr.Bcc = new List<string>();
+#endif
+               
+                result.Add(mr);
             }
             return result;
         }

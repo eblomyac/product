@@ -44,6 +44,8 @@ namespace ProtoLib.Managers
             }
         }
 
+    
+
         public DataTable LoadCardTable(string article)
         {
             using (SqlConnection sql =
