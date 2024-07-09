@@ -8,6 +8,7 @@ export interface IUser{
     isAdmin:boolean;
     isOperator:boolean;
     isMaster:boolean;
+    isPersonnel:boolean;
     postIdMaster:string[];
     roles:Role[];
 }
@@ -33,6 +34,7 @@ export class User{
         this.structure.isOperator = x.isOperator;
         this.structure.isMaster = x.isMaster;
         this.structure.postIdMaster = x.postIdMaster;
+        this.structure.isPersonnel = x.isPersonnel;
       }
     });
   }

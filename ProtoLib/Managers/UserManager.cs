@@ -57,7 +57,8 @@ namespace ProtoLib.Managers
                         dbUser.IsOperator = user.IsOperator;
                         dbUser.IsMaster = user.IsMaster;
                         dbUser.PostIdMaster = user.PostIdMaster;
-                        
+                        dbUser.IsPersonnel = user.IsPersonnel;
+
                     }
                     c.SaveChanges();
                 }

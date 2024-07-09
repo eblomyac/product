@@ -21,6 +21,7 @@
       <th>email</th>
       <th>Админ</th>
       <th>Оператор</th>
+      <th>Кадры</th>
       <th class="text-center">Мастер</th>
     </tr>
     <tr *ngFor="let user of this.userList">
@@ -33,6 +34,10 @@
       </td>
       <td>
         <mat-checkbox color="primary" [(ngModel)]="user.isOperator">
+        </mat-checkbox>
+      </td>
+      <td>
+        <mat-checkbox color="primary" [(ngModel)]="user.isPersonnel">
         </mat-checkbox>
       </td>
       <td>

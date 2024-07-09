@@ -8,7 +8,8 @@ namespace ProtoLib.Model
     {
         Admin,
         PostMaster,
-        Operator
+        Operator,
+        Personnel
     }
     public class Role:IEquatable<Role>
     {

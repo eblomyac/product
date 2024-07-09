@@ -16,6 +16,53 @@ namespace ProtoLib.Model
         public string Mail { get; set; }
         
         public ICollection<Role> Roles { get; set; }
+
+        [NotMapped]
+        public bool IsPersonnel
+        {
+            get
+            {
+                if (Roles == null || Roles.Count == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return Roles.FirstOrDefault(x => x.Type == RoleType.Personnel) != null;
+                }
+            }
+            set
+            {
+                if (value)
+                {
+                    if (this.Roles == null)
+                    {
+                        this.Roles = new List<Role>();
+                    }
+
+                    var exist = this.Roles.FirstOrDefault(x => x.Type == RoleType.Personnel);
+                    if (exist == null)
+                    {
+                        exist = new Role();
+                        exist.Type = RoleType.Personnel;
+                        exist.UserAccName = this.AccName;
+                        this.Roles.Add(exist);
+                    }
+                }else
+                {
+                    if (Roles != null)
+                    {
+                        var existRole = this.Roles.FirstOrDefault(x => x.Type == RoleType.Personnel);
+                        if (existRole != null)
+                        {
+                            this.Roles.Remove(existRole);                            
+                        }
+
+                    }
+                    
+                }
+            }
+        }
         
         [NotMapped]
         public bool IsAdmin {

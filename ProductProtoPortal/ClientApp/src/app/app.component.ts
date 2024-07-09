@@ -38,7 +38,13 @@ export class AppComponent {
           }if(this.session.currentUser.structure.isOperator){
             this.availableMenu.push({caption:"Оператор ИТР",route:"/operate"})
          //   this.router.navigate(['/operate'])
-          }if(this.session.currentUser.structure.isAdmin || this.session.currentUser.structure.isOperator){
+
+          }
+          if(this.session.currentUser.structure.isOperator){
+            this.availableMenu.push({caption:"Кадры",route:"/personnel"})
+            //   this.router.navigate(['/operate'])
+          }
+          if(this.session.currentUser.structure.isAdmin || this.session.currentUser.structure.isOperator){
             this.availableMenu.push({caption:"Приоритет работ",route:"/work-priority"})
           }
 

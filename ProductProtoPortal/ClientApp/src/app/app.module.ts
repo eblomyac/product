@@ -79,6 +79,7 @@ import {
   AdditionalSourceSettingsComponent
 } from "./components/admin-settings/additional-source-settings/additional-source-settings.component";
 import {AdditionalCostDialogComponent} from "./dialogs/additional-cost-dialog/additional-cost-dialog.component";
+import {PersonnelComponent} from "./components/personnel/personnel.component";
 
 
 
@@ -98,7 +99,7 @@ import {AdditionalCostDialogComponent} from "./dialogs/additional-cost-dialog/ad
         PostDialogComponent,
         InfoViewComponent,
         NumberDialogComponent,
-        AnalyticComponent,
+        AnalyticComponent, PersonnelComponent,
         IssueSettingsComponent, AdditionalCostDialogComponent,
         IssueCreateDialogComponent, AdditionalSourceSettingsComponent,
         PostStatisticComponent, DailySourceDialogComponent,
@@ -119,6 +120,7 @@ import {AdditionalCostDialogComponent} from "./dialogs/additional-cost-dialog/ad
       {path: 'admin', component: AdminSettingsComponent},
       {path: 'operate', component: OperatorComponent},
       {path: 'statistic', component: AnalyticComponent},
+      {path: 'personnel', component: PersonnelComponent},
       {path: 'card', component: CardViewComponent},
       {path: 'card-search', component: CardfinderComponent},
       {path: 'work-priority', component: PriorityListComponent}
