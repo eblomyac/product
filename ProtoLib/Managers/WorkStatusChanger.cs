@@ -8,6 +8,7 @@ namespace ProtoLib.Managers
 {
     public class WorkStatusChanger
     {
+        
         private BaseContext? _c = null;
         public WorkStatusChanger(BaseContext? c=null)
         {
@@ -94,17 +95,14 @@ namespace ProtoLib.Managers
                 }
                 else
                 {
-                    ChangeStatus(work, newStatus, accName, moveTo, moveFrom);
-                    var actualIssues = work.Issues.Where(x => x.Resolved == null);
-                    if (actualIssues.Count() > 0 && newStatus == WorkStatus.running)
+                    var actualIssues = work.Issues.Where(x => x.Resolved == null).ToList();
+                    if ((newStatus == WorkStatus.sended || newStatus == WorkStatus.running) && actualIssues.Count>0)
                     {
-
-                        IssueManager im = new IssueManager();
-                        foreach (var issue in actualIssues)
-                        {
-                            im.ResolveIssue(issue.Id, accName);
-                        }
-
+                        return false;
+                    }
+                    else
+                    {
+                        ChangeStatus(work, newStatus, accName, moveTo, moveFrom);
                     }
                 }
 

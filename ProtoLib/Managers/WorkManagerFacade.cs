@@ -132,7 +132,7 @@ namespace ProtoLib.Managers
             Work result = null;
             BaseContext c = _c ?? new BaseContext(_accName);
             {
-                result= c.Works.AsNoTracking().Include(x=>x.Issues).FirstOrDefault(x=>x.Id == id);
+                result= c.Works.AsNoTracking().Include(x=>x.AdditionalCosts).Include(x=>x.Issues).FirstOrDefault(x=>x.Id == id);
             }
             if (_c == null)
             {

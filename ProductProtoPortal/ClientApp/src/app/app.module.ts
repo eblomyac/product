@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -67,7 +67,7 @@ import {OperatorUtilityComponent} from "./components/operator/operator-utility/o
 import {ReportComponent} from "./components/admin-settings/report/report.component";
 import {CustomDateAdapter} from "./CustomAdapter";
 import {NgxEchartsDirective, NgxEchartsModule} from "ngx-echarts";
-import {DatePipe} from "@angular/common";
+import {DatePipe, registerLocaleData} from "@angular/common";
 import {MatChipsModule} from "@angular/material/chips";
 import {TransferCreateComponent} from "./dialogs/transfer-create/transfer-create.component";
 import {TransferListComponent} from "./dialogs/transfer-list/transfer-list.component";
@@ -79,9 +79,13 @@ import {
   AdditionalSourceSettingsComponent
 } from "./components/admin-settings/additional-source-settings/additional-source-settings.component";
 import {AdditionalCostDialogComponent} from "./dialogs/additional-cost-dialog/additional-cost-dialog.component";
-import {PersonnelComponent} from "./components/personnel/personnel.component";
+import {PersonnelComponent} from "./components/hr/personnel/personnel.component";
+import {CalendarComponent} from "./components/hr/calendar/calendar.component";
 
 
+import localeRu from '@angular/common/locales/ru';
+import localeRuExtra from '@angular/common/locales/extra/ru';
+registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
 
 
 
@@ -98,7 +102,7 @@ import {PersonnelComponent} from "./components/personnel/personnel.component";
         WorkCompactViewComponent,
         PostDialogComponent,
         InfoViewComponent,
-        NumberDialogComponent,
+        NumberDialogComponent, CalendarComponent,
         AnalyticComponent, PersonnelComponent,
         IssueSettingsComponent, AdditionalCostDialogComponent,
         IssueCreateDialogComponent, AdditionalSourceSettingsComponent,
@@ -160,7 +164,8 @@ import {PersonnelComponent} from "./components/personnel/personnel.component";
 
 
   ],
-    providers: [TransportService, DataService, SessionService, WorkEventService, StyleManagerService,ThemeService, DialogHandlerService,{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
+    providers: [TransportService, DataService, SessionService, WorkEventService, StyleManagerService,ThemeService, DialogHandlerService,
+      { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }, { provide: LOCALE_ID, useValue: "ru-RU" },
       { provide: DateAdapter, useClass: CustomDateAdapter },DatePipe],
     bootstrap: [AppComponent]
 })

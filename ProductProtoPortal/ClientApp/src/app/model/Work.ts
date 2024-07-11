@@ -166,7 +166,7 @@ export class Work {
         await this.openAdditionalCost();
         break;
       case 'Зарегистрировать событие':
-        this.registerIssue();
+        await this.registerIssue();
         break;
       case 'Продолжить работу':
       case 'Выполнять':
@@ -243,11 +243,18 @@ export class Work {
   }
   async registerIssue(){
     let issue = await DialogHandlerService.Singleton.ask(IssueCreateDialogComponent, {data: {forWork:this}});
-    this.isLoading=true;
+
     if(issue){
+      this.isLoading=true;
       this.dataService.Issue.Register(issue,this.structure.id).subscribe(x=>{
-        this.isLoading=false;
+
+
+
         if(x){
+          this.isLoading=false;
+          if(this.structure.status!=20){
+            this.workEventService.WorkStatusChange(this,this.structure.status,20,true);
+          }
           this.loadIssues();
         }
       });

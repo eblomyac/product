@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Diagnostics;
+using DocumentFormat.OpenXml.Bibliography;
 using KSK_LIB.Maconomy;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -73,6 +74,46 @@ public class MaintenanceManager
         }
     }
 
+    public void ResolveStackIssues()
+    {
+        using (BaseContext c = new BaseContext("maintenance"))
+        {
+            var possibleStackedIssues = c.Issues.AsNoTracking().Include(x=>x.Work)
+                .Where(x => x.Resolved == null && !string.IsNullOrWhiteSpace(x.ReturnBackPostId)).ToList();
+
+            List<WorkIssue> stackedIssues = new List<WorkIssue>();
+            foreach (var issue in possibleStackedIssues)
+            {
+                var allSameWorks = c.Works.AsNoTracking().Where(x => x.PostId == issue.ReturnBackPostId
+                                                                              && issue.Work.OrderNumber == x.OrderNumber
+                                                                              && x.OrderLineNumber == issue.Work.OrderLineNumber).ToList();
+                var connectedWork = allSameWorks.FirstOrDefault(x=>x.Count == issue.Work.Count);
+                if (allSameWorks.Count == 0)
+                {
+                    Debug.WriteLine("no work");
+                }
+                if (connectedWork == null && allSameWorks.Count>0)
+                {
+                    Debug.WriteLine("work is null");
+                    if (allSameWorks.All(x => x.Status == WorkStatus.ended))
+                    {
+                        connectedWork = allSameWorks[0];
+                    }
+                }
+                if (connectedWork!=null && connectedWork.Status == WorkStatus.ended)
+                {
+                    stackedIssues.Add(issue);
+                }
+            }
+
+            IssueManager im = new IssueManager(c);
+            foreach (var issue in stackedIssues)
+            {
+                im.ResolveIssue(issue.Id, "maintenance");
+            }
+        }
+    }
+
     public void CleanClosedPrediction()
     {
         using (BaseContext c = new BaseContext("maintenance"))
@@ -111,7 +152,7 @@ public class MaintenanceManager
                     }
                     else
                     {
-                        wsc.ChangeStatus(work.Id, (WorkStatus)loopStatus, "maintenance");    
+                        wsc.ChangeStatus(work.Id, (WorkStatus)loopStatus, "maintenance", Constants.Work.EndPosts.TotalEnd);    
                     }
                     
                 }

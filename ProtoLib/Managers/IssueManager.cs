@@ -117,9 +117,13 @@ namespace ProtoLib.Managers
                     wil.Type = template.Name;
                     wil.PostId = work.PostId;
                     wil.End = null;
+                    
+                    WorkStatusChanger wss = new WorkStatusChanger();
+                    wss.ChangeStatus(workId, WorkStatus.waiting, accName);
 
                     if (!string.IsNullOrWhiteSpace(wi.ReturnBackPostId))
                     {
+                        /*
                         var previousWork = c.Works.AsNoTracking().FirstOrDefault(x =>
                             x.PostId == wi.ReturnBackPostId && x.Article == work.Article &&
                             x.OrderLineNumber == work.OrderLineNumber &&
@@ -127,6 +131,7 @@ namespace ProtoLib.Managers
                             (x.Status == WorkStatus.ended || x.Status == WorkStatus.sended));
                         if (previousWork != null)
                         {
+                        
                             WorkStatusChanger wss = new WorkStatusChanger();
                             wss.ChangeStatus(previousWork, WorkStatus.waiting, accName);
                             WorkSaveManager workSaveManager = new WorkSaveManager(accName);
@@ -134,6 +139,36 @@ namespace ProtoLib.Managers
                             workSaveManager.SaveWorks(new List<Work> { previousWork });
 
                             RegisterIssue(previousWork.Id, templateId, description, accName, "", work.PostId);
+                        }*/
+                        var previousWorks = c.Works.AsNoTracking().Where(x =>
+                            x.PostId == wi.ReturnBackPostId && x.Article == work.Article &&
+                            x.OrderLineNumber == work.OrderLineNumber &&
+                            x.OrderNumber == work.OrderNumber &&
+                            (x.Status == WorkStatus.ended || x.Status == WorkStatus.sended)).ToList();
+                        if (previousWorks.Count == 0)
+                        {
+                            //создать работу?
+                        }
+                        else if(previousWorks.Count==1)
+                        {
+                            var prevWork = previousWorks[0];
+                            if (prevWork.Count != work.Count)
+                            {
+                                WorkManagerFacade wmf = new WorkManagerFacade(accName);
+                                var splittedWorks = wmf.SplitWork(prevWork.Id, work.Count);
+                                if (splittedWorks.Count > 1)
+                                {
+                                    prevWork = splittedWorks[1];
+                                }
+                            }
+                       //     WorkStatusChanger wss = new WorkStatusChanger();
+                            wss.ChangeStatus(prevWork, WorkStatus.waiting, accName);
+                            WorkSaveManager workSaveManager = new WorkSaveManager(accName);
+                            prevWork.MovedTo = "";
+                            workSaveManager.SaveWorks(new List<Work> { prevWork });
+
+                            RegisterIssue(prevWork.Id, templateId, description, accName, "", work.PostId);
+                            
                         }
                     }
 

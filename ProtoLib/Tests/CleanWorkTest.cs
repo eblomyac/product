@@ -13,6 +13,7 @@ public class CleanWorkTest
     [Test]
     public void fillWorkLog()
     {
+        
         using (BaseContext c = new BaseContext())
         {
         
@@ -64,8 +65,10 @@ public class CleanWorkTest
     [Test]
     public void Resolve()
     {
-        IssueManager im = new IssueManager();
-        im.ResolveIssue(628, "system");
+        MaintenanceManager mm = new MaintenanceManager();
+        mm.ResolveStackIssues();
+
+
     }
     [Test]
     public async Task ErrorRemake()
