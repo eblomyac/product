@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import {LOCALE_ID, NgModule} from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
@@ -85,6 +85,10 @@ import {CalendarComponent} from "./components/hr/calendar/calendar.component";
 
 import localeRu from '@angular/common/locales/ru';
 import localeRuExtra from '@angular/common/locales/extra/ru';
+import {WorkCostInfoComponent} from "./components/Info/work-cost-info/work-cost-info.component";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+
+
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
 
 
@@ -101,7 +105,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         OperatorComponent,
         WorkCompactViewComponent,
         PostDialogComponent,
-        InfoViewComponent,
+        InfoViewComponent, WorkCostInfoComponent,
         NumberDialogComponent, CalendarComponent,
         AnalyticComponent, PersonnelComponent,
         IssueSettingsComponent, AdditionalCostDialogComponent,
@@ -127,12 +131,12 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
       {path: 'personnel', component: PersonnelComponent},
       {path: 'card', component: CardViewComponent},
       {path: 'card-search', component: CardfinderComponent},
-      {path: 'work-priority', component: PriorityListComponent}
+      {path: 'work-priority', component: PriorityListComponent},
+      {path: 'info', component: WorkCostInfoComponent}
     ]),
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     }),
-
     BrowserAnimationsModule,
 
     MatIconModule,
@@ -161,6 +165,8 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
     NgxEchartsDirective,
     MatChipsModule,
     MatBadgeModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
 
 
   ],

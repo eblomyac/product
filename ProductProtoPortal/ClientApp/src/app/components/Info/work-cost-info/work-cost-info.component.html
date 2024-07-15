@@ -1,0 +1,75 @@
+<div class="container-fluid mt-2">
+  <div class="d-flex align-items-center" style="column-gap: 20px">
+    <div>
+      <div *ngIf="isLoadPosts" class="d-flex align-items-start" style="column-gap: 10px">
+        <mat-spinner diameter="20" style="display: inline"></mat-spinner>
+        <span>Загрузка постов</span>
+
+      </div>
+      <div *ngIf="isLoadArticles" class="d-flex align-items-start" style="column-gap: 10px">
+        <mat-spinner diameter="20" style="display: inline"></mat-spinner>
+        <span>Загрузка артикулов</span>
+
+      </div>
+    </div>
+    <div>
+      <mat-form-field >
+        <mat-label>Артикул</mat-label>
+        <input type="text" matInput  [matAutocomplete]="auto"  [formControl]="myControl" (keyup.enter)="articleAdd(myControl.value)" [disabled]="true">
+        <mat-autocomplete #auto="matAutocomplete" >
+          @for (art of filteredArticles | async; track art) {
+            <mat-option [value]="art">{{art}}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <div>
+      <button mat-raised-button color="primary" (click)="copyToClip()">Скопировать</button>
+    </div>
+    <div>
+      <mat-checkbox [(ngModel)]="hideNulls" color="primary" >Скрыть нули</mat-checkbox>
+    </div>
+  </div>
+
+
+<table class="w-100" #table>
+<tr>
+  <th class="text-center" style="width: 80px">
+    Заказ
+  </th>
+  <th class="text-center">
+    Артикул
+  </th>
+  <th class="text-center" style="width: 80px">
+    Количество
+  </th>
+  <th class="text-center" *ngFor="let p of this.posts">
+    {{p}}
+  </th>
+  <th>
+    Сумма
+  </th>
+</tr>
+
+
+  <tr *ngFor="let cd of costData">
+    <td >
+      <input  type="text" style="width: 80px" [(ngModel)]="cd.order">
+    </td>
+    <td class="text-center">{{cd.article}}</td>
+    <td class="text-start">
+      <input  type="number" style="width: 80px" [(ngModel)]="cd.count" [min]="0">
+    </td>
+    <td class="text-end" *ngFor="let pdata of cd.costs">
+      <ng-container *ngIf="hideNulls;else showAll">
+        {{pdata>0.001?(pdata * cd.count| number : '1.2-2'):''}}
+      </ng-container>
+      <ng-template #showAll>{{(pdata * cd.count| number : '1.2-2')}}</ng-template>
+    </td>
+    <td>
+
+    </td>
+  </tr>
+
+</table>
+</div>

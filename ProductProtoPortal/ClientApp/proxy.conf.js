@@ -17,7 +17,8 @@ const PROXY_CONFIG = [
       "/priority",
       "/download",
       "/DailySource",
-      "/AdditionalCost"
+      "/AdditionalCost",
+      "/Info"
    ],
     target: target,
     secure: false,

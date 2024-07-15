@@ -14,9 +14,9 @@ public class MaintenanceManager
     {
         using (BaseContext c = new BaseContext())
         {
-            DateTime d = DateTime.Today.AddDays(-1); 
+            DateTime d = DateTime.Today.AddDays(-7); 
             var works  = c.Works.Include(x=>x.Post).
-                ThenInclude(x=>x.PostCreationKeys).Where(x => (x.CommentMap.Length <2 || x.SingleCost==0)&&x.CreatedStamp.Date > d.Date).ToList();
+                ThenInclude(x=>x.PostCreationKeys).Where(x => (x.CommentMap.Length <2 || x.SingleCost==0)).ToList();
             var artilces = works.Select(x => x.Article).ToList();
             CrpManager crp = new CrpManager();
             var data = crp.LoadWorkData(artilces);

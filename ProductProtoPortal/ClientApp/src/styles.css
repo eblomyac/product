@@ -53,7 +53,10 @@ a {
 
 }
 
-
+input{
+  color: var(--post-item-color);
+  background-color: var(--post-bg-item-color);
+}
 
 .item-text:hover{
   background-color: rgba(128,128,128,0);
