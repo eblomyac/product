@@ -14,14 +14,14 @@ export class AdditionalSourceSettingsComponent {
     this.loadTemplates();
   }
   loadTemplates(){
-    this.dataService.AdditionalCostData.TemplatesList(true).subscribe(x=>{
+    this.dataService.AdditionalCostData.TemplatesList().subscribe(x=>{
       if(x!=null){
         this.templates = x;
       }
     });
   }
   createTemplate(name:string){
-    let a = {name:name,disabled:false, id:0};
+    let a = {name:name,canPost:false,canItem:false, id:0};
     this.templates.push(a);
   }
   saveTemplates(){

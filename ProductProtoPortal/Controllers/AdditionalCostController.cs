@@ -9,13 +9,49 @@ namespace ProductProtoPortal.Controllers;
 [Route("/[controller]")]
 public class AdditionalCostController:Controller
 {
+    [HttpPost]
+    [Route("[action]")]
+    public async Task<IActionResult> PostAdditionalCostCreate(string post, string prodLine)
+    {
+        var user = AuthHelper.GetADUser(this.HttpContext);
+        string toParse = "";
+        using (StreamReader st = new StreamReader(this.Request.Body))
+        {
+            toParse= await st.ReadToEndAsync();
+        }
+
+        List<AdditionalCost> data = JsonConvert.DeserializeObject<List<AdditionalCost>>(toParse);
+
+        AdditionalCostManager acm = new AdditionalCostManager();
+        var work = acm.CreateForPost(post, prodLine, user.SAM, data);
+        return new OkObjectResult(new ApiAnswer(work).ToString());
+    }
+    
     [HttpGet]
     [Route("[action]")]
-    public IActionResult TemplateList(bool ShowDisabled)
+    public IActionResult TemplateList()
     {
 
         AdditionalCostManager acm = new AdditionalCostManager();
-        return new OkObjectResult(new ApiAnswer(acm.List(ShowDisabled)).ToString());
+        return new OkObjectResult(new ApiAnswer(acm.ListAll()).ToString());
+        
+    }
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult TemplateListForItem()
+    {
+
+        AdditionalCostManager acm = new AdditionalCostManager();
+        return new OkObjectResult(new ApiAnswer(acm.ListForItem()).ToString());
+        
+    }
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult TemplateListForPost()
+    {
+
+        AdditionalCostManager acm = new AdditionalCostManager();
+        return new OkObjectResult(new ApiAnswer(acm.ListForPost()).ToString());
         
     }
 

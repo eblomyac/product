@@ -1,49 +1,101 @@
 <div>
   <div mat-dialog-title>
-    <span>Дополнительные работы</span>
+    <span>Дополнительные работы {{this.data.work?'для позиции':'для поста'}}</span>
   </div>
   <div style="width: 750px" mat-dialog-content>
 
-    <div>
-      <div *ngFor="let ac of this.data.work.structure.additionalCosts; let i = index" class="d-flex justify-content-between">
-        <div>{{i+1}}.{{ac.additionalCostTemplate?.name}}</div>
-        <div>{{ac.description}}</div>
-        <div>{{ac.cost}}
+    <div *ngIf="data.work; else newWork">
+      <div>
+        <div *ngFor="let ac of this.data.work.structure.additionalCosts; let i = index" class="d-flex justify-content-between">
+          <div>{{i+1}}.{{ac.additionalCostTemplate?.name}}</div>
+          <div>{{ac.description}}</div>
+          <div>{{ac.cost}}
+          </div>
         </div>
       </div>
-    </div>
-    <br>
-    <mat-divider></mat-divider>
-    <div *ngIf="templates.length>0">
-    <div>Добавление доп. работы</div>
-    <div class="d-flex justify-content-between align-items-baseline">
-      <mat-form-field>
-        <mat-label>Тип работы</mat-label>
-        <mat-select #templateId>
-          <mat-option *ngFor="let t of this.templates" [value]="t.id">{{t.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field style="flex: 2 1 0">
-        <mat-label>Описание</mat-label>
-        <input #desc matInput type="text" [defaultValue]="''">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Норма</mat-label>
-        <input #cost type="number" matInput min="0" [defaultValue]="'0'">
-      </mat-form-field>
-    </div>
-    <div class="d-flex justify-content-end">
-      <button mat-raised-button color="primary" (click)="create(templateId.value,desc.value,Number(cost.value))" [disabled]="templateId.value==null || Number(cost.value)==0" >Создать</button>
-    </div>
+      <br>
+      <mat-divider></mat-divider>
+      <div *ngIf="templates.length>0">
+        <div>Добавление доп. работы</div>
+        <div class="d-flex justify-content-between align-items-baseline">
+          <mat-form-field>
+            <mat-label>Тип работы</mat-label>
+            <mat-select #templateId>
+              <mat-option *ngFor="let t of this.templates" [value]="t.id">{{t.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field style="flex: 2 1 0">
+            <mat-label>Описание</mat-label>
+            <input #desc matInput type="text" [defaultValue]="''">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Норма</mat-label>
+            <input #cost type="number" matInput min="0" [defaultValue]="'0'">
+          </mat-form-field>
+        </div>
+        <div class="d-flex justify-content-end">
+          <button mat-raised-button color="primary" (click)="create(templateId.value,desc.value,Number(cost.value))" [disabled]="templateId.value==null || Number(cost.value)==0 || isLoading" >Создать</button>
+        </div>
+      </div>
+
     </div>
 
+    <ng-template #newWork>
+      <div>
+        <mat-form-field>
+          <mat-label>Произв. линия</mat-label>
+          <mat-select [(ngModel)]="workProdLine">
+            <mat-option [value]="'LUMAR'">LUMAR</mat-option>
+            <mat-option [value]="'SVETON'">SVETON</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <div *ngFor="let ac of this.workCosts; let i = index" class="d-flex justify-content-between">
+          <div>{{i+1}}.{{ac.additionalCostTemplate?.name}}</div>
+          <div>{{ac.description}}</div>
+          <div>{{ac.cost}}
+          </div>
+        </div>
+        <br>
+        <mat-divider></mat-divider>
+        <br>
+        <div *ngIf="templates.length>0">
+          <div>Спиок доп. работ</div>
+          <div class="d-flex justify-content-between align-items-baseline">
+            <mat-form-field>
+              <mat-label>Тип работы</mat-label>
+              <mat-select #templateId>
+                <mat-option *ngFor="let t of this.templates" [value]="t">{{t.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field style="flex: 2 1 0">
+              <mat-label>Описание</mat-label>
+              <input #desc matInput type="text" [defaultValue]="''">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Норма</mat-label>
+              <input #cost type="number" matInput min="0" [defaultValue]="'0'">
+            </mat-form-field>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button mat-raised-button color="primary"
+                    (click)="addCost(templateId.value,desc.value,Number(cost.value)); templateId.value=null;desc.value='';cost.value=''"
+                    [disabled]="templateId.value==null || Number(cost.value)==0" > Добавить</button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
   </div>
+
+
 
   <div mat-dialog-actions>
     <div  style="display: flex;justify-content: space-between; width: 100%">
 
 
-      <button mat-raised-button color="primary" (click)="ok()">Закрыть</button>
+      <button mat-raised-button color="primary" (click)="ok()" [disabled]="isLoading">Закрыть</button>
+      <button mat-raised-button color="primary" *ngIf="!this.data.work" (click)="createPostWork()" [disabled]="isLoading">Создать</button>
     </div>
   </div>
 </div>

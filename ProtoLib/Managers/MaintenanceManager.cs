@@ -10,6 +10,26 @@ namespace ProtoLib.Managers;
 
 public class MaintenanceManager
 {
+    public void FillWorkCostAndComment(long workId)
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            var works  = c.Works.Include(x=>x.Post).
+                ThenInclude(x=>x.PostCreationKeys).Where(x => x.Id==workId).ToList();
+            var artilces = works.Select(x => x.Article).ToList();
+            CrpManager crp = new CrpManager();
+            var data = crp.LoadWorkData(artilces);
+            foreach (var work in works)
+            {
+                var keys = work.Post.PostCreationKeys.Select(x=>x.Key).ToList();
+                var workCreateTemplates =data.Where(x => keys.Contains(x.PostKey) && x.Article==work.Article).ToList();
+                work.Comments = workCreateTemplates.SelectMany(x => x.Comment.Split('\r', StringSplitOptions.RemoveEmptyEntries)).ToList();
+                work.SingleCost = workCreateTemplates.Sum(x => x.SingleCost);
+            }
+
+            c.SaveChanges();
+        }
+    }
     public void FillWorkCostAndComment()
     {
         using (BaseContext c = new BaseContext())

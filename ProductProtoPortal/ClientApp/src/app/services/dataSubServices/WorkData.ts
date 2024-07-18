@@ -10,6 +10,16 @@ import * as http from "http";
 export  class WorkData{
   constructor(private transport:TransportService, private dataService:DataService) {
   }
+
+  public CheckCrp(id:number):Observable<boolean>{
+    return this.transport
+      .Get(`/works/${id}/CheckCrp`, new HttpParams())
+      .pipe(map<ApiAnswer|null,boolean>(x=>{
+        if(x!=null){
+          return x.result;
+        }
+      }));
+  }
   public EndProduction(work:Work):Observable<boolean|null>{
     return this.transport
       .Get(`/works/${work.structure.id}/endProduction`, new HttpParams())

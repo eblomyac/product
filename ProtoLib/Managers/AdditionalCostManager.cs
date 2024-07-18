@@ -1,23 +1,51 @@
-﻿using ProtoLib.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using ProtoLib.Model;
 
 namespace ProtoLib.Managers;
 
 public class AdditionalCostManager
 {
-    public List<AdditionalCostTemplate> List(bool showDisabled=false)
+    public List<AdditionalCostTemplate> ListAll()
     {
         using (BaseContext c = new BaseContext())
         {
-            if (showDisabled)
-            {
-                return c.AdditionalCostTemplates.ToList();    
-            }
-            else
-            {
-                return c.AdditionalCostTemplates.Where(x=>!x.Disabled).ToList();
-            }
+           
+            return c.AdditionalCostTemplates.AsNoTracking().ToList();
+           
             
         }
+    }
+    public List<AdditionalCostTemplate> ListForPost()
+    {
+        using (BaseContext c = new BaseContext())
+        {
+           
+                return c.AdditionalCostTemplates.AsNoTracking().Where(x=>x.CanPost).ToList();
+           
+            
+        }
+    }
+    public List<AdditionalCostTemplate> ListForItem()
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            return c.AdditionalCostTemplates.AsNoTracking().Where(x=>x.CanItem).ToList();
+            
+        }
+    }
+
+    public Work CreateForPost(string postId, string lineId, string accName, List<AdditionalCost> costs)
+    {
+        WorkCreateManager wcm = new WorkCreateManager();
+        var work = wcm.CreateAdditionalWork(postId, lineId, accName, costs.Select(x=>x.AdditionalCostTemplate.Name +" " + x.Description).ToList());
+        foreach (var ac in costs)
+        {
+            ac.WorkId = work.Id;
+            CreateForWork(ac);
+        }
+
+        return work;
+
     }
 
     public AdditionalCost CreateForWork(AdditionalCost ac)
@@ -54,7 +82,8 @@ public class AdditionalCostManager
                     c.AdditionalCostTemplates.Add(exist);
                 }
 
-                exist.Disabled = add.Disabled;
+                exist.CanPost = add.CanPost;
+                exist.CanItem = add.CanItem;
                 result.Add(exist);
                 
             }

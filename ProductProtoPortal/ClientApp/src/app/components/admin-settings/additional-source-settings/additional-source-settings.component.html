@@ -7,14 +7,16 @@
 
   <table class="mt-4 w-100">
     <colgroup>
-      <col span="1" style="width: 80%;">
-      <col span="1" style="width: 20%;">
+      <col span="1" style="width: 70%;">
+      <col span="1" style="width: 15%;">
+      <col span="1" style="width: 15%;">
 
     </colgroup>
     <tbody>
     <tr>
       <th>Название</th>
-      <th>Запрещена</th>
+      <th>Для артикула</th>
+      <th>Для участка</th>
     </tr>
     <tr *ngIf="this.templates.length==0">
       <td style="padding-top: 7px; padding-bottom: 3px">
@@ -26,7 +28,10 @@
         {{p.name}}
       </td>
       <td>
-        <mat-checkbox color="primary" [(ngModel)]="p.disabled"></mat-checkbox>
+        <mat-checkbox color="primary" [(ngModel)]="p.canItem"></mat-checkbox>
+      </td>
+      <td>
+        <mat-checkbox color="primary" [(ngModel)]="p.canPost"></mat-checkbox>
       </td>
     <tr>
 

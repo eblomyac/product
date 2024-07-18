@@ -270,7 +270,27 @@ namespace ProtoLib.Managers
             return w;
         }
 
-     
+
+        public Work CreateAdditionalWork(string postId,string prodLine, string accName, List<string> cooment )
+        {
+            Work w = new Work();
+            w.Description = $"Доп. работа {postId}";
+            w.Article = $"Работа {prodLine}";
+            w.Count = 1;
+            w.MovedFrom = "";
+            w.MovedTo = "";
+            w.DeadLine = DateTime.Today;
+            w.PostId = postId;
+            w.Status = WorkStatus.waiting;
+            w.Comments = cooment;
+            w.CreatedStamp = DateTime.Now;
+            w.Priority = 10;
+            w.ProductLineId = prodLine;
+            w.OrderNumber = 100;
+            WorkSaveManager wsm = new WorkSaveManager(accName);
+            var work = wsm.SaveWorks(new List<Work>() { w })[0];
+            return work;
+        }
     }
 
     public static class WorkAggregator

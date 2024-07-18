@@ -10,6 +10,7 @@ export interface AdditionalCost{
 export interface AdditionalCostTemplate{
   id:number;
   name:string;
-  disabled:boolean;
+  canPost:boolean;
+  canItem:boolean;
 
 }

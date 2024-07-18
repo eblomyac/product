@@ -126,6 +126,7 @@ export class Work {
         //result.push('Изменить участок передачи')
       }
       result.push('Открыть тех. карту');
+      result.push('Проверить нормы и операции');
 
     }
     return result;
@@ -157,6 +158,13 @@ export class Work {
     switch (action) {
       case '[ЗАВЕРШИТЬ ПРОИЗВОДСТВО]':
         this.endProduction();
+        break;
+      case 'Проверить нормы и операции':
+        this.dataService.Work.CheckCrp(this.structure.id).subscribe(x=>{
+          if(x) {
+            this.updateStructure();
+          }
+        });
         break;
       case 'Вернуть':
         //this.changeStatus(0);

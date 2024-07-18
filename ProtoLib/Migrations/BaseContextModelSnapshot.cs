@@ -66,7 +66,10 @@ namespace ProtoLib.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<bool>("Disabled")
+                    b.Property<bool>("CanItem")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanPost")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")

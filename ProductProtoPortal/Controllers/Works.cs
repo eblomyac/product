@@ -162,6 +162,15 @@ namespace ProductProtoPortal.Controllers
             var result = wss.ChangeStatus(id,status,user.SAM);
             return new OkObjectResult(new ApiAnswer(result,"",result!= null));
         }
+
+        [HttpGet]
+        [Route("{id}/[action]")]
+        public IActionResult CheckCrp([FromRoute]long id)
+        {
+            MaintenanceManager mm = new MaintenanceManager();
+            mm.FillWorkCostAndComment(id);
+            return new OkObjectResult(new ApiAnswer(true));
+        }
         [HttpPut]
         [Route("{id}/[action]")]
         public IActionResult Split([FromQuery]int splitCount, [FromRoute]long id)

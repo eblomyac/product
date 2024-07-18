@@ -17,6 +17,7 @@ import {NumberDialogComponent} from "../../dialogs/number-dialog/number-dialog.c
 import {addWarning} from "@angular-devkit/build-angular/src/utils/webpack-diagnostics";
 import {DailySource} from "../../model/DailySource";
 import {DailySourceDialogComponent} from "../../dialogs/daily-source-dialog/daily-source-dialog.component";
+import {AdditionalCostDialogComponent} from "../../dialogs/additional-cost-dialog/additional-cost-dialog.component";
 
 @Component({
   selector: 'app-post-view',
@@ -63,6 +64,25 @@ export class PostViewComponent implements OnInit, OnDestroy {
       return this.waitWorks;
     }else{
       return  this.waitWorks.filter(x => x.structure.issues.filter(z => z.returnBackPostId.length > 0).length == 0)
+    }
+  }
+  async makeAdditionalWork(){
+    let x = this.matDialog.open(AdditionalCostDialogComponent, {
+      data: {
+        work:null,
+        dataService:this.data,
+        postId:this.selectedPost
+      },
+
+      autoFocus: true,
+      hasBackdrop: true,
+      disableClose:true
+
+
+    });
+    let v = await firstValueFrom(x.afterClosed())
+    if(v){
+     this.loadWorks();
     }
   }
   selectedPostChange() {
