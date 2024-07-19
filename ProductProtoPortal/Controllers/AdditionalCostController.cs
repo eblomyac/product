@@ -21,6 +21,10 @@ public class AdditionalCostController:Controller
         }
 
         List<AdditionalCost> data = JsonConvert.DeserializeObject<List<AdditionalCost>>(toParse);
+        if (data.Count == 0 || data is null)
+        {
+            return new BadRequestResult();
+        }
 
         AdditionalCostManager acm = new AdditionalCostManager();
         var work = acm.CreateForPost(post, prodLine, user.SAM, data);

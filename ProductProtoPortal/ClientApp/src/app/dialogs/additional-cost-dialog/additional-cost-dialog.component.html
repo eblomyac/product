@@ -95,7 +95,7 @@
 
 
       <button mat-raised-button color="primary" (click)="ok()" [disabled]="isLoading">Закрыть</button>
-      <button mat-raised-button color="primary" *ngIf="!this.data.work" (click)="createPostWork()" [disabled]="isLoading">Создать</button>
+      <button mat-raised-button color="primary" *ngIf="!this.data.work" (click)="createPostWork()" [disabled]="isLoading || this.workCosts.length==0">Создать</button>
     </div>
   </div>
 </div>
