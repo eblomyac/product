@@ -51,6 +51,19 @@ public class MaintenanceManager
             c.SaveChanges();
         }
     }
+
+    public void CheckIssues()
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            var issues = c.Issues.Include(x=>x.Work).Where(x => x.Resolved == null && x.Work.Status == WorkStatus.running).ToList();
+            WorkStatusChanger wss = new WorkStatusChanger();
+            foreach (var issue in issues)
+            {
+                wss.ChangeStatus(issue.WorkId, WorkStatus.waiting, "maintenance");
+            }
+        }
+    }
     public void FillWorkLog()
     {
         using (BaseContext c = new BaseContext())

@@ -25,6 +25,9 @@ export class WorkCostInfoComponent {
   filteredArticles:Observable<string[]>|null=null;
   costData:CostData[]=[];
 
+  PostSum(postIndex:number):number{
+    return this.costData.reduce((sum,x)=>x.costs[postIndex]*x.count+sum,0);
+  }
   constructor(private data:DataService,private clipboard: Clipboard) {
     this.isLoadPosts=true;
     this.isLoadArticles = true;
@@ -60,15 +63,24 @@ export class WorkCostInfoComponent {
       s+=x.article+'\t';
       s+=x.count+'\t';
       x.costs.forEach(z=>{
-        if(this.hideNulls && z<0.001){
+        if(this.hideNulls && z*x.count<0.001){
           s+='\t';
         }else{
-          s+=z.toFixed(2).replace('.',',')+'\t';
+          s+=(z*x.count).toFixed(2).replace('.',',')+'\t';
         }
-
       });
       s+='\r\n';
     });
+    s+='Сумма:\t\t\t';
+    this.posts.forEach((x,i)=>{
+      let z = this.PostSum(i);
+      if(this.hideNulls && z<0.001) {
+        s+='\t';
+      }else{
+        s+=z.toFixed(2).replace('.',',')+'\t';
+      }
+    });
+    s+=this.PostSum(this.posts.length).toFixed(2).replace('.',',')+'\r\n';
     this.clipboard.copy(s);
   }
   loadArticleData(article:string){

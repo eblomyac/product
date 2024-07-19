@@ -66,8 +66,24 @@
       </ng-container>
       <ng-template #showAll>{{(pdata * cd.count| number : '1.2-2')}}</ng-template>
     </td>
-    <td>
 
+  </tr>
+  <br>
+  <tr *ngIf="costData.length>0">
+    <td>Сумма</td>
+    <td></td>
+    <td></td>
+    <td class="text-end" *ngFor="let p of this.posts; let i = index">
+      <ng-container *ngIf="hideNulls;else showAll">
+        {{this.PostSum(i)>0.001?(this.PostSum(i)| number : '1.2-2'):''}}
+      </ng-container>
+      <ng-template #showAll>{{(this.PostSum(i)| number : '1.2-2')}}</ng-template>
+    </td>
+    <td class="text-end">
+      <ng-container *ngIf="hideNulls;else showAll">
+        {{this.PostSum(this.posts.length)>0.001?(this.PostSum(this.posts.length)| number : '1.2-2'):''}}
+      </ng-container>
+      <ng-template #showAll>{{(this.PostSum(this.posts.length)| number : '1.2-2')}}</ng-template>
     </td>
   </tr>
 
