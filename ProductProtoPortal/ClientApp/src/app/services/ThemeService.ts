@@ -46,6 +46,11 @@ export class ThemeService {
     document.documentElement.style.setProperty( '--table-even-bg-color','rgb(30, 30, 30,0.20)');
     document.documentElement.style.setProperty( '--table-sticky-bg-color','rgb(74, 74, 74,1)');
 
+
+    document.documentElement.style.setProperty( '--load-block-back','rgba(32,32,32,0.8)');
+
+
+
   }
   setLightColorValues(){
     document.documentElement.style.setProperty('--scroll-color', '#3F50B4');
@@ -62,6 +67,8 @@ export class ThemeService {
     document.documentElement.style.setProperty( '--table-hover-bg-color','#3F50B420');
     document.documentElement.style.setProperty( '--table-even-bg-color','rgb(60, 60, 60,0.15)');
     document.documentElement.style.setProperty( '--table-sticky-bg-color','rgb(225, 225, 225,1)');
+
+    document.documentElement.style.setProperty( '--load-block-back','rgba(220,220,220,0.8)');
   }
 
   setDark(){

@@ -10,6 +10,9 @@
   createdBy: string
   closedBy: string
   lines: TransferLine[]
+  totalItemsCount:number;
+  totalItemsTransfered:number;
+  orders:string;
 }
 
 export interface TransferLine {

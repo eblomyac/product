@@ -1,0 +1,110 @@
+<div class="container-fluid" style="height: 90vh">
+  <div class="row">
+    <div class="col-8 d-flex justify-content-start align-items-baseline" style="column-gap: 5px">
+      <mat-form-field>
+        <mat-label>От участка</mat-label>
+        <mat-select [(ngModel)]="filter.fromPost" [disabled]="isLoadingPost">
+          <mat-option [value]="null">Не важно</mat-option>
+          <mat-option *ngFor="let p of this.postList" [value]="p.name">{{p.name}}</mat-option>
+        </mat-select>
+        <mat-spinner *ngIf="isLoadingPost" matPrefix diameter="20"></mat-spinner>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>В участок</mat-label>
+        <mat-select [(ngModel)]="filter.toPost" [disabled]="isLoadingPost">
+          <mat-option [value]="null">Не важно</mat-option>
+          <mat-option *ngFor="let p of this.postList" [value]="p.name">{{p.name}}</mat-option>
+        </mat-select>
+        <mat-spinner *ngIf="isLoadingPost" matPrefix diameter="20"></mat-spinner>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Содержит заказ</mat-label>
+        <input matInput type="number" [(ngModel)]="filter.orderNumber">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Содержит артикул</mat-label>
+        <input matInput type="text" [(ngModel)]="filter.articleId" >
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Период</mat-label>
+        <mat-date-range-input [rangePicker]="periodPicker">
+          <input matStartDate placeholder="Начало" [(ngModel)]="this.filter.from" [max]="this.filter.to">
+          <input matEndDate placeholder="Конец" [(ngModel)]="this.filter.to" [min]="this.filter.from">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="periodPicker"></mat-datepicker-toggle>
+        <mat-date-range-picker #periodPicker></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+    <div class="col-2 offset-2 d-lg-flex justify-content-end align-items-center" style="column-gap: 10px">
+      <button mat-raised-button color="primary" (click)="this.offset=0;clear();load();">
+        Сбросить
+      </button>
+      <button mat-raised-button color="primary" (click)="this.offset=0;this.load()">
+        Поиск
+      </button>
+    </div>
+
+  </div>
+  <div class="row" style="max-height: 70vh">
+    <div>
+      <table class="w-100" style="height: 70vh" >
+        <colgroup>
+          <col style="width: 6%">
+          <col style="width: 12%">
+          <col style="width: 12%">
+          <col style="width: 10%">
+          <col style="width: 10%">
+          <col style="width: 10%">
+          <col style="width: 10%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr class="order-stat-table-header">
+          <th>#</th>
+          <th >Откуда</th>
+          <th>Куда</th>
+          <th>Создан</th>
+          <th>Принят</th>
+          <th class="text-end">Кол-во отдано</th>
+          <th class="text-end">Кол-во принято</th>
+          <th class="text-end">Заказы</th>
+
+        </tr>
+        <tr *ngIf="transfers.length==0">
+          <td colspan="8" class="text-center" style="font-size: 30px">Не обнаружено ни одного акта</td>
+        </tr>
+        <tr *ngFor="let t of transfers" class="order-stat-table-row">
+          <td>
+              <button mat-icon-button color="primary" (click)="view(t)"><mat-icon>zoom_in</mat-icon></button>
+              <button mat-icon-button color="primary" (click)="print(t)"><mat-icon>print</mat-icon></button>
+          </td>
+          <td>{{t.postFromId}}</td>
+          <td>{{t.postToId}}</td>
+          <td>{{t.createdStamp|date:'dd.MM HH:mm'}}</td>
+          <td>{{t.closedStamp?(t.closedStamp|date:'dd.MM HH:mm'):'Нет'}}</td>
+          <td class="text-end">{{t.totalItemsCount}}</td>
+          <td class="text-end">{{t.totalItemsTransfered}}</td>
+          <td class="text-end">{{t.orders}}</td>
+        </tr>
+      </table>
+      <div *ngIf="isLoadingData" style="position: relative; top:-70vh;left: 0px; height: 70vh; width: 100%;
+      background-color: var(--load-block-back)" class="d-flex justify-content-center align-items-center">
+        <div class="d-flex align-items-start" style="column-gap: 10px">
+          <mat-spinner diameter="30" style="display: inline"></mat-spinner>
+          <span style="font-size: 30px">Загрузка данных</span>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="row">
+    <div class="offset-10 col-2 d-flex justify-content-between align-items-baseline mt-2">
+
+      <button mat-raised-button color="primary" [disabled]="offset==0" (click)="this.offset=this.offset-10;this.load()"><<</button>
+      <span>Страница: {{offset/10 +1}}</span>
+      <button mat-raised-button color="primary" [disabled]="transfers.length<10" (click)="this.offset=this.offset+10;this.load()">>></button>
+    </div>
+
+  </div>
+</div>
+

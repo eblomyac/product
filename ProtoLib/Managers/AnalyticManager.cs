@@ -4,6 +4,7 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using KSK_LIB.Maconomy;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ProtoLib.Model;
@@ -17,6 +18,7 @@ namespace ProtoLib.Managers
             DataTable dt = new DataTable();
             dt.Columns.Add("Заказ");
             dt.Columns.Add("Артикул");
+            dt.Columns.Add("Наименование");
             dt.Columns.Add("Дата сдачи");
             dt.Columns.Add("Количество");
 
@@ -42,6 +44,7 @@ namespace ProtoLib.Managers
             {
                 DataRow row = dt.NewRow();
                 row["Артикул"] = line.Article;
+                row["Наименование"] = line.ItemText;
                 row["Заказ"] = line.Order;
                 row["Количество"] = line.Count;
                 row["Норматив всего"] = line.TotalCost;
@@ -196,11 +199,12 @@ namespace ProtoLib.Managers
             return result;
         }
 
+        
         public List<long> ActualOrders()
         {
             using (BaseContext c = new BaseContext(""))
             {
-                return c.Works.Where(x => x.Status != WorkStatus.ended).Select(x => x.OrderNumber).Distinct().ToList()
+                return c.Works.Where(x => x.Status != WorkStatus.ended && x.OrderNumber!=100).Select(x => x.OrderNumber).Distinct().ToList()
                     .OrderBy(x => x).ToList();
             }
         }
@@ -517,6 +521,36 @@ namespace ProtoLib.Managers
 
                 dynamic result = new ExpandoObject();
                 result.ArticleStat = new List<object>();
+
+                DataTable itemTexts = null;
+                var allArts = c.Works.Where(x => orders.Contains(x.OrderNumber)).Select(x => x.Article).Distinct().ToList();
+                using (MaconomyBase mb = new MaconomyBase())
+                {
+                    int loop = 0;
+                    do
+                    {
+                        var partOfArts = allArts.Skip(999 * loop).Take(999).ToList();
+                        if (partOfArts.Count == 0)
+                        {
+                            break;
+                        }
+
+                        string artQuert = string.Join(',', partOfArts.Select(x => $"{MaconomyBase.ToMaconomyString(x)}"));
+                        var t = mb.getTableFromDB(
+                            $"SELECT ITEMNUMBER,ITEMTEXT1 from iteminformation where itemnumber in ({artQuert})");
+                        if (itemTexts == null)
+                        {
+                            itemTexts = t;
+                        }
+                        else
+                        {
+                            itemTexts.Merge(t);
+                        }
+
+                        loop++;
+                    } while (loop < 100);
+
+                }
                 foreach (var orderId in orders)
                 {
                     var orderWorks = c.Works.AsNoTracking()
@@ -529,6 +563,8 @@ namespace ProtoLib.Managers
                     {
                         articles = articles.Where(x => x.Contains(articleFilter));
                     }
+
+                 
                     
                     foreach (var article in articles)
                     {
@@ -536,7 +572,16 @@ namespace ProtoLib.Managers
 
                         articleStat.Order = orderId;
                         articleStat.Article = article;
-                        
+
+                        var textRow = itemTexts.Select($"ITEMNUMBER='{article}'");
+                        if (textRow.Length > 0)
+                        {
+                            articleStat.ItemText = MaconomyBase.makeStringRu(textRow[0][1].ToString());
+                        }
+                        else
+                        {
+                            articleStat.ItemText = "";
+                        }
                        
                         result.ArticleStat.Add(articleStat);
                         var articleWorks = orderWorks.Where(x => x.Article == article).ToList();

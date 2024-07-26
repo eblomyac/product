@@ -20,7 +20,7 @@ public class ReportManager
         DateTime end = to.HasValue ? to.Value : DateTime.Today;
 
         List<string> lines = new List<string>();
-        using (BaseContext c = new BaseContext(""))
+        using (BaseContext c = new BaseContext("system"))
         {
             lines = c.ProductionLines.Select(x => x.Id).Distinct().ToList();
         }
@@ -30,8 +30,16 @@ public class ReportManager
         {
             foreach (var productionLine in lines)
             {
-                dynamic dateRep = DailyReport(date, productionLine);
-                result.Add(dateRep);
+                try
+                {
+                    dynamic dateRep = DailyReport(date, productionLine);
+                    result.Add(dateRep);
+                }
+                catch (Exception exc)
+                {
+                    Console.WriteLine(exc.Message);
+                }
+                
                 
             }
             date=date.AddDays(1);
@@ -155,8 +163,9 @@ public class ReportManager
                     w.Cost = wp.TotalCost;
                     w.AdditionalCost = addCost.Where(x=>x.Id==wp.WorkId).Sum(z=>z.Cost);
 
-                    if (macInfo != null)
+                    if (macInfo != null && wp.OrderNumber!=100)
                     {
+                        
                         DataRow[] thisOrderRows = macInfo.Select($"TransactionNumber='{wp.OrderNumber}'");
                         int maxLineNumber = thisOrderRows.Length;
 

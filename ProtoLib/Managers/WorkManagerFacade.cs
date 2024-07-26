@@ -35,8 +35,9 @@ namespace ProtoLib.Managers
                 {
                     return false;
                 }
-
+                
                 var work = c.Works.AsNoTracking().Include(x=>x.Post).FirstOrDefault(x => x.Id == workId);
+                if (work.OrderNumber==100) return true;
                 if (work.Post.CanEnd == false)
                 {
                     return false;

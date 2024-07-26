@@ -18,6 +18,8 @@ export class TransferListComponent {
   isAllCancel=false;
   allCancelReason = '';
 
+  viewItem:Transfer|null=null;
+
   selectAllCancel(){
     if(this.isAllCancel){
       this.selectedTransfer?.lines.forEach(x=>x.transferedCount=0);
@@ -42,8 +44,11 @@ export class TransferListComponent {
   }
 
   constructor(private dialogRef:MatDialogRef<TransferListComponent>,@Inject(MAT_DIALOG_DATA)
-  public data: {transfers:Array<Transfer>, dataService:DataService, type:'in'|'out'}) {
-
+  public data: {transfers:Array<Transfer>, dataService:DataService, type:'in'|'out', viewItem:Transfer}) {
+    if(data.viewItem){
+      this.selectedTransfer = data.viewItem;
+      this.viewItem = data.viewItem;
+    }
   }
   close(){
     this.dialogRef.close(false);

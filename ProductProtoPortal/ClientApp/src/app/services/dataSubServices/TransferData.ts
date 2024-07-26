@@ -25,6 +25,19 @@ export class TransferData{
         return null;
     }))
   }
+  public list(offset:number, filter:any){
+    return this.transportService.Post('/transfer/list', new HttpParams().append('offset',offset), filter)
+      .pipe(map<ApiAnswer|null,Transfer[]|null>(x=>{
+
+      if(x && x.isSuccess){
+        return x.result as Transfer[];
+      }else if(x?.isSuccess==false){
+        console.log(x.message);
+      }
+      return null;
+    }))
+
+  }
   public inTransfers(post:string):Observable<Transfer[]|null>{
     return this.transportService.Get('/transfer/listin', new HttpParams().append('postId',post))
       .pipe(map<ApiAnswer|null,Transfer[]|null>(x=>{

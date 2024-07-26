@@ -87,6 +87,8 @@ import localeRu from '@angular/common/locales/ru';
 import localeRuExtra from '@angular/common/locales/extra/ru';
 import {WorkCostInfoComponent} from "./components/Info/work-cost-info/work-cost-info.component";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {ActHistoryComponent} from "./components/Info/act-history/act-history.component";
+import {InfoComponent} from "./components/Info/info.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -103,8 +105,8 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         WorkPrepareComponent,
         WorkStarterComponent,
         OperatorComponent,
-        WorkCompactViewComponent,
-        PostDialogComponent,
+        WorkCompactViewComponent, InfoComponent,
+        PostDialogComponent, ActHistoryComponent,
         InfoViewComponent, WorkCostInfoComponent,
         NumberDialogComponent, CalendarComponent,
         AnalyticComponent, PersonnelComponent,
@@ -132,7 +134,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
       {path: 'card', component: CardViewComponent},
       {path: 'card-search', component: CardfinderComponent},
       {path: 'work-priority', component: PriorityListComponent},
-      {path: 'info', component: WorkCostInfoComponent}
+      {path: 'info', component: InfoComponent}
     ]),
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')

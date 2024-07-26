@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProtoLib.Model;
 
@@ -22,5 +23,45 @@ public class Transfer
     
     public List<TransferLine> Lines { get; set; }
     
+    [NotMapped]
+    public string Orders {
+        get
+        {
+            if (this.Lines != null)
+            {
+                return string.Join(", ", this.Lines.Select(x => x.OrderNumber).Distinct());
+            }
+
+            return "";
+        }
+    }
+
+    [NotMapped]
+    public int TotalItemsCount
+    {
+        get
+        {
+            if (this.Lines != null)
+            {
+                return this.Lines.Sum(x => x.Count);
+            }
+
+            return 0;
+        }
+    }
+
+    [NotMapped]
+    public int TotalItemsTransfered
+    {
+        get
+        {
+            if (this.Lines != null)
+            {
+                return this.Lines.Sum(x => x.TransferedCount);
+            }
+
+            return 0;
+        }
+    }
     
 }

@@ -29,7 +29,6 @@
       <Folder Include="ClientApp\.angular\cache\13.3.4\angular-webpack\31ab68e39bd9db6e09216848768bc28a4a0a85ec" />
       <Folder Include="ClientApp\.angular\cache\13.3.4\babel-webpack" />
       <Folder Include="ClientApp\src\app\components\hr\" />
-      <Folder Include="ClientApp\src\app\components\Info\" />
       <Folder Include="ClientApp\src\app\components\TechCard" />
       <Folder Include="download\" />
       <Folder Include="pdf\" />

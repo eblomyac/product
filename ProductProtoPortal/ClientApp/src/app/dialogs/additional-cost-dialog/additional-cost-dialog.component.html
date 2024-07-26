@@ -1,6 +1,6 @@
 <div>
   <div mat-dialog-title>
-    <span>Дополнительные работы {{this.data.work?'для позиции':'для поста'}}</span>
+    <span>Дополнительные работы {{this.data.work?'для позиции':'для участка'}}</span>
   </div>
   <div style="width: 750px" mat-dialog-content>
 
@@ -51,17 +51,25 @@
         </mat-form-field>
       </div>
       <div>
+        <br>
+        <div *ngIf="workProdLine.length<1">
+          <h4>Укажите производственную линию в поле выше</h4>
+        </div>
+        <div *ngIf="workCosts.length==0 && workProdLine.length>0">
+          <h4>Выберите тип доп. работы ниже, укажите норму и, при желании, описание, после нажмите добавить</h4>
+          <h4>Вы можете добавить несколько доп. работ, когда полностью сформируете список, нажмите кнопку "создать" для завершения</h4>
+        </div>
         <div *ngFor="let ac of this.workCosts; let i = index" class="d-flex justify-content-between">
-          <div>{{i+1}}.{{ac.additionalCostTemplate?.name}}</div>
-          <div>{{ac.description}}</div>
-          <div>{{ac.cost}}
+          <div style="font-size: 16px; font-weight: bold">{{i+1}}.{{ac.additionalCostTemplate?.name}}</div>
+          <div style="font-size: 16px; font-weight: bold">{{ac.description}}</div>
+          <div style="font-size: 16px; font-weight: bold">{{ac.cost}}
           </div>
         </div>
         <br>
         <mat-divider></mat-divider>
         <br>
-        <div *ngIf="templates.length>0">
-          <div>Спиок доп. работ</div>
+        <div *ngIf="templates.length>0 && this.workProdLine.length>0">
+          <div>Список доп. работ</div>
           <div class="d-flex justify-content-between align-items-baseline">
             <mat-form-field>
               <mat-label>Тип работы</mat-label>
@@ -84,6 +92,7 @@
                     [disabled]="templateId.value==null || Number(cost.value)==0" > Добавить</button>
           </div>
         </div>
+
       </div>
     </ng-template>
   </div>
@@ -95,7 +104,7 @@
 
 
       <button mat-raised-button color="primary" (click)="ok()" [disabled]="isLoading">Закрыть</button>
-      <button mat-raised-button color="primary" *ngIf="!this.data.work" (click)="createPostWork()" [disabled]="isLoading || this.workCosts.length==0">Создать</button>
+      <button mat-raised-button color="primary" *ngIf="!this.data.work" (click)="createPostWork()" [disabled]="isLoading || this.workCosts.length==0 || this.workProdLine==null|| this.workProdLine.length<1">Создать</button>
     </div>
   </div>
 </div>

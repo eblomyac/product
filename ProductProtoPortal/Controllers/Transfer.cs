@@ -15,6 +15,29 @@ namespace ProductProtoPortal.Controllers
     [Route("/[controller]")]
     public class Transfer:Controller
     {
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> List(int offset)
+        {
+            try
+            {
+                string data = "";
+                using (StreamReader sr = new StreamReader(Request.Body))
+                {
+                    data = await sr.ReadLineAsync();
+                }
+                TransferFilter tf = JsonConvert.DeserializeObject<TransferFilter>(data);
+                TransferManager tm = new TransferManager();
+                var result = await tm.List(offset, tf);
+                return new OkObjectResult(new ApiAnswer(result).ToString());
+            }
+            catch (Exception exc)
+            {
+                return new OkObjectResult(new ApiAnswer(null, exc.Message, false));
+            }
+            
+        }
+        
         [HttpGet]
         [Route("{id}/[action]")]
         public IActionResult Print([FromRoute]long id)

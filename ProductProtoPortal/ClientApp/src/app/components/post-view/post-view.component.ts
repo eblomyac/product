@@ -222,10 +222,8 @@ export class PostViewComponent implements OnInit, OnDestroy {
     this.transfers();
     this.sendedUpdateTimer = setInterval(() => {
       this.transfers();
-      this.endedWorks.forEach(x => {
-        x.updateStructure();
-      })
-    }, 60000 * 7);
+      this.loadWorks();
+    }, 60000 * 5);
     workEvent.OnWorkChangedStatus.subscribe(x => {
       if (!x.isSuccess) {
         this.returnBack(x.work, x.from, x.to);

@@ -91,7 +91,7 @@ export class Work {
     let result: string[] = [];
     if (this.structure) {
 
-      if(this.structure.canClosed && this.structure.status>20){
+      if((this.structure.canClosed||this.structure.orderNumber==100) && this.structure.status>20){
         result.push('[ЗАВЕРШИТЬ ПРОИЗВОДСТВО]')
       }
 

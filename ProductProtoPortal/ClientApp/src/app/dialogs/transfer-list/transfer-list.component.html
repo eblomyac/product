@@ -1,5 +1,5 @@
 <div>
-  <div mat-dialog-title>Акты приемопередачи {{this.data.type=='out'?'(исходящие)':'(вхоядщие)'}}</div>
+  <div mat-dialog-title>Акты приемопередачи {{this.viewItem?'':(this.data.type=='out'?'(исходящие)':'(входящие)')}}</div>
   <div style="width: 900px;min-height: 500px" mat-dialog-content>
     <div class="row" *ngIf="!edit">
       <div class="col-4" >

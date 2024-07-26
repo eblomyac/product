@@ -5,6 +5,15 @@ using ProtoLib.Model;
 
 namespace ProtoLib.Managers;
 
+public class TransferFilter
+{
+    public DateTime? from { get; set; }
+    public DateTime? to { get; set; }
+    public string articleId { get; set; }
+    public string fromPost { get; set; }
+    public string toPost { get; set; }
+    public long? orderNumber { get; set; }
+}
 public class TransferManager
 {
     public string Print(long id)
@@ -221,5 +230,48 @@ public class TransferManager
             return notClosed;
 
         }
-    } 
+    }
+
+    public async Task<List<Transfer>> List(int offset, TransferFilter tf)
+    {
+        
+        
+
+        using (BaseContext c = new BaseContext())
+        {
+            var q = c.Transfers.Include(x=>x.Lines).Where(x=>x.Id>0).OrderByDescending(x=>x.Id);
+            if (tf.from.HasValue)
+            {
+                 q = q.Where(x => x.CreatedStamp.Date >= tf.from.Value.AddHours(3).Date).OrderByDescending(x=>x.Id);
+            }
+
+            if (tf.to.HasValue)
+            {
+                q = q.Where(x => x.CreatedStamp.Date <= tf.to.Value.AddHours(3).Date).OrderByDescending(x=>x.Id);
+            }
+
+            if (!string.IsNullOrWhiteSpace(tf.fromPost))
+            {
+                q = q.Where(x => x.PostFromId == tf.fromPost).OrderByDescending(x=>x.Id);
+            }
+
+            if (!string.IsNullOrWhiteSpace(tf.toPost))
+            {
+                q = q.Where(x => x.PostToId == tf.toPost).OrderByDescending(x=>x.Id);
+            }
+
+            if (tf.orderNumber.HasValue && tf.orderNumber.Value != 0)
+            {
+                q = q.Where(x => x.Lines.Count(z => z.OrderNumber == tf.orderNumber.Value) > 0).OrderByDescending(x=>x.Id);
+            }
+
+            if (!string.IsNullOrWhiteSpace(tf.articleId))
+            {
+                q = q.Where(x => x.Lines.Count(z => z.Article.Contains(tf.articleId)) > 0).OrderByDescending(x=>x.Id);
+            }
+
+            var result =  await q.Skip(offset).Take(10).ToListAsync();
+            return result;
+        }
+    }
 }
