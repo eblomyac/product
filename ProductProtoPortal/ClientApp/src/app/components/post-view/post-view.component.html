@@ -3,51 +3,51 @@
   <div class="row">
     <div class="col-12 text-center post-column-caption">
       <div style="display: flex; justify-content: space-between; column-gap: 10px">
-        <div class="post-column-title" style="margin-left: 30px">
+        <div style="display: flex; justify-content: start; column-gap: 10px">
+          <div class="post-column-title" style="margin-left: 30px">
           <span class="pt-3"
                 *ngIf="this.session.currentUser!.structure!.postIdMaster.length==1">{{ this.session.currentUser!.structure!.postIdMaster[0]! }}</span>
-          <mat-form-field *ngIf="this.session.currentUser!.structure!.postIdMaster.length>1" style="width: 300px">
-            <mat-label>Участок</mat-label>
-            <mat-select [disabled]="isLoading" [(ngModel)]="this.selectedPost" (ngModelChange)="selectedPostChange()">
-              <mat-option *ngFor="let p of this.session.currentUser!.structure!.postIdMaster" [value]="p">{{ p }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <span style="color: #ce456d" *ngIf="allWorks.length!=filteredWorks.length">(АКТИВНЫЙ ФИЛЬТР)</span></div>
-        <div class="d-flex mt-2 flex-row">
-          <div>
-            <div class="d-flex mt-2">
+            <mat-form-field *ngIf="this.session.currentUser!.structure!.postIdMaster.length>1" style="width: 300px">
+              <mat-label>Участок</mat-label>
+              <mat-select [disabled]="isLoading" [(ngModel)]="this.selectedPost" (ngModelChange)="selectedPostChange()">
+                <mat-option *ngFor="let p of this.session.currentUser!.structure!.postIdMaster" [value]="p">{{ p }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <span style="color: #ce456d" *ngIf="allWorks.length!=filteredWorks.length">(АКТИВНЫЙ ФИЛЬТР)</span>
+            </div>
+          <div class="d-flex mt-2 flex-row">
+            <div>
+              <div class="d-flex mt-2">
                   <span><mat-icon color="primary" style="font-size: 18px"
                                   (click)="fillResource()">edit</mat-icon></span>
-              <span>Дневной ресурс </span>
-            </div>
+                <span>Дневной ресурс: </span>
+              </div>
+              <span>{{ todayDaily }}</span>
 
-            <div class="d-flex flex-column column-gap-1 ">
-              <span *ngFor="let p of this.todayDailySource">
-                {{ p.productLineId }}: {{ p.value }}
-              </span>
+
             </div>
 
           </div>
 
         </div>
 
-      <div style="display: flex; justify-content: center">
-        <div>
 
-          <div class="d-flex">
-            <div class="mt-3">Работ: {{ allWorks.length }}</div>
-            <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length">
-              ({{ filteredWorks.length }})
+        <div style="display: flex; justify-content: center">
+          <div>
+
+            <div class="d-flex">
+              <div class="mt-3">Работ: {{ allWorks.length }}</div>
+              <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length">
+                ({{ filteredWorks.length }})
+              </div>
+              <div class="mt-3" style="margin-left: 20px">Норматив: {{ getTotalCost(filteredWorks) }}</div>
+              <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length">
+                ({{ getTotalCost(filteredWorks) }})
+              </div>
             </div>
-            <div class="mt-3" style="margin-left: 20px">Норматив: {{ getTotalCost(filteredWorks) }}</div>
-            <div class="mt-3" style="margin-left: 2px" *ngIf="allWorks.length!=filteredWorks.length">
-              ({{ getTotalCost(filteredWorks) }})
-            </div>
+
           </div>
-
-        </div>
           <div style="margin-left: 30px">
             <mat-form-field>
               <mat-label>Фильтр по артикулу</mat-label>
@@ -108,9 +108,9 @@
           Ожидание
         </div>
 
-        <div class="align-self-end" >
+        <div class="align-self-end">
           <button mat-icon-button color="primary" (click)="makeAdditionalWork()">
-            <mat-icon color="primary" >add_circle</mat-icon>
+            <mat-icon color="primary">add_circle</mat-icon>
           </button>
           <button mat-icon-button color="primary" (click)="printWorks(waitWorks)" *ngIf="waitWorks.length>0">
             <mat-icon>print</mat-icon>

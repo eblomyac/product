@@ -512,7 +512,7 @@ namespace ProtoLib.Managers
             using (BaseContext c = new BaseContext(""))
             {
                 var posts = c.Posts.OrderBy(x => x.ProductOrder).ToList();
-                var orders = c.Works.Where(x => x.Status != WorkStatus.ended).Select(x => x.OrderNumber).Distinct()
+                var orders = c.Works.Where(x => x.Status != WorkStatus.ended && x.OrderNumber!=100).Select(x => x.OrderNumber).Distinct()
                     .ToList().OrderBy(x => x).ToList();
                 if (!string.IsNullOrEmpty(orderFilter))
                 {
@@ -602,10 +602,18 @@ namespace ProtoLib.Managers
 
                         articleStat.ByPosts = new List<object>();
                         List<string> postCurrent = new List<string>();
+                        bool isEnded = false;
                         foreach (var post in posts)
                         {
+                            
                             var articlePostWorks = articleWorks.Where(x => x.PostId == post.Name).ToList().OrderBy(x=>x.Post.ProductOrder);
                             var completedArticlePostWorks = articlePostWorks.Where(x => x.Status == WorkStatus.ended).OrderBy(x=>x.Post.ProductOrder);
+                            
+                            if (isEnded == false )
+                            {
+                                isEnded = completedArticlePostWorks.FirstOrDefault(x=>x.MovedTo== Constants.Work.EndPosts.TotalEnd)!=null;
+                            }
+                            
                             dynamic postStat = new ExpandoObject();
                             articleStat.ByPosts.Add(postStat);
 
@@ -645,6 +653,19 @@ namespace ProtoLib.Managers
                             articleStat.CurrentPost = postCurrent.First();
                         }
                         else
+                        {
+                            if (articleStat.CompletedCost < 0.1m)
+                            {
+                                articleStat.CurrentPost = "Не начато";
+                            }
+                            else
+                            {
+                                articleStat.CurrentPost = Constants.Work.EndPosts.TotalEnd;    
+                            }
+                            
+                        }
+
+                        if (isEnded)
                         {
                             articleStat.CurrentPost = Constants.Work.EndPosts.TotalEnd;
                         }

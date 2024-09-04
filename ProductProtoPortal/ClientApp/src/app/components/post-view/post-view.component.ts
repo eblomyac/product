@@ -41,6 +41,7 @@ export class PostViewComponent implements OnInit, OnDestroy {
   outcomeTransfers:Transfer[]=[];
 
   todayDailySource:DailySource[] = [];
+  lastDailySource:DailySource[] = [];
 
   showReturnedWorks = true;
   showSendedWorks = true;
@@ -87,10 +88,12 @@ export class PostViewComponent implements OnInit, OnDestroy {
   }
   selectedPostChange() {
 
-   this.todayDailySource = [];
-    this.checkResource();
+   //this.todayDailySource = [];
+    this.lastDailySource=[];
+    //this.checkResource();
     this.loadWorks();
     this.transfers();
+    this.loadLastDailySourceValues();
   }
 
   sendedUpdateTimer;
@@ -180,37 +183,23 @@ export class PostViewComponent implements OnInit, OnDestroy {
     })
   }
   async fillResource(){
+
     let sourceDialog = await DialogHandlerService.Singleton.ask(DailySourceDialogComponent, {
       data:{
-        productionLines: this.todayDailySource
+        productionLines: this.lastDailySource
       }
     })
+
   //  console.log(sourceDialog);
-    if(sourceDialog!=null){
-      let ds =  await lastValueFrom(this.data.DailySource.FillValues(this.todayDailySource));
+   if(sourceDialog!=null){
+      let ds =  await lastValueFrom(this.data.DailySource.Update(this.lastDailySource));
       if(ds){
         this.todayDailySource = ds;
       }
-      await this.checkResource();
-    }else{
-      await this.fillResource();
+
     }
   }
-  async checkResource(){
-    let s = this.data.DailySource.TodayValues(this.selectedPost).subscribe( async x=>{
-      if(x){
-        this.todayDailySource = x;
-        if(this.todayDailySource.findIndex(z=>z.value<0.01)>=0){
-          await this.fillResource();
-        }
-        //this.dailySource = x;
-        //if(this.dailySource==null || this.dailySource==-1){
-//         await this.fillResource();
-  //      }
-      }
-    });
-    this.subsToDel.push(s);
-  }
+
   constructor(private data: DataService, public session: SessionService,
               private matDialog: MatDialog, private workEvent: WorkEventService, private router: Router) {
     if (this.session.currentUser == null || this.session.currentUser?.structure?.postIdMaster == null) {
@@ -218,7 +207,7 @@ export class PostViewComponent implements OnInit, OnDestroy {
     }
 
     this.selectedPost = this.session.currentUser?.structure?.postIdMaster[0]!;
-    this.checkResource();
+    this.loadLastDailySourceValues();
     this.transfers();
     this.sendedUpdateTimer = setInterval(() => {
       this.transfers();
@@ -258,6 +247,27 @@ export class PostViewComponent implements OnInit, OnDestroy {
     if (currentIndex == -1 && oldIndex != -1) {
       transferArrayItem(oldArray, currentArray, oldIndex, 0);
     }
+  }
+  get todayDaily():string{
+    let today = new Date();
+    let val = this.lastDailySource.filter(x=>x.day == today.getDay()+1 && x.month == today.getMonth()+1 && x.year == today.getFullYear());
+    if(val.length==0){
+      return "Не задан";
+    }
+    let res = '';
+    val.forEach(v=>{
+      res += v.productLineId +": " + v.value +"\r\n";
+    });
+    return res;
+  }
+  loadLastDailySourceValues(){
+    let s = this.data.DailySource.LastValues(this.selectedPost).subscribe(x=>{
+      if(x) {
+        this.lastDailySource = x;
+
+      }
+    })
+    this.subsToDel.push(s);
   }
 
   getArrayByStatus(status: number): Work[] {

@@ -25,7 +25,7 @@ namespace ProductProtoPortal.Controllers
                 DateTime pDateFrom = DateTime.ParseExact(dateFrom, "dd-MM-yyyy", CultureInfo.InvariantCulture);
                 DateTime pDateTo = DateTime.ParseExact(dateTo, "dd-MM-yyyy", CultureInfo.InvariantCulture);
                 ReportManager rm = new ReportManager();
-                var request = rm.PeriodReport(pDateFrom,pDateTo);
+                var request = await rm.PeriodReport(pDateFrom,pDateTo);
                 var r =rm.PeriodReportToMail(request, user.SAM);
                 await EmailNotificatorSingleton.Instance.Send(r);  
                 return new OkObjectResult(new ApiAnswer(true));

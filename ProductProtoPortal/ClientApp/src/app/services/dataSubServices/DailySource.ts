@@ -22,6 +22,19 @@ export class DailySourceData {
         return null;
       }));
   }
+  public Update(dailySource:DailySource[]):Observable<DailySource[]|null>{
+    return this.transportService.Post('/DailySource/Update', new HttpParams(), dailySource)
+      .pipe(map<ApiAnswer | null, DailySource[] | null>(x => {
+        if (x != null) {
+          if (x.isSuccess) {
+            return x.result as DailySource[];
+          } else {
+            return [];
+          }
+        }
+        return null;
+      }));
+  }
   public TodayValues(postId:string):Observable<DailySource[]|null>{
     return this.transportService.Get('/DailySource/TodayValues', new HttpParams().append('postId', postId))
       .pipe(map<ApiAnswer | null, DailySource[] | null>(x => {
@@ -53,6 +66,20 @@ export class DailySourceData {
       .pipe(map<ApiAnswer | null, boolean | null>(x => {
         if (x != null) {
           return x.isSuccess;
+        }
+        return null;
+      }));
+  }
+
+  public LastValues(postId:string):Observable<DailySource[]|null>{
+    return this.transportService.Get('/DailySource/LastValues', new HttpParams().append('postId', postId))
+      .pipe(map<ApiAnswer | null, DailySource[] | null>(x => {
+        if (x != null) {
+          if (x.isSuccess) {
+            return x.result as DailySource[];
+          } else {
+            return [];
+          }
         }
         return null;
       }));
