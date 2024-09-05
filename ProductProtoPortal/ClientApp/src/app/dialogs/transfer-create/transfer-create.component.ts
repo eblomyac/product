@@ -47,6 +47,10 @@ export class TransferCreateComponent {
   loadPosts(){
     this.dataService.Post.List().subscribe(x=>{
       this.posts = x;
+      let delIndex = this.posts.findIndex(z=>z.name == this.data.sourcePost);
+      if(delIndex != -1){
+        this.posts.splice(delIndex,1);
+      }
     })
   }
   loadWorksDestination(){
