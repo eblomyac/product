@@ -38,4 +38,14 @@ export class InfoData {
       return [];
     }));
   }
+  public CostDataBatch(arts:string[]):Observable<number[][]>{
+    return this.transportService.Post('/Info/ArticleCostBatch', new HttpParams(), arts).pipe(map<ApiAnswer|null,number[][]>(x=>{
+      if(x){
+        if(x.isSuccess){
+          return (x.result as number[][]);
+        }
+      }
+      return [];
+    }));
+  }
 }

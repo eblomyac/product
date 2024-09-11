@@ -1,0 +1,128 @@
+<div class="mt-3 w-100" style="display:flex; justify-content: space-between">
+  <mat-form-field>
+    <mat-label>
+      Номер заказа
+    </mat-label>
+    <input matInput type="number" [(ngModel)]="orderId" [disabled]="isLoading" (keyup.enter)="Prepare()">
+  </mat-form-field>
+
+  <div>
+    <button style="margin-left: 20px"mat-raised-button color="primary" (click)="Prepare()" [disabled]="isLoading" >Загрузить</button>
+    <button style="margin-left: 20px" mat-raised-button color="primary" (click)="Start()" [disabled]="isLoading" >Запустить работы</button>
+
+  </div>
+
+
+
+</div>
+<div class="mt-2 w-100" >
+  <div style="display: flex;justify-content: center" *ngIf="isLoading">
+    <mat-spinner diameter="25"></mat-spinner>
+  </div>
+</div>
+<div class="w-100">
+  <mat-expansion-panel *ngIf="errorWorks.length>0" >
+    <mat-expansion-panel-header>Операции которые будут проигнорированы: {{errorWorks.length}}</mat-expansion-panel-header>
+    <table class="w-100" >
+      <colgroup>
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 15%;">
+        <col span="1" style="width: 40%;">
+
+
+
+      </colgroup>
+      <tr>
+        <th class="work-prepare-header">
+          Номер заказа (строка)
+        </th>
+        <th class="work-prepare-header">
+          Артикул
+        </th>
+        <th class="work-prepare-header">
+          Количество
+        </th>
+        <th class="work-prepare-header">
+          Норматив партия
+        </th>
+        <th class="text-center">
+          Операции
+        </th>
+      </tr>
+      <tr *ngFor="let e of errorWorks">
+        <td>{{e.orderNumber}} ({{e.orderLineNumber}})</td>
+        <td>{{e.article}}</td>
+        <td>{{e.count}}</td>
+        <td>{{e.totalCost.toFixed(2)}}</td>
+
+        <td>
+          <ul>
+            <li *ngFor="let c of e.comments">
+              {{c}}</li>
+          </ul>
+
+        </td>
+      </tr>
+
+    </table>
+  </mat-expansion-panel>
+
+  <table class="w-100" *ngIf="workLines.length>0">
+    <colgroup>
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width:28%;">
+
+
+
+    </colgroup>
+    <tr>
+      <th class="work-prepare-header">
+        Номер заказа (строка)
+      </th>
+      <th class="work-prepare-header">
+        Артикул
+      </th>
+      <th class="work-prepare-header">
+        Количество
+      </th>
+      <th class="work-prepare-header">
+        Норматив (штука)
+      </th>
+      <th class="work-prepare-header">
+        Норматив партия
+      </th>
+      <th class="text-center">
+        Линия
+      </th>
+      <th class="text-center">
+        Стартовый участок
+      </th>
+    </tr>
+    <tr *ngFor="let w of this.workLines">
+      <td>{{w.orderNumber}} ({{w.orderLineNumber}})</td>
+      <td>{{w.article}}</td>
+      <td>{{w.count}}</td>
+      <td>{{w.singleCost.toFixed(2)}}</td>
+      <td>{{w.totalCost.toFixed(2)}}</td>
+      <td>{{w.productionLine}}</td>
+      <td>
+        <mat-form-field class="w-100">
+          <mat-label>Доступные участки</mat-label>
+          <mat-select [(ngModel)]="w.startOnDefault" [disabled]="isLoading">
+            <mat-option [value]="''">Не начинать</mat-option>
+            <mat-option *ngFor="let p of w.startPosts" [value]="p">{{ p }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </td>
+      <td></td>
+    </tr>
+
+  </table>
+</div>

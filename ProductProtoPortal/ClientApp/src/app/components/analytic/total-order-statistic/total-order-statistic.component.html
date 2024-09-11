@@ -43,6 +43,7 @@
         <th  class="text-center sticky" style="width: 8%; " >Количество</th>
         <th class="text-center sticky" >Текущий уч.</th>
         <th class="text-center sticky" style="width: 8%; ">Норматив</th>
+        <th class="text-center sticky" style="width: 8%; ">Норматив CRP</th>
         <th  class="text-center sticky" style="width: 8%; ">Выполнено</th>
         <th  class="text-center sticky"  *ngFor="let postColumn of this.posts">{{postColumn.tableName}}</th>
       </tr>
@@ -61,6 +62,9 @@
 
           <td style="width: 8%" class="text-center">
             {{article.TotalCost|number}}
+          </td>
+          <td style="width: 8%" class="text-center">
+            {{article.TotalCostCrp|number}}
           </td>
 
           <td class="text-center" style="width: 8%">

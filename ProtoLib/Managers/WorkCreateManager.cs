@@ -271,11 +271,27 @@ namespace ProtoLib.Managers
         }
 
 
-        public Work CreateAdditionalWork(string postId,string prodLine, string accName, List<string> cooment )
+        public Work CreateAdditionalWork(string postId,string prodLine, string accName, List<string> cooment, string description="", string article="" )
         {
             Work w = new Work();
-            w.Description = $"Доп. работа {postId}";
-            w.Article = $"Работа {prodLine}";
+            if (string.IsNullOrEmpty(description))
+            {
+                w.Description = $"Доп. работа {postId}";
+            }
+            else
+            {
+                w.Description = description;
+            }
+
+            if (string.IsNullOrEmpty(article))
+            {
+                w.Article = $"Работа {prodLine}";    
+            }
+            else
+            {
+                w.Article = article;
+            }
+            
             w.Count = 1;
             w.MovedFrom = "";
             w.MovedTo = "";

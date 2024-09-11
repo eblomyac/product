@@ -67,6 +67,18 @@ export  class WorkData{
         }
         return [];
       }
+      return null;
+    }));
+  }
+  public PrepareNew(orders:number[]):Observable<{errorResult:IWork[],result:any[]}|null>{
+    return this.transport.Post('/works/prepare', new HttpParams(), orders).pipe(map<ApiAnswer|null, {errorResult:IWork[],result:any[]}|null>(x=>{
+      if(x!=null){
+        if( x.isSuccess){
+          return (x.result as {errorResult:IWork[],result:any[]});
+          //return (x.result as IWork[]).map(z=>new Work(z,this.dataService))
+        }
+        return {errorResult:[],result:[]};
+      }
      return null;
     }));
   }
@@ -111,10 +123,10 @@ export  class WorkData{
         }
     }));
   }
-  public StartWorks(suggestions:any[]):Observable<boolean|null>{
-    return this.transport.Post('/works/StartWorks' , new HttpParams(),suggestions).pipe(map<ApiAnswer|null,boolean|null>(x=>{
+  public StartWorks(suggestions:any[]):Observable<IWork[]|null>{
+    return this.transport.Post('/works/StartWorks' , new HttpParams(),suggestions).pipe(map<ApiAnswer|null,IWork[]|null>(x=>{
       if(x){
-        return x.isSuccess;
+        return x.result as IWork[];
       }
       return null
     }));

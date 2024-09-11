@@ -94,6 +94,17 @@ export class WorkCostInfoComponent {
 
     });
   }
+  articleImport(){
+    navigator.clipboard.readText().then(t=>{
+      console.log(t);
+      let arts:string[]=t.split('\r\n').filter(z=>z.length>2);
+      this.data.InfoData.CostDataBatch(arts).subscribe((z=>{
+        z.forEach(((art,index)=>{
+          this.costData.push({order:'',article:arts[index],count:1,costs:art})
+        }));
+      }));
+    })
+  }
   articleAdd(art:string|null){
     this.myControl.setValue('');
     if(art){

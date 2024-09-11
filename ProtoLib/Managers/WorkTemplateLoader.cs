@@ -9,8 +9,113 @@ using ProtoLib.Model;
 
 namespace ProtoLib.Managers
 {
+    public class WorkPrepareGroupResult
+    {
+        public string Article { get; set; }
+        public long OrderNumber { get; set; }
+        public int OrderLineNumber { get; set; }
+
+        public decimal TotalCost
+        {
+            get
+            {
+                return SingleCost * Count;
+            }
+        }
+
+        public decimal SingleCost { get; set; }
+        public List<string> Comments { get; set; }
+        public int Count { get; set; }
+        public string Description { get; set; }
+        public string ProductionLine { get; set; }
+        public List<string> StartPosts { get; set; }
+        public string StartOnDefault { get; set; }
+        public List<Work> Source { get; set; }
+
+   
+        public static List<WorkPrepareGroupResult> GroupForPrepare(List<Work> works)
+        {
+            var result = new List<WorkPrepareGroupResult>();
+            var posts = new List<Post>();
+            using (BaseContext c = new BaseContext("system"))
+            {
+                posts =c.Posts.OrderBy(x => x.ProductOrder).ToList();
+            }
+
+            var orderGroup = works.GroupBy(x => x.OrderNumber);
+            foreach (var order in orderGroup)
+            {
+                var orderLine = order.GroupBy(x => x.OrderLineNumber);
+                foreach (var line in orderLine)
+                {
+                    var lineWorks = line.Where(x => !string.IsNullOrEmpty(x.PostId)).ToList();
+                    if (lineWorks.Count() == 0)
+                    {
+                        continue;
+                    }
+                    decimal cost = lineWorks.Sum(x => x.SingleCost);
+                    List<string> comment = lineWorks.SelectMany(x => x.Comments).ToList();
+
+                    
+                    var r = new WorkPrepareGroupResult();
+                    r.OrderNumber = order.Key;
+                    r.OrderLineNumber = line.Key;
+                    r.Article = lineWorks.First().Article;
+                    r.Description = lineWorks.First().Description;
+                    r.ProductionLine = lineWorks.First().ProductLineId;
+                    r.Comments = comment;
+                    r.SingleCost = cost;
+                    r.Count = lineWorks.First().Count;
+                    r.StartPosts = lineWorks.Select(x => x.PostId).ToList();
+                    r.StartOnDefault = posts.First(x=>x.Name == r.StartPosts.First()).Name;
+                    r.Source = lineWorks;
+                    result.Add(r);
+                }
+            }
+            
+            return result;
+        }
+        
+    }
     public class WorkTemplateLoader
     {
+        public List<WorkCreateTemplate> LoadOnlyCrp(List<string> articles)
+        {
+            CrpManager crp = new CrpManager();
+            var workCreateTemplates = crp.LoadAticleDatas(articles);
+            
+            return workCreateTemplates;
+        }
+        public List<WorkCreateTemplate> LoadForPostKeys(string orderNumber, int lineNumber, List<string> PostKeys)
+        {
+            CrpManager crp = new CrpManager();
+            var macTemplates = MaconomyPrepare(orderNumber);
+            var crpTemplates = crp.LoadWorkDataForPost(macTemplates.Select(x => x.Article).ToList(), PostKeys.Where(x=>!x.Contains(',')).ToList());
+            
+            List<WorkCreateTemplate> result = new List<WorkCreateTemplate>();
+            foreach (var macTemplate in macTemplates.Where(x=>x.OrderLineNumber==lineNumber))
+            {
+                var articleCrpTemplates = crpTemplates.Where(x => x.Article == macTemplate.Article);
+
+                foreach (var articleDesign in articleCrpTemplates.Where(x=>PostKeys.Contains(x.PostKey)))
+                {
+                    WorkCreateTemplate wct = new WorkCreateTemplate();
+                    wct.OrderLineNumber = macTemplate.OrderLineNumber;
+                    wct.OrderNumber = macTemplate.OrderNumber;
+                    wct.Article = macTemplate.Article;
+                    wct.Description = macTemplate.Description;
+                    wct.DeadLine = macTemplate.DeadLine;
+                    wct.ProductLine = macTemplate.ProductLine;
+                    wct.Count = macTemplate.Count;
+                    wct.PostKey = articleDesign.PostKey;
+                    wct.SingleCost = articleDesign.SingleCost;
+                    wct.Comment = articleDesign.Comment;
+                    result.Add(wct);
+                }
+            }
+
+            return result.ToList();
+        }
         public List<WorkCreateTemplate> Load(string orderNumber)
         {
             CrpManager crp = new CrpManager();
@@ -39,26 +144,12 @@ namespace ProtoLib.Managers
                     result.Add(wct);
                 }
             }
-
-            /*
-            foreach (var crpTemplate in crpTemplates)
-            {
-                var allTemplates = macTemplates.Where(x => x.Article == crpTemplate.Article);
-                foreach (var macTemplate in allTemplates)
-                {
-                    crpTemplate.OrderNumber = macTemplate.OrderNumber;
-                    crpTemplate.Count = macTemplate.Count;
-                    crpTemplate.Description = macTemplate.Description;
-                    crpTemplate.ProductLine = macTemplate.ProductLine;
-                    crpTemplate.DeadLine = macTemplate.DeadLine;
-                }
-               
-            }*/
+            
 
             return  result.OrderBy(x => x.Article).ToList();
             
         }
-
+       
         private List<WorkCreateTemplate> MaconomyPrepare(string order)
         {
             using (MaconomyBase mb = new MaconomyBase())

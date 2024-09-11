@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using Microsoft.Data.SqlClient;
 using ProtoLib.Model;
 
@@ -25,20 +26,20 @@ namespace ProtoLib.Managers
                     .Select(x => x.Field<string>(0)).ToList());
             }
         }
+
         public List<string> CrpPosts()
         {
             if (post_list.Count == 0)
             {
                 this.LoadPostList();
-                
             }
+
             return this.post_list;
-
-
         }
+
         public List<string> CrpArticles()
         {
-            string s = "SELECT DISTINCT (ViewRep_Item_Duration_Posts.PartID) as Article"  +
+            string s = "SELECT DISTINCT (ViewRep_Item_Duration_Posts.PartID) as Article" +
                        " FROM crp.dbo.ViewRep_Item_Duration_Posts ViewRep_Item_Duration_Posts";
             using (SqlConnection sql =
                    new SqlConnection(Constants.Database.CrpConnectionString))
@@ -51,6 +52,7 @@ namespace ProtoLib.Managers
                 return list;
             }
         }
+
         public List<double> CostInfo(string article)
         {
             using (SqlConnection sql =
@@ -60,19 +62,19 @@ namespace ProtoLib.Managers
                            " ViewRep_Item_Duration_Posts.Center_Name as Post," +
                            " SUM(ViewRep_Item_Duration_Posts.Dur) as Duration" +
                            $" FROM crp.dbo.ViewRep_Item_Duration_Posts ViewRep_Item_Duration_Posts  where PartId=@Article Group By PartId,Center_Name";
-                SqlCommand sc = new SqlCommand(s,sql);
+                SqlCommand sc = new SqlCommand(s, sql);
                 SqlParameter articleParam = new SqlParameter("@Article", SqlDbType.NVarChar);
                 articleParam.Value = article;
                 sc.Parameters.Add(articleParam);
                 SqlDataAdapter sda = new SqlDataAdapter(sc);
                 DataTable dt = new DataTable();
                 sda.Fill(dt);
-                
+
                 if (post_list.Count == 0)
                 {
                     this.LoadPostList();
                 }
-                
+
 
                 List<double> result = new List<double>();
                 foreach (var post in post_list)
@@ -83,24 +85,93 @@ namespace ProtoLib.Managers
                         result.Add(0);
                     }
                     else
-                    { 
+                    {
                         result.Add(cost[0].Field<double>("Duration"));
                     }
                 }
+
                 result.Add(result.Sum());
                 return result;
-
             }
-
         }
-        public List<WorkCreateTemplate> LoadWorkData(List<string> articles)
+        public List<List<double>> CostInfoBatch(List<string >articles)
+        {
+            using (SqlConnection sql =
+                   new SqlConnection(Constants.Database.CrpConnectionString))
+            {
+
+                var queryParams = string.Join(",", articles.Select((x, i) => $"@art{i}"));
+                string s = "SELECT ViewRep_Item_Duration_Posts.PartID as Article," +
+                           " ViewRep_Item_Duration_Posts.Center_Name as Post," +
+                           " SUM(ViewRep_Item_Duration_Posts.Dur) as Duration" +
+                           $" FROM crp.dbo.ViewRep_Item_Duration_Posts ViewRep_Item_Duration_Posts  where PartId in({queryParams}) Group By PartId,Center_Name";
+                SqlCommand sc = new SqlCommand(s, sql);
+                foreach (var art in articles)
+                {
+                    SqlParameter articleParam = new SqlParameter($"@art{sc.Parameters.Count}", SqlDbType.NVarChar);
+                    articleParam.Value = art;
+                    sc.Parameters.Add(articleParam);    
+                }
+                
+                SqlDataAdapter sda = new SqlDataAdapter(sc);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+
+                if (post_list.Count == 0)
+                {
+                    this.LoadPostList();
+                }
+
+
+                List<List<double>> allResult = new();
+                foreach (var art in articles)
+                {
+                    List<double> result = new List<double>();
+                    foreach (var post in post_list)
+                    {
+                        DataRow[] cost = dt.Select($"Post='{post}' AND Article='{art}'");
+                        if (cost.Length == 0)
+                        {
+                            result.Add(0);
+                        }
+                        else
+                        {
+                            result.Add(cost[0].Field<double>("Duration"));
+                        }
+                    }
+
+                    result.Add(result.Sum());  
+                    allResult.Add(result);
+                }
+                
+                return allResult;
+            }
+        }
+
+        public List<WorkCreateTemplate> LoadAticleDatas(List<string> articles)
+        {
+            int loop = 0;
+            List<WorkCreateTemplate> result = new();
+            do
+            {
+                var part = articles.Skip(999 * loop).Take(999).ToList();
+                if (part.Count == 0)
+                {
+                    return result;
+                }
+                result.AddRange(_loadArticleDatas(part));
+                loop++;
+            } while (true);
+        }
+        private List<WorkCreateTemplate> _loadArticleDatas(List<string> articles)
         {
             if (articles.Count == 0)
             {
                 return new List<WorkCreateTemplate>();
             }
+
             using (SqlConnection sql =
-                new SqlConnection(Constants.Database.CrpConnectionString))
+                   new SqlConnection(Constants.Database.CrpConnectionString))
             {
                 string articleData = string.Join(',', articles.Select(x => $"'{x}'"));
                 string query =
@@ -129,15 +200,102 @@ namespace ProtoLib.Managers
             }
         }
 
-    
+        public List<WorkCreateTemplate> LoadWorkData(List<string> articles)
+        {
+            if (articles.Count == 0)
+            {
+                return new List<WorkCreateTemplate>();
+            }
+
+            using (SqlConnection sql =
+                   new SqlConnection(Constants.Database.CrpConnectionString))
+            {
+                string articleData = string.Join(',', articles.Select(x => $"'{x}'"));
+                string query =
+                    $"SELECT PartId as ItemNumber, Center_Name as post_key , SUM(Dur) as cost from ViewRep_Item_Duration_Posts where PartID in ({articleData}) GROUP BY PartID, Center_Name";
+
+                string query2 =
+                    $"SELECT PartId as ItemNumber, Center_Name as post_key ," +
+                    $" SUM(Duration) as cost,   (SELECT Oper_Description+CHAR(32)+sub.NPartID+CHAR(32)+ISNULL(sub.NSchema,'')+CHAR(32)+ ISNULL(sub.ProcSymbol,'') +CHAR(13) FROM ViewRep_PartOperations sub WHERE ViewRep_PartOperations.PartId = sub.PartID and sub.Center_Name = ViewRep_PartOperations.Center_Name FOR XML PATH(''), TYPE ).value('.','VARCHAR(MAX)') AS Comments  " +
+                    $"from ViewRep_PartOperations where PartId in ({articleData})  GROUP BY PartID, Center_Name";
+                SqlDataAdapter sda = new SqlDataAdapter(query2, sql);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                var result = new List<WorkCreateTemplate>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    WorkCreateTemplate wct = new WorkCreateTemplate();
+                    wct.Article = row["ItemNumber"].ToString();
+                    wct.PostKey = row["post_key"].ToString();
+                    wct.SingleCost = decimal.Parse(row["cost"].ToString());
+                    wct.Comment = row["Comments"].ToString();
+                    //wct.Description = row["Oper_Description"].ToString();
+                    result.Add(wct);
+                }
+
+                return result;
+            }
+        }
+
+        public List<WorkCreateTemplate> LoadWorkDataForPost(List<string> articles, List<string> PostKeys)
+        {
+            if (articles.Count == 0)
+            {
+                return new List<WorkCreateTemplate>();
+            }
+
+            using (SqlConnection sql =
+                   new SqlConnection(Constants.Database.CrpConnectionString))
+            {
+                string articleData = string.Join(',', articles.Select(x => $"'{x}'"));
+                string postKeys = string.Join(',', PostKeys.Select(x => $"'{x}'"));
+                string query =
+                    $"SELECT PartId as ItemNumber, Center_Name as post_key , SUM(Dur) as cost from ViewRep_Item_Duration_Posts where PartID in ({articleData}) GROUP BY PartID, Center_Name";
+
+                string query2 =
+                    $"SELECT PartId as ItemNumber , Center_Name as post_key," +
+                    $" SUM(Duration) as cost,   (SELECT Oper_Description+CHAR(32)+sub.NPartID+CHAR(32)+ISNULL(sub.NSchema,'')+CHAR(32)+ ISNULL(sub.ProcSymbol,'') +CHAR(13) FROM ViewRep_PartOperations sub WHERE ViewRep_PartOperations.PartId = sub.PartID and sub.Center_Name = ViewRep_PartOperations.Center_Name FOR XML PATH(''), TYPE ).value('.','VARCHAR(MAX)') AS Comments  " +
+                    $"from ViewRep_PartOperations where PartId in ({articleData}) and Center_Name in ({postKeys}) GROUP BY PartID, Center_Name";
+                SqlDataAdapter sda = new SqlDataAdapter(query2, sql);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                var result = new List<WorkCreateTemplate>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    WorkCreateTemplate wct = new WorkCreateTemplate();
+                    wct.Article = row["ItemNumber"].ToString();
+                    wct.PostKey = row["post_key"].ToString();
+                    wct.SingleCost = decimal.Parse(row["cost"].ToString());
+                    wct.Comment = row["Comments"].ToString();
+                    //wct.Description = row["Oper_Description"].ToString();
+                    result.Add(wct);
+                }
+
+                List<WorkCreateTemplate> newResult = new();
+                foreach (var art in articles)
+                {
+                    var toGroup = result.Where(x => x.Article == art);
+                    if (toGroup.Count() > 0)
+                    {
+                        newResult.Add(new WorkCreateTemplate()
+                        {
+                            Article = art,
+                            Comment = string.Join('\r', toGroup.Select(x => x.Comment)),
+                            SingleCost = toGroup.Sum(x => x.SingleCost),
+                            PostKey = toGroup.First().PostKey
+                        });
+                    }
+                }
+
+                return newResult;
+            }
+        }
 
         public DataTable LoadCardTable(string article)
         {
             using (SqlConnection sql =
-                new SqlConnection(Constants.Database.CrpConnectionString))
+                   new SqlConnection(Constants.Database.CrpConnectionString))
             {
-                
-
                 string query2 =
                     $"SELECT PartId as ItemNumber, Center_Name as post_key ," +
                     $" SUM(Duration) as cost,   (SELECT Oper_Description+CHAR(32)+sub.NPartID+CHAR(32)+ISNULL(sub.NSchema,'')+CHAR(32)+ ISNULL(sub.ProcSymbol,'') +CHAR(13) FROM ViewRep_PartOperations sub WHERE ViewRep_PartOperations.PartId = sub.PartID and sub.Center_Name = ViewRep_PartOperations.Center_Name FOR XML PATH(''), TYPE ).value('.','VARCHAR(MAX)') AS Comments  " +

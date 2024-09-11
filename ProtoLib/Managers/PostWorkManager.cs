@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Presentation;
 using Microsoft.EntityFrameworkCore;
 using ProtoLib.Model;
 
@@ -14,6 +15,26 @@ public class PostWorkManager
         _accName = accName;
     }
 
+     public void CreateWork(long orderNumber, int orderLineNumber, int count, string fromPost)
+    {
+        using (BaseContext c = new BaseContext(_accName))
+        {
+            using (var transaction = c.Database.BeginTransaction())
+            {
+                try
+                {
+                    WorkTemplateLoader wtl = new WorkTemplateLoader();
+                    var keys = c.PostKeys.Where(x => x.PostId == this._postId).Select(x=>x.Key).ToList();
+                    wtl.LoadForPostKeys(orderNumber.ToString(), orderLineNumber, keys);
+                }
+                catch (Exception exc)
+                {
+                    transaction.Rollback();
+                }
+
+            }
+        }
+    }
     public void TakeWorkForProduction(long orderNumber, int orderLineNumber, int count, string fromPost)
     {
         using (BaseContext c = new BaseContext(_accName))

@@ -121,11 +121,11 @@ namespace ProtoLib.Managers
                 }
             }
         }
-        public void ChangeStatus(List<Work> w, WorkStatus newStatus, string accName)
+        public void ChangeStatus(List<Work> w, WorkStatus newStatus, string accName, string moveFrom="")
         {
             foreach (var work in w)
             {
-                this.ChangeStatus(work,newStatus,accName);
+                this.ChangeStatus(work,newStatus,accName, moveFrom:moveFrom);
             }
         }
     }

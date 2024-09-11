@@ -65,10 +65,17 @@ namespace ProductProtoPortal.Controllers
             foreach (var order in orders)
             {
                 var templates = wtl.Load(order.ToString());
+                //works.AddRange(templates);
                 works.AddRange(wmf.PrepareWorks(templates));
+                
             }
 
-            return new OkObjectResult(new ApiAnswer(works));
+            var result = WorkPrepareGroupResult.GroupForPrepare(works);
+            var errorResult = works.Where(x => string.IsNullOrEmpty(x.PostId));
+            dynamic r = new ExpandoObject();
+            r.result = result;
+            r.errorResult = errorResult;
+            return new OkObjectResult(new ApiAnswer(r));
 
         }
 
@@ -124,12 +131,22 @@ namespace ProductProtoPortal.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public IActionResult StartWorks(List<WorkAnalytic.WorkStartSuggestion> suggestions)
+        public async Task<IActionResult> StartWorks()
         {
+            string body = "";
+            using (StreamReader sr = new StreamReader(this.HttpContext.Request.Body))
+            {
+                body = await sr.ReadToEndAsync();
+            }
+
+            List<WorkPrepareGroupResult>
+                suggestions = JsonConvert.DeserializeObject<List<WorkPrepareGroupResult>>(body);
             var user = AuthHelper.GetADUser(this.HttpContext);
-            WorkAnalyticFacade waf = new WorkAnalyticFacade();
-            var result = waf.StartWorkOperator(suggestions, user.SAM);
-            return new OkObjectResult(new ApiAnswer(result,"",result));
+            //WorkAnalyticFacade waf = new WorkAnalyticFacade();
+            //var result = waf.StartWorkOperator(suggestions, user.SAM);
+            OperatorManager om = new OperatorManager();
+            var result = om.StartAllWorks(suggestions, user.SAM);
+            return new OkObjectResult(new ApiAnswer(result));
         }
 
         [HttpGet]
@@ -144,8 +161,16 @@ namespace ProductProtoPortal.Controllers
         
         [HttpPost]
         [Route("[action]")]
-        public IActionResult GetSuggestions(List<Work> works)
+        public async Task<IActionResult> GetSuggestions()
         {
+            List<Work> works = new();
+            string body = "";
+            using (StreamReader sr = new StreamReader(HttpContext.Request.Body))
+            {
+                body = await sr.ReadToEndAsync();
+            }
+
+            works = JsonConvert.DeserializeObject<List<Work>>(body);
             var user = AuthHelper.GetADUser(this.HttpContext);
             WorkAnalyticFacade waf = new WorkAnalyticFacade();
             var result = waf.GetMoveSuggestions(works,user.SAM);

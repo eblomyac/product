@@ -56,7 +56,9 @@ namespace ProtoLib.Managers
             using (BaseContext c = new BaseContext(accName))
             {
                 //List<Work> allWorks = new List<Work>();
-                var currentWork = c.Works.AsNoTracking().FirstOrDefault(x => x.Id == workId);
+                var currentWork = c.Works.Include(x=>x.AdditionalCosts)
+                    .AsNoTracking()
+                    .FirstOrDefault(x => x.Id == workId);
 
                 if (currentWork.Status != WorkStatus.sended)
                 {
@@ -97,11 +99,24 @@ namespace ProtoLib.Managers
                 var nextWorks = c.Works.AsNoTracking().Include(x=>x.Issues).Where(x =>
                     x.Article == currentWork.Article && x.OrderNumber == currentWork.OrderNumber && 
                     x.Count==currentWork.Count && x.OrderLineNumber == currentWork.OrderLineNumber &&
-                    (startOnPosts.Contains(x.PostId)||x.PostId==toPostId)).ToList();
+                    (startOnPosts.Contains(x.PostId)||x.PostId==toPostId) && x.Status==WorkStatus.hidden).ToList();
 
+                if (currentWork.OrderNumber==100)
+                {
+                    
+                    if (currentWork.Article.Contains("Возврат"))
+                    {
+                        var issueId = long.Parse(currentWork.AdditionalCosts.First().Comment);
+                        IssueManager im = new();
+                        im.ResolveIssue(issueId, accName);
+                    }
+                }
 
                 if (nextWorks.Count == 0 && toPostId!=Constants.Work.EndPosts.TotalEnd)
                 {
+                        var PostKeys = c.PostKeys.Where(x => x.PostId == toPostId).Select(x => x.Key).ToList();
+                        WorkTemplateLoader wtl = new WorkTemplateLoader();
+                        var template = wtl.LoadForPostKeys(currentWork.OrderNumber.ToString(), currentWork.OrderLineNumber, PostKeys);
                    
                         var sharedWork = new Work();
                         sharedWork.Article = currentWork.Article;
@@ -115,10 +130,10 @@ namespace ProtoLib.Managers
                         sharedWork.ProductLineId = currentWork.ProductLineId;
                         sharedWork.MovedFrom = currentWork.PostId;
                         sharedWork.CreatedStamp = DateTime.Now;
-                        sharedWork.SingleCost = 0;
+                        sharedWork.SingleCost =template.Count>0? template.Sum(x => x.SingleCost):0;
                         sharedWork.Count = currentWork.Count;
                         sharedWork.DeadLine = currentWork.DeadLine;
-                        sharedWork.CommentMap = "Произв. плана не найдено";
+                        sharedWork.CommentMap =template.Count>0? string.Join('\t', template.Select(x => x.Comment)):"Произв. плана не найдено";
                     
                         c.Works.Add(sharedWork);
                         c.SaveChanges();
@@ -150,7 +165,7 @@ namespace ProtoLib.Managers
             }
 
             
-        }
+            }
 
        
     }

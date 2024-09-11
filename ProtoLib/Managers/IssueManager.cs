@@ -45,6 +45,8 @@ namespace ProtoLib.Managers
                 }
             }
         }
+
+     
         
         public WorkIssue? RegisterIssue(long workId, long templateId, string description,string accName, string returnPostId, string returnedFromPostId="")
         {
@@ -118,28 +120,33 @@ namespace ProtoLib.Managers
                     wil.PostId = work.PostId;
                     wil.End = null;
                     
+                    c.Issues.Add(wi);
+                    c.SaveChanges();
+                    wil.SourceIssueId = wi.Id;
+                    c.WorkIssueLogs.Add(wil);
+                    c.SaveChanges();
+                    
                     WorkStatusChanger wss = new WorkStatusChanger();
                     wss.ChangeStatus(workId, WorkStatus.waiting, accName);
 
                     if (!string.IsNullOrWhiteSpace(wi.ReturnBackPostId))
                     {
-                        /*
-                        var previousWork = c.Works.AsNoTracking().FirstOrDefault(x =>
-                            x.PostId == wi.ReturnBackPostId && x.Article == work.Article &&
-                            x.OrderLineNumber == work.OrderLineNumber &&
-                            x.OrderNumber == work.OrderNumber &&
-                            (x.Status == WorkStatus.ended || x.Status == WorkStatus.sended));
-                        if (previousWork != null)
+                        AdditionalCostManager acm = new AdditionalCostManager();
+                        var returnedWork = acm.CreateForPost(wi.ReturnBackPostId, work.ProductLineId, accName, new List<AdditionalCost>()
                         {
-                        
-                            WorkStatusChanger wss = new WorkStatusChanger();
-                            wss.ChangeStatus(previousWork, WorkStatus.waiting, accName);
-                            WorkSaveManager workSaveManager = new WorkSaveManager(accName);
-                            previousWork.MovedTo = "";
-                            workSaveManager.SaveWorks(new List<Work> { previousWork });
+                            new AdditionalCost()
+                            {
+                                AdditionalCostTemplateId = c.AdditionalCostTemplates
+                                    .FirstOrDefault(x => x.Name == "Исправление").Id,
+                                AdditionalCostTemplate = c.AdditionalCostTemplates
+                                    .FirstOrDefault(x => x.Name == "Исправление"),
+                                Comment = wi.Id.ToString(),
+                                Description = wi.Description, Cost = 0
+                            }
+                        }, $"Возврат от {work.PostId}",  $"Заказ: {work.OrderNumber}, Артикул: {work.Article} x {work.Count}");
+                        returnedWork.MovedFrom = work.PostId;
+                        /*/
 
-                            RegisterIssue(previousWork.Id, templateId, description, accName, "", work.PostId);
-                        }*/
                         var previousWorks = c.Works.AsNoTracking().Where(x =>
                             x.PostId == wi.ReturnBackPostId && x.Article == work.Article &&
                             x.OrderLineNumber == work.OrderLineNumber &&
@@ -168,15 +175,11 @@ namespace ProtoLib.Managers
                             workSaveManager.SaveWorks(new List<Work> { prevWork });
 
                             RegisterIssue(prevWork.Id, templateId, description, accName, "", work.PostId);
-                            
-                        }
+
+                        }/*/
                     }
 
-                    c.Issues.Add(wi);
-                    c.SaveChanges();
-                    wil.SourceIssueId = wi.Id;
-                    c.WorkIssueLogs.Add(wil);
-                    c.SaveChanges();
+               
                     return wi;
                 }
             }

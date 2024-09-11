@@ -94,7 +94,16 @@ export class TransferCreateComponent {
   }
   create(){
 
+
+
     if(this.toPost){
+      let cp = this.posts.find(z=>z.name==this.currentPost);
+      if(cp){
+        if(cp.productOrder>= this.toPost.productOrder){
+          let a = confirm("Вы собираетесь передать позиции на участок с этапом производства меньше текущего.\r\n"+ cp.name +  "(" +cp.productOrder+ ") => " + this.toPost.name +"("+this.toPost.productOrder+")"
+            +"\r\nВы уверены?")
+        }
+      }
     this.isLoading=true;
       this.dataService.TransferData.createTransfer(this.currentPost, this.toPost.name, this.selectedWorks.map(x=>x.structure)).subscribe(x=>{
         if(x){
@@ -108,6 +117,7 @@ export class TransferCreateComponent {
     }
 
   }
+
   cancel(){
     this.dialogRef.close(null);
   }

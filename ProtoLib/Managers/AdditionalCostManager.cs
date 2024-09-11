@@ -34,10 +34,10 @@ public class AdditionalCostManager
         }
     }
 
-    public Work CreateForPost(string postId, string lineId, string accName, List<AdditionalCost> costs)
+    public Work CreateForPost(string postId, string lineId, string accName, List<AdditionalCost> costs, string article="",string description="")
     {
         WorkCreateManager wcm = new WorkCreateManager();
-        var work = wcm.CreateAdditionalWork(postId, lineId, accName, costs.Select(x=>x.AdditionalCostTemplate.Name +" " + x.Description).ToList());
+        var work = wcm.CreateAdditionalWork(postId, lineId, accName, costs.Select(x=>x.AdditionalCostTemplate.Name +" " + x.Description).ToList(), description, article);
         foreach (var ac in costs)
         {
             ac.WorkId = work.Id;

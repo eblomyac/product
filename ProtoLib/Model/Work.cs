@@ -105,7 +105,7 @@ namespace ProtoLib.Model
             }
         }
 
-        [JsonIgnore]
+    
         public string CommentMap { get; set; } = "";
 
         [NotMapped] public bool CanClosed { get; set; } = false;

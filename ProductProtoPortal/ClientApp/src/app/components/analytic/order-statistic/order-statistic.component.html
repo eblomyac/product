@@ -32,13 +32,6 @@
             ({{ ((stat.CompletedCost / stat.TotalCost) * 100)|number }}%)
           </div>
           <div>
-            Количество работ: {{ stat.TotalWorks | number }}
-          </div>
-          <div>
-            Выполнено работ: {{ stat.CompletedWorks | number }}
-            ({{ ((stat.CompletedWorks / stat.TotalWorks) * 100)|number }}%)
-          </div>
-          <div>
             Всего артикулов: {{ stat.TotalArticles | number }}
           </div>
           <div>
@@ -121,6 +114,7 @@
             <th style="min-width: 12%; ">Артикул</th>
             <th class="text-center" style="width: 8%">Количество</th>
             <th class="text-center" style="width: 8%">Норматив</th>
+            <th class="text-center" style="width: 8%">Норматив CRP</th>
             <th class="text-end" style="width: 8%">Выполнено</th>
             <th class="text-center" *ngFor="let postColumn of stat.PostStatus">{{ postColumn.Name }}</th>
           </tr>
@@ -135,6 +129,9 @@
 
               <td style="width: 8%" class="text-center">
                 {{ article.TotalCost|number }}
+              </td>
+              <td style="width: 8%" class="text-center">
+                {{ article.TotalCostCrp|number }}
               </td>
 
               <td class="text-center" style="width: 8%">

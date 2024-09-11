@@ -89,6 +89,7 @@ import {WorkCostInfoComponent} from "./components/Info/work-cost-info/work-cost-
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {ActHistoryComponent} from "./components/Info/act-history/act-history.component";
 import {InfoComponent} from "./components/Info/info.component";
+import {OperatorStarterComponent} from "./components/operator/operator-starter/operator-starter.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -104,7 +105,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         PostSettingsComponent,
         WorkPrepareComponent,
         WorkStarterComponent,
-        OperatorComponent,
+        OperatorComponent, OperatorStarterComponent,
         WorkCompactViewComponent, InfoComponent,
         PostDialogComponent, ActHistoryComponent,
         InfoViewComponent, WorkCostInfoComponent,
@@ -140,7 +141,6 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
       echarts: () => import('echarts')
     }),
     BrowserAnimationsModule,
-
     MatIconModule,
     DragDropModule,
     MatToolbarModule,

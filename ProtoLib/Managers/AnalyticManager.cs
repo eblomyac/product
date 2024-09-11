@@ -4,6 +4,7 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using iText.Kernel.Geom;
 using KSK_LIB.Maconomy;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,20 +12,58 @@ using ProtoLib.Model;
 
 namespace ProtoLib.Managers
 {
+    public static class CostLoader
+    {
+        public static decimal ArticleSingleCost(this List<WorkCreateTemplate> templates, string article, List<string> postKeys=null)
+        {
+            var t = templates.Where(x => x.Article == article).ToList();
+            if (postKeys != null)
+            {
+                t = t.Where(x => postKeys.Contains(x.PostKey) && x.Article == article).ToList();
+            }
+
+       //     Console.WriteLine(article);
+//            Console.WriteLine("\t"+JsonConvert.SerializeObject(t));
+  //          Console.WriteLine("\t"+" sum : "+t.Sum(x => x.SingleCost));
+            return Math.Round(t.Sum(x => x.SingleCost),2);
+
+        }
+
+        public static decimal WorkTotalCost(this List<WorkCreateTemplate> templates, List<Work> works, List<string> postKeys=null)
+        { 
+            var lineList = works.Select(x =>
+            {
+                return new
+                {
+                    Order = x.OrderNumber, Line = x.OrderLineNumber, Article=x.Article
+                };
+            }).Distinct();
+            decimal result = 0;
+            foreach (var line in lineList)
+            {
+                var workList = works.Where(x => x.OrderLineNumber == line.Line && x.OrderNumber == line.Order);
+                result += templates.ArticleSingleCost(line.Article, postKeys) * workList.Max(z => z.Count);
+            }
+
+            return result;
+        }
+    }
     public class AnalyticManager
     {
+        
         public DataTable TotalOrderToExcel(dynamic data)
         {
             DataTable dt = new DataTable();
-            dt.Columns.Add("Заказ");
+            dt.Columns.Add("Заказ", typeof(long));
             dt.Columns.Add("Артикул");
             dt.Columns.Add("Наименование");
             dt.Columns.Add("Дата сдачи");
-            dt.Columns.Add("Количество");
+            dt.Columns.Add("Количество",typeof(decimal));
 
             dt.Columns.Add("Текущий участок");
             
-            dt.Columns.Add("Норматив всего", typeof(decimal));
+            dt.Columns.Add("Норматив партии", typeof(decimal));
+            dt.Columns.Add("Норматив партии (CRP)", typeof(decimal));
             dt.Columns.Add("Норматив выполнено", typeof(decimal));
             dt.Columns.Add("% выполнено всего", typeof(double));
 
@@ -47,7 +86,8 @@ namespace ProtoLib.Managers
                 row["Наименование"] = line.ItemText;
                 row["Заказ"] = line.Order;
                 row["Количество"] = line.Count;
-                row["Норматив всего"] = line.TotalCost;
+                row["Норматив партии"] = line.TotalCost;
+                row["Норматив партии (CRP)"] = line.TotalCostCrp;
                 row["Норматив выполнено"] = line.CompletedCost;
                 row["Производство"] = line.ProductLine;
                 row["Комментарий"] = line.Comment;
@@ -215,9 +255,12 @@ namespace ProtoLib.Managers
 
             using (BaseContext c = new BaseContext(""))
             {
-                var posts = c.Posts.OrderBy(x => x.ProductOrder).ToList();
+                var posts = c.Posts.Include(x=>x.PostCreationKeys).OrderBy(x => x.ProductOrder).ToList();
                 var orderWorks = c.Works.AsNoTracking().Include(x => x.Issues).Where(x => x.OrderNumber == orderId)
                     .ToList();
+                WorkTemplateLoader wtl = new WorkTemplateLoader();
+                var articles = orderWorks.Select(x => x.Article).Distinct();
+                var templates = wtl.LoadOnlyCrp(articles.ToList());
                 if (articleIds.Count>0)
                 {
                     orderWorks = orderWorks.Where(x => articleIds.Contains(x.Article)).ToList();
@@ -225,7 +268,7 @@ namespace ProtoLib.Managers
                 var completedWorks = orderWorks.Where(x => x.Status == WorkStatus.ended).ToList();
                 result.Order = orderId;
                 result.Line = orderWorks.FirstOrDefault()?.ProductLineId;
-                result.TotalCost = orderWorks.Sum(x => x.TotalCost);
+                result.TotalCost = templates.WorkTotalCost(orderWorks);//orderWorks.Sum(x => x.TotalCost);
                 result.TotalWorks = orderWorks.Count;
                 result.TotalArticles = orderWorks.Select(x => x.Article).Distinct().Count();
                 result.TotalWorkItems = orderWorks.Sum(x => x.Count);
@@ -246,26 +289,31 @@ namespace ProtoLib.Managers
                     dynamic postCost = new ExpandoObject();
                     result.PostCost.Add(postCost);
                     postCost.Name = p.TableName;
-                    postCost.Cost = postWorks.Sum(x => x.TotalCost);
+                    postCost.Cost = templates.WorkTotalCost(postWorks, p.PostCreationKeys.Select(x => x.Key).ToList());//postWorks.Sum(x => x.TotalCost);
 
                     dynamic postStatus = new ExpandoObject();
                     result.PostStatus.Add(postStatus);
                     postStatus.Name = p.TableName;
-                    postStatus.TotalCost = postWorks.Sum(x => x.TotalCost);
+                    postStatus.TotalCost =
+                        templates.WorkTotalCost(orderWorks, p.PostCreationKeys.Select(x => x.Key).ToList());//postWorks.Sum(x => x.TotalCost);
                     postStatus.CompletedCost = postCompletedWorks.Sum(x => x.TotalCost);
 
+                   // postStatus.Income = postWorks.Where(x => x.Status == WorkStatus.income).Sum(x => x.TotalCost);
                     postStatus.Income = postWorks.Where(x => x.Status == WorkStatus.income).Sum(x => x.TotalCost);
                     postStatus.Waiting = postWorks.Where(x => x.Status == WorkStatus.waiting).Sum(x => x.TotalCost);
                     postStatus.Running = postWorks.Where(x => x.Status == WorkStatus.running).Sum(x => x.TotalCost);
                     postStatus.Sended = postWorks.Where(x => x.Status == WorkStatus.sended).Sum(x => x.TotalCost);
 
-                    postStatus.Unstarted = postWorks.Where(x => x.Status == WorkStatus.hidden).Sum(x => x.TotalCost);
+                   // postStatus.Unstarted = postWorks.Where(x => x.Status == WorkStatus.hidden).Sum(x => x.TotalCost);
+                    postStatus.Unstarted = postStatus.TotalCost - postWorks.Sum(x=>x.TotalCost);
                     postStatus.Ended = postWorks.Where(x => x.Status == WorkStatus.ended).Sum(x => x.TotalCost);
 
                     postStatus.Issues = postWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
                 }
 
-                var articles = orderWorks.Select(x => x.Article).Distinct();
+              
+              
+                
 
                 result.ArticleStat = new List<object>();
                 foreach (var article in articles)
@@ -279,11 +327,12 @@ namespace ProtoLib.Managers
                     var completedArticleWorks = articleWorks.Where(x => x.Status == WorkStatus.ended);
                     articleStat.WorkCount = articleWorks.Count;
                     articleStat.Count = articleWorks.Max(x => x.Count);
-                    articleStat.TotalCost = articleWorks.Sum(x => x.TotalCost);
+                    //articleStat.TotalCost = //articleWorks.Sum(x => x.TotalCost);
                     articleStat.CompletedCost = completedArticleWorks.Sum(x => x.TotalCost);
                     articleStat.Issues = articleWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
 
-
+                    decimal totalCost = 0;
+                   
                     foreach (var post in posts)
                     {
                         var articlePostWorks = articleWorks.Where(x => x.PostId == post.Name).ToList();
@@ -292,7 +341,10 @@ namespace ProtoLib.Managers
                         articleStat.ByPosts.Add(postStat);
 
                         postStat.Name = post.TableName;
-                        postStat.TotalCost = articlePostWorks.Sum(x => x.TotalCost);
+                        postStat.TotalCost = templates.ArticleSingleCost(article,
+                            post.PostCreationKeys.Select(x => x.Key).ToList())*articleStat.Count;//articlePostWorks.Sum(x => x.TotalCost);
+                   
+                        totalCost += postStat.TotalCost;
                         postStat.CompletedCost = completedArticlePostWorks.Sum(x => x.TotalCost);
                         if (postStat.TotalCost > 0)
                         {
@@ -305,13 +357,17 @@ namespace ProtoLib.Managers
 
 
                         postStat.IsCompleted = postStat.TotalCost == postStat.CompletedCost;
-                        postStat.IsEmpty = articlePostWorks.Count() == 0;
+                        postStat.IsEmpty = postStat.TotalCost == 0;
 
 
                         postStat.Issues = articlePostWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
                         postStat.IssuesText = articlePostWorks.SelectMany(x => x.Issues).Where(x => x.Resolved == null)
                             .Select(x =>$"{x.Created:dd.MM HH:mm}: {x.Description}" ).ToList();
                     }
+                    
+                    
+                    articleStat.TotalCostCrp = templates.ArticleSingleCost(article)*articleStat.Count;//articleWorks.Sum(x => x.TotalCost);
+                    articleStat.TotalCost = totalCost;
                 }
             }
 
@@ -511,7 +567,7 @@ namespace ProtoLib.Managers
         {
             using (BaseContext c = new BaseContext(""))
             {
-                var posts = c.Posts.OrderBy(x => x.ProductOrder).ToList();
+                var posts = c.Posts.Include(x=>x.PostCreationKeys).OrderBy(x => x.ProductOrder).ToList();
                 var orders = c.Works.Where(x => x.Status != WorkStatus.ended && x.OrderNumber!=100).Select(x => x.OrderNumber).Distinct()
                     .ToList().OrderBy(x => x).ToList();
                 if (!string.IsNullOrEmpty(orderFilter))
@@ -555,7 +611,7 @@ namespace ProtoLib.Managers
                 {
                     var orderWorks = c.Works.AsNoTracking()
                         .Include(x => x.Issues)
-                        .Include(x=>x.Post)
+                        .Include(x=>x.Post).ThenInclude(x=>x.PostCreationKeys)
                         .Where(x => x.OrderNumber == orderId)
                         .ToList();
                     var articles = orderWorks.Select(x => x.Article).Distinct();
@@ -563,6 +619,9 @@ namespace ProtoLib.Managers
                     {
                         articles = articles.Where(x => x.Contains(articleFilter));
                     }
+
+                    WorkTemplateLoader wtl = new WorkTemplateLoader();
+                    var templates = wtl.LoadOnlyCrp(articles.ToList());
 
                  
                     
@@ -596,13 +655,14 @@ namespace ProtoLib.Managers
 
                         articleStat.WorkCount = articleWorks.Count;
                         articleStat.Count = articleWorks.Max(x => x.Count);
-                        articleStat.TotalCost = articleWorks.Sum(x => x.TotalCost);
+                     
                         articleStat.CompletedCost = completedArticleWorks.Sum(x => x.TotalCost);
                         articleStat.Issues = articleWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
 
                         articleStat.ByPosts = new List<object>();
                         List<string> postCurrent = new List<string>();
                         bool isEnded = false;
+                        decimal totalCost = 0;
                         foreach (var post in posts)
                         {
                             
@@ -618,7 +678,9 @@ namespace ProtoLib.Managers
                             articleStat.ByPosts.Add(postStat);
 
                             postStat.Name = post.Name;
-                            postStat.TotalCost = articlePostWorks.Sum(x => x.TotalCost);
+                            postStat.TotalCost = templates.ArticleSingleCost(article,
+                                post.PostCreationKeys.Select(x => x.Key).ToList());// articlePostWorks.Sum(x => x.TotalCost);
+                            totalCost += postStat.TotalCost;
                             postStat.CompletedCost = completedArticlePostWorks.Sum(x => x.TotalCost);
                             if (postStat.TotalCost > 0)
                             {
@@ -631,7 +693,7 @@ namespace ProtoLib.Managers
                            
 
                             postStat.IsCompleted = postStat.TotalCost == postStat.CompletedCost;
-                            postStat.IsEmpty = articlePostWorks.Count() == 0;
+                            postStat.IsEmpty = postStat.TotalCost==0;
 
                             if ( articlePostWorks.Count() != 0 && postStat.TotalCost != postStat.CompletedCost)
                             {
@@ -639,6 +701,7 @@ namespace ProtoLib.Managers
                                 {
                                     postCurrent.Add(post.Name);    
                                 }
+                                
                                 
                             }
                             
@@ -648,6 +711,9 @@ namespace ProtoLib.Managers
                                 .Select(x => x.Description).ToList();
                         }
 
+                        articleStat.TotalCost = totalCost*articleStat.Count;
+                        articleStat.TotalCostCrp = templates.ArticleSingleCost(article)*articleStat.Count;//articleWorks.Sum(x => x.TotalCost);
+                        
                         if (postCurrent.Count > 0)
                         {
                             articleStat.CurrentPost = postCurrent.First();
