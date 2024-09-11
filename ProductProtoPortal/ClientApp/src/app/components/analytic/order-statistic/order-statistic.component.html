@@ -97,7 +97,7 @@
             <input type="text" matInput [(ngModel)]="articleFilter" (ngModelChange)="articleFilterUpdate()">
 
           </mat-form-field>
-
+          <mat-checkbox color="primary" [(ngModel)]="hideEnded" (ngModelChange)="articleFilterUpdate()">Спрятать завершенные</mat-checkbox>
           <div *ngIf="this.stat.ArticleStat.length!=this.articleStat.length" class="mb-2">
             Фильтр, отображено {{ this.articleStat.length }} из {{ this.stat.ArticleStat.length }}
           </div>
@@ -121,7 +121,12 @@
 
           <ng-container *ngFor="let article of articleStat">
             <tr class="order-stat-table-row">
-              <td style="width: 12%">{{ article.Article }}</td>
+              <td style="width: 12%" class="text-center">
+                <div>{{ article.Article }}</div>
+                <div class="mt-1 ml-1" *ngIf="article.IsEnded">[Завершено]
+
+                </div>
+              </td>
               <td style="width: 8%" class="text-center">
                 {{ article.Count }}
               </td>

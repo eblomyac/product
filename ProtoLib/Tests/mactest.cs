@@ -14,6 +14,14 @@ public class mactest
 
 {
     [Test]
+    public async Task TestLineCount()
+    {
+        MaconomyOrderMaxCountManager m = new MaconomyOrderMaxCountManager("543647");
+        Console.WriteLine(await m.GetCount(543647 , 1));
+        Console.WriteLine(await m.GetCount(543647 , 5));
+    }
+    
+    [Test]
     public void FillComment()
     {
         using (BaseContext c = new BaseContext())

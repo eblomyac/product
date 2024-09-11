@@ -58,7 +58,7 @@ namespace ProtoLib.Managers
                 _accName = "";
             }
             
-            this._createManager = new WorkCreateManager(null,_c);
+            this._createManager = new WorkCreateManager(_c);
             this._saveManager = new WorkSaveManager(_c);
             this._splitter = new WorkSplitter(_c);
             this._workStarter = new WorkStarter(_accName);

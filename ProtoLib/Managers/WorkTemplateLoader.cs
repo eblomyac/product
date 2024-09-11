@@ -66,8 +66,16 @@ namespace ProtoLib.Managers
                     r.Comments = comment;
                     r.SingleCost = cost;
                     r.Count = lineWorks.First().Count;
-                    r.StartPosts = lineWorks.Select(x => x.PostId).ToList();
-                    r.StartOnDefault = posts.First(x=>x.Name == r.StartPosts.First()).Name;
+                    r.StartPosts = lineWorks.OrderBy(x=>x.Post?.ProductOrder).Select(x => x.PostId).ToList();
+                    foreach (var p in posts)
+                    {
+                        if (r.StartPosts.Contains(p.Name))
+                        {
+                            r.StartOnDefault = p.Name;
+                            break;
+                        }    
+                    }
+                    
                     r.Source = lineWorks;
                     result.Add(r);
                 }

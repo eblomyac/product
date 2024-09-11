@@ -80,6 +80,7 @@ namespace ProtoLib.Managers
 
         public List<Work> AggregateByPosts(List<Work> works)
         {
+            works = works.OrderBy(x => x.Post?.ProductOrder).ToList();
             return works.AggregateWorksByPosts();
         }
         public List<Work> SaveWorks(List<Work> works)
@@ -168,27 +169,23 @@ namespace ProtoLib.Managers
     public class WorkCreateManager
     {
         private BaseContext? _c = null;
-        private List<PostCreationKey> _postCreationKeys;
+        private List<Post> _posts;
 
         
-        public WorkCreateManager(List<PostCreationKey>? post_key_cache = null, BaseContext? c=null)
+        public WorkCreateManager(BaseContext? c=null)
         {
             _c = c;
-            if (post_key_cache == null)
-            {
+           
                 BaseContext bc = _c ?? new BaseContext("");
                 {
-                 _postCreationKeys = bc.PostKeys.AsNoTracking().ToList();
+                 _posts = bc.Posts.Include(x => x.PostCreationKeys).ToList();
                 }
                 if (_c == null)
                 {
                     bc.Dispose();
                 }
-            }
-            else
-            {
-                _postCreationKeys = post_key_cache;
-            }
+            
+          
         }
 
       
@@ -223,10 +220,11 @@ namespace ProtoLib.Managers
                     c.Dispose();
                 }
             }
+            
             var aggregated = works.AggregateWorksByPosts();
 
             
-            return aggregated.OrderBy(x=>x.OrderNumber).ThenBy(x=>x.OrderLineNumber).ThenBy(x=>x.PostId).ToList();
+            return aggregated.OrderBy(x=>x.OrderNumber).ThenBy(x=>x.OrderLineNumber).ToList();
         }
 
      
@@ -253,11 +251,13 @@ namespace ProtoLib.Managers
             w.MovedTo = "";
             w.DeadLine = template.DeadLine;
 
-            var suggestablePost = this._postCreationKeys.FirstOrDefault(x =>
-                x.Key.Equals(template.PostKey, StringComparison.InvariantCultureIgnoreCase));
+            var suggestablePost = this._posts.FirstOrDefault(x =>
+                x.PostCreationKeys.Count(z=>z.Key.Equals(template.PostKey, StringComparison.InvariantCultureIgnoreCase))>0);
             if (suggestablePost != null)
             {
-                w.PostId = suggestablePost.PostId;
+                w.PostId = suggestablePost.Name;
+                w.Post = suggestablePost;
+
                 //throw new ArgumentException($"PostKey: {template.PostKey} not addicted to any post");
             }
             else

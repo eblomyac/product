@@ -65,7 +65,7 @@ namespace ProductProtoPortal.Controllers
         
         [HttpGet]
         [Route("[action]")]
-        public IActionResult PrintTotalOrderStat(string articleFilter,string orderFilter)
+        public async Task<IActionResult> PrintTotalOrderStat(string articleFilter,string orderFilter)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace ProductProtoPortal.Controllers
                     articleFilter = "";
                 }
 
-                dynamic data = am.TotalOrderStat(orderFilter, articleFilter);
+                dynamic data = await am.TotalOrderStat(orderFilter, articleFilter);
                 var table = am.TotalOrderToExcel(data);
 
                 string fileName = Path.Combine(Environment.CurrentDirectory, "download",
@@ -103,10 +103,10 @@ namespace ProductProtoPortal.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult TotalOrderStat()
+        public async Task<IActionResult> TotalOrderStat()
         {
             AnalyticManager am = new AnalyticManager();
-            return new OkObjectResult(new ApiAnswer(am.TotalOrderStat()));
+            return new OkObjectResult(new ApiAnswer(await am.TotalOrderStat()));
         }
         
         [HttpGet]
@@ -127,17 +127,17 @@ namespace ProductProtoPortal.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult OrderStatistic(long orderId)
+        public async Task<IActionResult> OrderStatistic(long orderId)
         {
             AnalyticManager am = new AnalyticManager();
-            return new OkObjectResult(new ApiAnswer(am.OrderStat(orderId, new List<string>())));
+            return new OkObjectResult(new ApiAnswer(await am.OrderStat(orderId, new List<string>())));
         }
         [HttpPost]
         [Route("[action]")]
-        public IActionResult OrderStatistic([FromQuery]long orderId,[FromBody]List<string> articleIds)
+        public async Task<IActionResult> OrderStatistic([FromQuery]long orderId,[FromBody]List<string> articleIds)
         {
             AnalyticManager am = new AnalyticManager();
-            return new OkObjectResult(new ApiAnswer(am.OrderStat(orderId,articleIds)));
+            return new OkObjectResult(new ApiAnswer(await am.OrderStat(orderId,articleIds)));
         }
 
         [HttpGet]

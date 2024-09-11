@@ -30,6 +30,8 @@ export class OrderStatisticComponent implements OnInit {
   orderChartOptions:ApexChartOption = this.chartOptions.getOrderStatisticChartOptions();
   postsChartOptions:ApexChartOption = this.chartOptions.getOrderByPostsChartOptions();
 
+  hideEnded=false;
+
   @ViewChild('orderChart',{static:false})orderChart:ChartComponent|null=null;
   @ViewChild('postChart',{static:false})postChart:ChartComponent|null=null;
 
@@ -39,10 +41,19 @@ export class OrderStatisticComponent implements OnInit {
   articleFilterUpdate(){
 
     if(this.articleFilter.length == 0){
-      this.articleStat = this.stat.ArticleStat;
+      if(this.hideEnded){
+        this.articleStat = this.stat.ArticleStat.filter((x:any)=>x.IsEnded==false);
+      }else{
+        this.articleStat = this.stat.ArticleStat;
+      }
       this.makeOrderTotalStatParam(this.stat);
     }else{
-      this.articleStat = this.stat.ArticleStat.filter((x:any)=>x.Article.includes(this.articleFilter));
+      if(this.hideEnded){
+        this.articleStat = this.stat.ArticleStat.filter((x:any)=>x.Article.includes(this.articleFilter) && x.IsEnded==false);
+      }else{
+        this.articleStat = this.stat.ArticleStat.filter((x:any)=>x.Article.includes(this.articleFilter));
+      }
+
     }
   }
 
@@ -59,7 +70,13 @@ export class OrderStatisticComponent implements OnInit {
 
   }
   redrawCharts(){
-    let articles = this.stat.ArticleStat.filter((x:any)=>x.Article.includes(this.articleFilter)).map((x:any)=>x.Article);
+    let articles=[];
+    if(this.hideEnded){
+      articles = this.stat.ArticleStat.filter((x:any)=>x.Article.includes(this.articleFilter) && x.IsEnded==false).map((x:any)=>x.Article);
+    }else{
+      articles = this.stat.ArticleStat.filter((x:any)=>x.Article.includes(this.articleFilter)).map((x:any)=>x.Article);
+    }
+
     this.loadOrderStatistic(this.currentOrder, articles);
   }
 

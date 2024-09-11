@@ -19,6 +19,7 @@ export class TransferCreateComponent {
   toPost:IPost|undefined;
   selectedWorks:Array<Work>=[];
   currentPost:string='';
+  currentPostEntity: IPost | undefined;
   movableWorks:Array<Work>=[];
   artFilter = "";
   orderFilter="";
@@ -48,8 +49,10 @@ export class TransferCreateComponent {
     this.dataService.Post.List().subscribe(x=>{
       this.posts = x;
       let delIndex = this.posts.findIndex(z=>z.name == this.data.sourcePost);
+
       if(delIndex != -1){
-        this.posts.splice(delIndex,1);
+          this.currentPostEntity = this.posts[delIndex];
+          this.posts.splice(delIndex,1);
       }
     })
   }
@@ -97,13 +100,19 @@ export class TransferCreateComponent {
 
 
     if(this.toPost){
-      let cp = this.posts.find(z=>z.name==this.currentPost);
-      if(cp){
-        if(cp.productOrder>= this.toPost.productOrder){
-          let a = confirm("Вы собираетесь передать позиции на участок с этапом производства меньше текущего.\r\n"+ cp.name +  "(" +cp.productOrder+ ") => " + this.toPost.name +"("+this.toPost.productOrder+")"
-            +"\r\nВы уверены?")
+
+
+      if(this.currentPostEntity) {
+
+        if (this.currentPostEntity.productOrder >= this.toPost.productOrder) {
+          let a = confirm("Вы собираетесь передать позиции на участок с этапом производства меньше текущего.\r\n" + this.currentPostEntity.name + " [" + this.currentPostEntity.productOrder + "] => " + this.toPost.name + " [" + this.toPost.productOrder + "]"
+            + "\r\nВы уверены?")
+          if (a == false) {
+            return;
+          }
         }
       }
+
     this.isLoading=true;
       this.dataService.TransferData.createTransfer(this.currentPost, this.toPost.name, this.selectedWorks.map(x=>x.structure)).subscribe(x=>{
         if(x){

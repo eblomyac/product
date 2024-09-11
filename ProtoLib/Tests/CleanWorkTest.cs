@@ -11,6 +11,20 @@ public class CleanWorkTest
 
 {
     [Test]
+    public void FindBadCountWorks()
+    {
+        AnalyticManager am = new AnalyticManager();
+        var orders = am.ActualOrders();
+        using (BaseContext c = new BaseContext())
+        {
+            var worksToCheck = c.Works.Where(x => orders.Contains(x.OrderNumber)).ToList();
+            var groupedByPost = worksToCheck.GroupBy(x => x.PostId);
+            
+
+        }
+    }
+    
+    [Test]
     public void fillWorkLog()
     {
         
