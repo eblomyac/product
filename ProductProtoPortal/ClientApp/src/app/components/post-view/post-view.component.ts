@@ -250,7 +250,7 @@ export class PostViewComponent implements OnInit, OnDestroy {
   }
   get todayDaily():string{
     let today = new Date();
-    let val = this.lastDailySource.filter(x=>x.day == today.getDay()+1 && x.month == today.getMonth()+1 && x.year == today.getFullYear());
+    let val = this.lastDailySource.filter(x=>x.day == today.getDate() && x.month == today.getMonth()+1 && x.year == today.getFullYear());
     if(val.length==0){
       return "Не задан";
     }
