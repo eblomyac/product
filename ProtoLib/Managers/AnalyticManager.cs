@@ -694,7 +694,7 @@ namespace ProtoLib.Managers
                             totalCost += postStat.TotalCost;
                             //текущий участок
                             var receivedWorks = articlePostWorks.Where(x => (int)x.Status>10).ToList();
-                            if (postStat.TotalCost > 0 &&receivedWorks.Count > 0 && articleStat.CurrentPost)
+                            if (postStat.TotalCost > 0 &&receivedWorks.Count > 0)
                             {
                                 articleStat.CurrentPost = post.Name;
                             }
