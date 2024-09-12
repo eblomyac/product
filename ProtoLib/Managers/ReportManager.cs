@@ -192,7 +192,7 @@ public class ReportManager
                     w.Article = wp.Article;
                     w.Count = wp.Count;
                     w.Cost = wp.TotalCost;
-                    w.AdditionalCost = addCost.Where(x=>x.Id==wp.WorkId).Sum(z=>z.Cost);
+                    w.AdditionalCost = addCost.Where(x=>x.WorkId==wp.WorkId).Sum(z=>z.Cost);
 
                     if (macInfo != null && wp.OrderNumber!=100)
                     {

@@ -622,7 +622,7 @@ namespace ProtoLib.Managers
                 foreach (var orderId in orders)
                 {
                     var orderWorks = c.Works.AsNoTracking()
-                        .Include(x => x.Issues)
+                        .Include(x => x.Issues).Include(x=>x.AdditionalCosts)
                         .Include(x=>x.Post).ThenInclude(x=>x.PostCreationKeys)
                         .Where(x => x.OrderNumber == orderId)
                         .ToList();
