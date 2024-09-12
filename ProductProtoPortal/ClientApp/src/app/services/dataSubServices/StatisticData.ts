@@ -9,6 +9,17 @@ export class StatisticData {
   constructor(private transportService: TransportService, private dataService: DataService) {
 
   }
+  public MaconomyCompareOrders():Observable<number[]|null>{
+    return this.transportService.Get('/analytic/MaconomyOrderCompare', new HttpParams())
+      .pipe(map<ApiAnswer|null,number[]|null>(x=>{
+        if(x!=null){
+          if(x.isSuccess){
+            return x.result as number[];
+          }
+        }
+        return [];
+      }))
+  }
   public PeriodReport(dateFrom:string,dateTo:string):Observable<boolean|null>{
     return this.transportService.Get('/analytic/PeriodReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo))
       .pipe(map<ApiAnswer|null,boolean|null>(x=>{

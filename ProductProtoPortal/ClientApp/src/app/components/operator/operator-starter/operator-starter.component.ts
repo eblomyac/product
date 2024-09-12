@@ -18,7 +18,13 @@ export class OperatorStarterComponent {
 
   errorWorks:IWork[]=[];
   workLines:any[]=[];
+  suggestOrders:number[] =[];
   constructor(private data:DataService) {
+    this.data.Statistic.MaconomyCompareOrders().subscribe(x=>{
+      if(x){
+        this.suggestOrders = x;
+      }
+    });
     this.data.Post.List().subscribe(x=>{
       if(x){
         this.posts = x;

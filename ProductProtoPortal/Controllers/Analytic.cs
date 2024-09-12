@@ -156,5 +156,13 @@ namespace ProductProtoPortal.Controllers
             AnalyticManager am = new AnalyticManager();
             return new OkObjectResult(new ApiAnswer(am.OrderTimeLine(orderNumber)).ToString());
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult MaconomyOrderCompare()
+        {
+            SuggestOperatorWork sow = new SuggestOperatorWork();
+            return new OkObjectResult(new ApiAnswer(sow.LoadSuggestions()).ToString());
+        }
     }
 }

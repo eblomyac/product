@@ -9,9 +9,13 @@
   <div>
     <button style="margin-left: 20px"mat-raised-button color="primary" (click)="Prepare()" [disabled]="isLoading" >Загрузить</button>
     <button style="margin-left: 20px" mat-raised-button color="primary" (click)="Start()" [disabled]="isLoading" >Запустить работы</button>
-
   </div>
-
+</div>
+<div class="w-100" *ngIf="suggestOrders.length>0">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>Рекомендуемые заказы: {{suggestOrders.length}}</mat-expansion-panel-header>
+    <button mat-raised-button color="primary"  style="margin-left: 5px; margin-top: 3px" *ngFor="let o of this.suggestOrders" (click)="orderId=o;Prepare()">{{o}}</button>
+  </mat-expansion-panel>
 
 
 </div>
@@ -77,7 +81,8 @@
       <col span="1" style="width: 12%;">
       <col span="1" style="width: 12%;">
       <col span="1" style="width: 12%;">
-      <col span="1" style="width:28%;">
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width:16%;">
 
 
 
@@ -85,6 +90,9 @@
     <tr>
       <th class="work-prepare-header">
         Номер заказа (строка)
+      </th>
+      <th class="work-prepare-header">
+        Запущена
       </th>
       <th class="work-prepare-header">
         Артикул
@@ -107,6 +115,7 @@
     </tr>
     <tr *ngFor="let w of this.workLines">
       <td>{{w.orderNumber}} ({{w.orderLineNumber}})</td>
+      <td>{{w.startedDate==null?'Нет':w.startedDate|date:'dd.MM.yyyy'}}</td>
       <td>{{w.article}}</td>
       <td>{{w.count}}</td>
       <td>{{w.singleCost.toFixed(2)}}</td>

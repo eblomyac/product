@@ -14,6 +14,7 @@ namespace ProtoLib.Managers
         public string Article { get; set; }
         public long OrderNumber { get; set; }
         public int OrderLineNumber { get; set; }
+        public DateTime? StartedDate { get; set; }
 
         public decimal TotalCost
         {
@@ -37,9 +38,12 @@ namespace ProtoLib.Managers
         {
             var result = new List<WorkPrepareGroupResult>();
             var posts = new List<Post>();
+            var startedWorks = new List<Work>();
             using (BaseContext c = new BaseContext("system"))
             {
+                var orderList = works.Select(x => x.OrderNumber).Distinct().ToList();
                 posts =c.Posts.OrderBy(x => x.ProductOrder).ToList();
+                startedWorks = c.Works.Where(x => orderList.Contains(x.OrderNumber)).OrderBy(x=>x.CreatedStamp).ToList();
             }
 
             var orderGroup = works.GroupBy(x => x.OrderNumber);
@@ -67,6 +71,8 @@ namespace ProtoLib.Managers
                     r.SingleCost = cost;
                     r.Count = lineWorks.First().Count;
                     r.StartPosts = lineWorks.OrderBy(x=>x.Post?.ProductOrder).Select(x => x.PostId).ToList();
+                    r.StartedDate = startedWorks.FirstOrDefault(x =>
+                        (int)x.Status > 10 && x.OrderNumber == order.Key && x.OrderLineNumber == line.Key)?.CreatedStamp;
                     foreach (var p in posts)
                     {
                         if (r.StartPosts.Contains(p.Name))
@@ -74,6 +80,11 @@ namespace ProtoLib.Managers
                             r.StartOnDefault = p.Name;
                             break;
                         }    
+                    }
+
+                    if (r.StartedDate != null)
+                    {
+                        r.StartOnDefault = "";
                     }
                     
                     r.Source = lineWorks;

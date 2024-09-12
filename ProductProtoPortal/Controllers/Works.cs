@@ -66,7 +66,7 @@ namespace ProductProtoPortal.Controllers
             {
                 var templates = wtl.Load(order.ToString());
                 //works.AddRange(templates);
-                works.AddRange(wmf.PrepareWorks(templates));
+                works.AddRange(wmf.PrepareWorks(templates,false));
                 
             }
 

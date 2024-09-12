@@ -65,9 +65,9 @@ namespace ProtoLib.Managers
             _statusChanger = new WorkStatusChanger();
         }
         
-        public List<Work> PrepareWorks(List<WorkCreateTemplate> workCreateTemplates)
+        public List<Work> PrepareWorks(List<WorkCreateTemplate> workCreateTemplates, bool removeExist)
         {
-            return _createManager.CreateWorks(workCreateTemplates ,true);
+            return _createManager.CreateWorks(workCreateTemplates ,removeExist);
         }
         
 
