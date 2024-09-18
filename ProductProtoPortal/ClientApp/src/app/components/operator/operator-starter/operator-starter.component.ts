@@ -10,21 +10,24 @@ import {DataService} from "../../../services/data.service";
 })
 export class OperatorStarterComponent {
 
+  ignoreStarted=true;
   isLoading=false;
   orderId:number=0;
+  resultString='';
 
   editMode=false;
   posts:IPost[]=[];
 
   errorWorks:IWork[]=[];
   workLines:any[]=[];
+  filteredWorkLines:any[]=[];
   suggestOrders:number[] =[];
   constructor(private data:DataService) {
-    this.data.Statistic.MaconomyCompareOrders().subscribe(x=>{
+   /* this.data.Statistic.MaconomyCompareOrders().subscribe(x=>{
       if(x){
         this.suggestOrders = x;
       }
-    });
+    }); /*/
     this.data.Post.List().subscribe(x=>{
       if(x){
         this.posts = x;
@@ -34,15 +37,29 @@ export class OperatorStarterComponent {
   clear(){
 
   }
+  filterLines(){
+    if(this.ignoreStarted){
+      this.filteredWorkLines = this.workLines.filter(z=>z.startedDate ==null);
+    }else{
+      this.filteredWorkLines = this.workLines;
+    }
+  }
   public Start(){
     this.isLoading = true;
-    this.data.Work.StartWorks(this.workLines).subscribe(x=>{
+    this.data.Work.StartWorks(this.filteredWorkLines).subscribe(x=>{
         if(x){
           this.isLoading=false;
-          alert('Запущено ' + x.length + ' работ');
+          if(x.length>0){
+            this.resultString = 'Запущено ' + x.length + ' работ';
+          }else{
+            this.resultString = 'Работы не запущены';
+          }
+          setTimeout(()=>{this.resultString=''},3000)
+
 
           this.errorWorks=[];
           this.workLines=[];
+          this.filterLines();
         }
     });
   }
@@ -57,7 +74,7 @@ export class OperatorStarterComponent {
         this.isLoading=false;
         this.errorWorks = x.errorResult;
         this.workLines = x.result;
-
+        this.filterLines();
         this.orderId=0;
       }
     });
