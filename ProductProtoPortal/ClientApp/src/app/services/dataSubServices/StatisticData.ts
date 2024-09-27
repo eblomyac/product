@@ -20,8 +20,26 @@ export class StatisticData {
         return [];
       }))
   }
-  public PeriodReport(dateFrom:string,dateTo:string):Observable<boolean|null>{
-    return this.transportService.Get('/analytic/PeriodReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo))
+  public AdditionalCostReport(dateFrom:string,dateTo:string, moveDay:boolean):Observable<boolean|null>{
+    return this.transportService.Get('/analytic/AdditionalCostReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo).append('moveDay',moveDay))
+      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
+        if(x!=null){
+          x.isSuccess
+        }
+        return null;
+      }))
+  }
+  public PeriodReport(dateFrom:string,dateTo:string, moveDay:boolean):Observable<boolean|null>{
+    return this.transportService.Get('/analytic/PeriodReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo).append('moveDay',moveDay))
+      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
+        if(x!=null){
+          x.isSuccess
+        }
+        return null;
+      }))
+  }
+  public ArticlePeriodReport(dateFrom:string,dateTo:string, moveDay:boolean):Observable<boolean|null>{
+    return this.transportService.Get('/analytic/ArticlePeriodReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo).append('moveDay',moveDay))
       .pipe(map<ApiAnswer|null,boolean|null>(x=>{
         if(x!=null){
           x.isSuccess

@@ -17,7 +17,7 @@ namespace ProductProtoPortal.Controllers
     {
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> PeriodReport(string dateFrom,string dateTo)
+        public async Task<IActionResult> ArticlePeriodReport(string dateFrom,string dateTo, bool moveDay)
         {
             try
             {
@@ -25,9 +25,49 @@ namespace ProductProtoPortal.Controllers
                 DateTime pDateFrom = DateTime.ParseExact(dateFrom, "dd-MM-yyyy", CultureInfo.InvariantCulture);
                 DateTime pDateTo = DateTime.ParseExact(dateTo, "dd-MM-yyyy", CultureInfo.InvariantCulture);
                 ReportManager rm = new ReportManager();
-                var request = await rm.PeriodReport(pDateFrom,pDateTo);
+                await rm.ArticleReportMail(pDateFrom,pDateTo ,moveDay, user.SAM);
+                return new OkObjectResult(new ApiAnswer(true));
+            }
+            catch (Exception exc)
+            {
+                return new BadRequestObjectResult(new ApiAnswer(exc).ToString());
+            }
+            
+            
+        }
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> PeriodReport(string dateFrom,string dateTo, bool moveDay=true)
+        {
+            try
+            {
+                var user = AuthHelper.GetADUser(this.HttpContext);
+                DateTime pDateFrom = DateTime.ParseExact(dateFrom, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                DateTime pDateTo = DateTime.ParseExact(dateTo, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                ReportManager rm = new ReportManager();
+                var request = await rm.PeriodReport(pDateFrom,pDateTo, moveDay);
                 var r =rm.PeriodReportToMail(request, user.SAM);
                 await EmailNotificatorSingleton.Instance.Send(r);  
+                return new OkObjectResult(new ApiAnswer(true));
+            }
+            catch (Exception exc)
+            {
+                return new BadRequestObjectResult(new ApiAnswer(exc).ToString());
+            }
+            
+            
+        }
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> AdditionalCostReport(string dateFrom,string dateTo, bool moveDay=true)
+        {
+            try
+            {
+                var user = AuthHelper.GetADUser(this.HttpContext);
+                DateTime pDateFrom = DateTime.ParseExact(dateFrom, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                DateTime pDateTo = DateTime.ParseExact(dateTo, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                ReportManager rm = new ReportManager();
+                await rm.AdditioncalCostReportPeriodMail(pDateFrom,pDateTo,user.SAM);
                 return new OkObjectResult(new ApiAnswer(true));
             }
             catch (Exception exc)

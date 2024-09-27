@@ -11,10 +11,14 @@ export class ReportComponent {
   date=new Date();
   isLoading=false;
   datepipe: DatePipe = new DatePipe('en-US')
+  infoMessage="";
+  reportType: 'production' | 'article' | 'additional'='production';
 
   fromDate= new Date();
   toDate= new Date();
   minDate:Date=new Date();
+
+  moveDay=true;
 
   constructor(private data:DataService) {
     this.fromDate.setDate(this.fromDate.getDate()-7);
@@ -33,16 +37,33 @@ export class ReportComponent {
       this.isLoading=false;
     })
   }
-  makePeriodReport(){
+  makeReport(){
     this.isLoading=true;
     let fromDate = this.datepipe.transform(this.fromDate, 'dd-MM-yyyy')!;
     let toDate = this.datepipe.transform(this.toDate, 'dd-MM-yyyy')!;
-    this.data.Statistic.PeriodReport(fromDate,toDate).subscribe(x=>{
-      this.isLoading=false;
-    }, e=>{
-      this.isLoading=false;
-    })
+
+    let req;
+    switch (this.reportType){
+      case "additional":
+        req =  this.data.Statistic.AdditionalCostReport(fromDate,toDate, this.moveDay)
+        break;
+      case "article":
+        req =  this.data.Statistic.ArticlePeriodReport(fromDate,toDate, this.moveDay)
+        break;
+      case "production":
+        req =  this.data.Statistic.PeriodReport(fromDate,toDate, this.moveDay)
+        break;
+    }
+    req.subscribe(x=>{
+      this.infoMessage = "Отчет будет доставлен на почту в ближайшее время"
+      setTimeout(x=>{
+        this.isLoading=false;
+        this.infoMessage='';
+      }, 3000)
+    });
+
   }
+
 
   orderMaconomyClose(){
     this.isLoading=true;

@@ -190,7 +190,9 @@ namespace ProtoLib.Managers
                     WorkCreateTemplate wct = new WorkCreateTemplate();
                     wct.Article = row["ItemNumber"].ToString();
                     wct.PostKey = row["post_key"].ToString();
-                    wct.SingleCost = decimal.Parse(row["cost"].ToString());
+                    decimal sc = 0;
+                    decimal.TryParse(row["cost"].ToString(), out sc);
+                    wct.SingleCost = sc;
                     wct.Comment = row["Comments"].ToString();
                     //wct.Description = row["Oper_Description"].ToString();
                     result.Add(wct);

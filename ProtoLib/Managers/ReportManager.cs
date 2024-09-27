@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Dynamic;
 using System.Text;
+using ClosedXML.Excel;
 using KSK_LIB.DataStructure.MQRequest;
 using KSK_LIB.Excel;
 using KSK_LIB.Maconomy;
@@ -11,7 +12,117 @@ namespace ProtoLib.Managers;
 
 public class ReportManager
 {
-    public async Task<List<dynamic>> PeriodReport(DateTime from, DateTime? to)
+    public async Task AdditioncalCostReportPeriodMail(DateTime from, DateTime to, string accName)
+    {
+        DateTime d = from;
+        DataTable fullTable = null;
+
+        while (d.Date != to.Date)
+        {
+            var report = AdditionalCostReport(d);
+            if (fullTable == null)
+            {
+                fullTable = report;
+            }
+            else
+            {
+                fullTable.Merge(report);
+            }
+            d = d.AddDays(1);
+        }
+
+        fullTable.TableName = "additional-cost-report";
+        ExcelExporter ee = new ExcelExporter("report-additional-cost.xlsx");
+        ee.ExportTable(fullTable);
+        
+        using (BaseContext c = new BaseContext(""))
+        {
+            var user = c.Users.First(x => x.AccName == accName);
+
+            MailRequest mr = new MailRequest();
+            mr.IsBodyHtml = true;
+            mr.Bcc = new List<string>(){"po@ksk.ru"};
+            mr.To = new List<string>() { user.Mail };
+            mr.CopyTo = new List<string>();
+            mr.From = "product-report@ksk.ru";
+            mr.Subject = $"Отчет о доп. работах";
+            mr.Body = "<body>Отчет во вложении</body>";
+            mr.MailAttachments = new List<MailAttachment>()
+            {
+                new MailAttachment("report-additional-cost.xlsx")
+            };
+            await EmailNotificatorSingleton.Instance.Send(mr);  
+        }
+    } 
+    public DataTable AdditionalCostReport( DateTime stamp)
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            DateTime minVal = new DateTime(stamp.Year, stamp.Month, stamp.Day, 10,30,0);
+            DateTime maxVal = minVal.AddDays(1).AddSeconds(-1);
+            var records = c.WorkStatusLogs.AsNoTracking()
+                .Where(x => x.Stamp>=minVal && x.Stamp<=maxVal && x.NewStatus== WorkStatus.ended).ToList();
+            
+            var worksIds = records.Where(x => x.WorkId > 0).Select(x => x.WorkId).Distinct().ToList();
+            var works = c.Works.AsNoTracking().Include(x => x.AdditionalCosts).ThenInclude(x=>x.AdditionalCostTemplate).Where(x => worksIds.Contains(x.Id))
+                .ToList();
+
+            DataTable t = new DataTable();
+            t.Columns.Add("Дата (отчет)", typeof(DateTime));
+            t.Columns.Add("Дата (создания)", typeof(DateTime));
+            t.Columns.Add("Дата (завершения)", typeof(DateTime));
+
+            t.Columns.Add("Тип доп. работы");
+            t.Columns.Add("Артикул");
+            t.Columns.Add("Заказ", typeof(long));
+            t.Columns.Add("Номер строки", typeof(int));
+            t.Columns.Add("Участок");
+            t.Columns.Add("Линия пр-ва");
+            t.Columns.Add("Общее назанчение работы");
+            t.Columns.Add("Описание");
+            t.Columns.Add("Норматив", typeof(decimal));
+            
+            foreach (var w in works)
+            {
+                string type = w.OrderNumber == 100 ? "Общая" : "Для артикула";
+                string article = w.Article;
+                long orderNumber = w.OrderNumber;
+                int orderLineNumber = w.OrderLineNumber;
+                string post = w.PostId;
+                string prodLine = w.ProductLineId;
+                
+                foreach (var ac in w.AdditionalCosts)
+                {
+                    string acType = ac.AdditionalCostTemplate.Name;
+                    string description = ac.Description;
+                    decimal cost = ac.Cost;
+
+                    DataRow r = t.NewRow();
+                    r[0] = stamp;
+                    r[2] = records.LastOrDefault(x=>x.WorkId==w.Id)!=null?records.Last(x=>x.WorkId==w.Id).Stamp:stamp;
+                    r[1] = w.CreatedStamp;
+                    r[3] = type;
+                    r[4] = w.OrderNumber!=100?article:"Нет";
+                    r[5] = w.OrderNumber!=100? orderNumber:0;
+                    r[6] = w.OrderNumber!=100?orderLineNumber:0;
+                    r[7] = post;
+                    r[8] = prodLine;
+                    r[9] = acType;
+                    r[10] = description;
+                    r[11] = cost;
+
+                    t.Rows.Add(r);
+                }
+                
+                    
+                
+            }
+
+            return t;
+
+        }
+    }
+    public async Task<List<dynamic>> PeriodReport(DateTime from, DateTime? to, bool moveDay)
     {
         List<dynamic> result = new List<object>();
 
@@ -37,7 +148,7 @@ public class ReportManager
                     tryCount++;
                     try
                     {
-                        dynamic dateRep = DailyReport(date, productionLine);
+                        dynamic dateRep = DailyReport(date, productionLine, moveDay);
                         result.Add(dateRep);
                         isOk = true;
                     }
@@ -75,7 +186,7 @@ public class ReportManager
         return result;
     }
 
-    public dynamic DailyReport(DateTime stamp, string productionLine)
+    public dynamic DailyReport(DateTime stamp, string productionLine, bool moveDay)
     {
         using (BaseContext bc = new BaseContext(""))
         {
@@ -93,10 +204,17 @@ public class ReportManager
             {
                 masters.Add("system");
             }
-             DateTime minVal = new DateTime(stamp.Year, stamp.Month, stamp.Day, 10, 30, 00);
+            
+             DateTime minVal = new DateTime(stamp.Year, stamp.Month, stamp.Day, 00, 00, 00);
+             if (moveDay)
+             {
+                 minVal = new DateTime(stamp.Year, stamp.Month, stamp.Day, 10, 30, 00);
+                 
+             }
+             DateTime maxVal = minVal.AddDays(1).AddSeconds(-1);
            // DateTime minVal = new DateTime(stamp.Year, stamp.Month, stamp.Day, 0, 0, 00);
            // DateTime maxVal = new DateTime(stamp.Year, stamp.Month, stamp.Day, 0, 0, 00).AddDays(1);
-             DateTime maxVal = new DateTime(stamp.Year, stamp.Month, stamp.Day, 10, 30, 00).AddDays(1);
+             
             
             var records = bc.WorkStatusLogs.AsNoTracking()
                 .Where(x => x.Stamp>=minVal && x.Stamp<=maxVal && x.ProductionLineId == productionLine).ToList();
@@ -112,17 +230,20 @@ public class ReportManager
             issues = issues.Where(x => filteredIssuesIds.Contains(x.Id)).ToList();
 
             //запущенные работы оператором
-            var startedWork = records.Where(x => x.Stamp.Date == stamp.Date &&
-                                                 x.NewStatus == WorkStatus.income &&
-                                                 x.PrevStatus == WorkStatus.hidden &&
+            var startedWork = records.Where(x => x.Stamp >= minVal && x.Stamp<=maxVal &&
+                                                 x.NewStatus == WorkStatus.hidden &&
+                                                 x.PrevStatus == WorkStatus.unkown &&
                                                  operators.Contains(x.EditedBy));
             var startedOrders = startedWork.Select(x => x.OrderNumber).Distinct().ToList();
-            var worksStartedIds = startedWork.Select(x => x.WorkId).ToList();
+            
             var worksIds = records.Where(x => x.WorkId > 0).Select(x => x.WorkId).Distinct().ToList();
             var works = bc.Works.AsNoTracking().Include(x => x.AdditionalCosts).Where(x => worksIds.Contains(x.Id))
                 .ToList();
             var addCost = bc.AdditionalCosts.Where(x => worksIds.Contains(x.WorkId)).ToList();
 
+            WorkTemplateLoader wtl = new WorkTemplateLoader();
+            List<WorkCreateTemplate> templates = wtl.LoadOnlyCrp(works.Select(x => x.Article).Distinct().ToList());
+            
             DataTable macInfo = null;
             DataTable macResult = null;
             using (MaconomyBase mb = new MaconomyBase())
@@ -147,7 +268,7 @@ public class ReportManager
             int articleEndedWorkCount = 0;
             decimal articleEndedGoodsCount = 0;
 
-
+            
 
             //сданные работы
             var endedWorks = records.Where(x => x.NewStatus == WorkStatus.ended && masters.Contains(x.EditedBy) && x.WorkId!=0);
@@ -168,6 +289,9 @@ public class ReportManager
             }
 
             result.Posts = new List<object>();
+
+            
+            
             foreach (var bcPost in bc.Posts.OrderBy(x => x.ProductOrder).AsNoTracking().ToList())
             {
                 var dses = dsm.DateValue(bcPost.Name, stamp);
@@ -193,7 +317,7 @@ public class ReportManager
                     w.Count = wp.Count;
                     w.Cost = wp.TotalCost;
                     w.AdditionalCost = addCost.Where(x=>x.WorkId==wp.WorkId).Sum(z=>z.Cost);
-
+                  
                     if (macInfo != null && wp.OrderNumber!=100)
                     {
                         
@@ -234,6 +358,9 @@ public class ReportManager
 
                     }
 
+                    w.TotalCost = w.TotalCount * templates.ArticleSingleCost(wp.Article);
+                    w.TotalCostCompleted = wp.Count * templates.ArticleSingleCost(wp.Article);
+                    
 
 
                     postStat.Works.Add(w);
@@ -262,13 +389,142 @@ public class ReportManager
             result.EndedIssuesCount = issuesEnded.Count();
             result.EndedWorksCount = totalEndCount;
             result.EndedCost = totalEndCost;
-            result.StartedCost = bc.Works.Where(x => worksStartedIds.Contains(x.Id)).Sum(x => x.SingleCost * x.Count);
+            result.StartedCost = startedWork.Select(x => templates.ArticleSingleCost(x.Article)*x.Count);  
             result.ArticleEndCount = articleEndedWorkCount;
             result.ArticleEndGoodsCount = articleEndedGoodsCount;
             return result;
         }
     }
-    
+
+    public dynamic ArticleReportSingelDay(DateTime d, bool moveDay)
+    {
+        DateTime minVal = new DateTime(d.Year, d.Month, d.Day, 0, 0, 00);
+        DateTime maxVal = minVal.AddDays(1);
+        if (moveDay)
+        {
+            minVal = new DateTime(d.Year, d.Month, d.Day, 10, 30, 0);
+            maxVal = minVal.AddDays(1).AddSeconds(-1);
+        }
+
+        dynamic result = new ExpandoObject();
+        result.DateStamp = d;
+        
+        using (BaseContext c = new BaseContext())
+        {
+            var dayLog = c.WorkStatusLogs.AsNoTracking().Where(x => x.Stamp >= minVal && x.Stamp <= maxVal && x.OrderNumber!=100).ToList();
+            var endedDayLog = dayLog.Where(x => x.MovedTo == Constants.Work.EndPosts.TotalEnd).OrderBy(x=>x.OrderNumber).ThenBy(x=>x.OrderLineNumber);
+
+            var endedArticles =  endedDayLog.Select(x => x.Article).Distinct().ToList();
+            WorkTemplateLoader wtl = new WorkTemplateLoader();
+            
+            var templates =  wtl.LoadOnlyCrp(endedArticles);
+
+            var posts = c.Posts.AsNoTracking().Include(x => x.PostCreationKeys).OrderBy(x=>x.ProductOrder);
+
+            DataTable t = new DataTable();
+            t.Columns.Add("Дата",typeof(DateTime));
+            t.Columns.Add("Артикул");
+            t.Columns.Add("Произв. линия");
+            t.Columns.Add("Завершенное количество", typeof(decimal));
+            foreach (var p in posts)
+            {
+                t.Columns.Add(p.Name +"_CRP",typeof(decimal));
+                t.Columns.Add(p.Name +"_DP",typeof(decimal));
+            }
+
+            t.Columns.Add("Сумма CRP",typeof(decimal));
+            t.Columns.Add("Сумма DP",typeof(decimal));
+
+            foreach (var log in endedDayLog)
+            {
+                var allArtWorks = c.Works.AsNoTracking().Where(x =>
+                    x.OrderNumber == log.OrderNumber && x.OrderLineNumber == x.OrderLineNumber).ToList();
+
+                DataRow r = t.NewRow();
+                r[0] = d;
+                r[1] = log.Article;
+                r[2] = log.ProductionLineId;
+                r[3] = log.Count;
+
+
+                decimal sCrp = 0;
+                decimal sDp = 0;
+                foreach (var p in posts)
+                {
+                    
+                    decimal crpCost =templates.ArticleSingleCost(log.Article, p.PostCreationKeys.Select(x => x.Key).ToList()) * log.Count.Value;
+                    sCrp += crpCost;
+                    r[p.Name + "_CRP"] = crpCost;
+                        
+                    
+                    var w = allArtWorks.Where(x => x.PostId == p.Name && x.Status == WorkStatus.ended).ToList().Count>0;
+                    if (w)
+                    {
+                        r[p.Name + "_DP"] = crpCost;
+                        sDp += crpCost;
+                    }
+                    else
+                    {
+                        r[p.Name + "_DP"] = 0;
+                    }
+                    
+                }
+
+                r["Сумма CRP"] = sCrp;
+                r["Сумма DP"] = sDp;
+                
+                t.Rows.Add(r);
+            }
+
+            result.Table = t;
+
+        }
+
+        return result;
+    }
+
+    public async Task ArticleReportMail(DateTime start, DateTime end, bool moveDay, string accName)
+    {
+        DateTime d = start;
+        DataTable fullTable = null;
+
+        while (d.Date != end.Date)
+        {
+            var report = ArticleReportSingelDay(d, moveDay);
+            if (fullTable == null)
+            {
+                fullTable = report.Table;
+            }
+            else
+            {
+                fullTable.Merge(report.Table);
+            }
+            d = d.AddDays(1);
+        }
+
+        fullTable.TableName = "article-report";
+        ExcelExporter ee = new ExcelExporter("report-article.xlsx");
+        ee.ExportTable(fullTable);
+        
+        using (BaseContext c = new BaseContext(""))
+        {
+            var user = c.Users.First(x => x.AccName == accName);
+
+            MailRequest mr = new MailRequest();
+            mr.IsBodyHtml = true;
+            mr.Bcc = new List<string>(){"po@ksk.ru"};
+            mr.To = new List<string>() { user.Mail };
+            mr.CopyTo = new List<string>();
+            mr.From = "product-report@ksk.ru";
+            mr.Subject = $"Поартикульный отчет производства за период";
+            mr.Body = "<body>Отчет во вложении</body>";
+            mr.MailAttachments = new List<MailAttachment>()
+            {
+                new MailAttachment("report-article.xlsx")
+            };
+            await EmailNotificatorSingleton.Instance.Send(mr);  
+        }
+    }
      
    
 
@@ -294,6 +550,8 @@ public class ReportManager
         t2.Columns.Add("Выполненный норматив (мин.)", typeof(decimal));
         t2.Columns.Add("Выполненный норматив доп. работ (мин.)", typeof(decimal));
         t2.Columns.Add("Дневной ресурс (мин.)", typeof(decimal));
+        t2.Columns.Add("НОРМАТИВ(TEST)", typeof(decimal));
+        t2.Columns.Add("НОРМАТИВ2(TEST)", typeof(decimal));
         t2.TableName = "По участкам";
 
         DataTable t3 = new DataTable();
@@ -309,6 +567,8 @@ public class ReportManager
         t3.Columns.Add("Количество в строке заказа",typeof(int));
         t3.Columns.Add("Норматив партии выполнено",typeof(decimal));
         t3.Columns.Add("Норматив доп. работ", typeof(decimal));
+        t3.Columns.Add("НОРМАТИВ(TEST)", typeof(decimal));
+        t3.Columns.Add("НОРМАТИВ2(TEST)", typeof(decimal));
         
         foreach (var report in reports)
         {
@@ -336,7 +596,10 @@ public class ReportManager
                 postRow["Выполненный норматив (мин.)"] = postReport.EndedCost;
                 postRow["Дневной ресурс (мин.)"] = postReport.DailySource;
                 postRow["Выполненный норматив доп. работ (мин.)"] = postReport.AdditionalCost;
+               
                 dailySource += postReport.DailySource;
+                decimal totalCost = 0;
+                decimal totalCostCompleted = 0;
 
                 foreach (var postWork in postReport.Works)
                 {
@@ -352,8 +615,15 @@ public class ReportManager
                     r[8] = postWork.TotalCount;
                     r[9] = postWork.Cost;
                     r[10] = postWork.AdditionalCost;
+                    r[11] = postWork.TotalCost;
+                    r[12] = postWork.TotalCostCompleted;
+                    totalCost += postWork.TotalCost;
+                    totalCostCompleted += postWork.TotalCostCompleted;
                     t3.Rows.Add(r);
                 }
+
+                postRow["НОРМАТИВ(TEST)"] = totalCost;
+                postRow["НОРМАТИВ2(TEST)"] = totalCostCompleted;
                 
                 t2.Rows.Add(postRow);
             }
@@ -491,7 +761,7 @@ public class ReportManager
             var prodLine = bc.ProductionLines.Select(x => x.Id).Distinct().ToList();
             foreach (var line in prodLine)
             {
-                var report = DailyReport(stamp, line);
+                var report = DailyReport(stamp, line,true);
                 ExcelExporter ee = new ExcelExporter("workRep.xlsx");
                 ee.ExportTable(DailyWorksTable(report));
                 
@@ -528,7 +798,7 @@ result.Add(mr);
             var prodLine = bc.ProductionLines.Select(x => x.Id).Distinct().ToList();
             foreach (var line in prodLine)
             {
-                var report = DailyReport(stamp, line);
+                var report = DailyReport(stamp, line, true);
                 ExcelExporter ee = new ExcelExporter("workRep.xlsx");
                 ee.ExportTable(DailyWorksTable(report));
                 
