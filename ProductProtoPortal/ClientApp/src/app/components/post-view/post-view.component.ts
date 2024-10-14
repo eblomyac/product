@@ -48,6 +48,7 @@ export class PostViewComponent implements OnInit, OnDestroy {
 
   orderFilter: number[] = [];
   articleFilter: string = '';
+  orderStringFilter:string = "";
 
   //dailySource:number|null=null;
   subsToDel:Subscription[]=[];
@@ -101,6 +102,7 @@ export class PostViewComponent implements OnInit, OnDestroy {
   clearFilters() {
     this.orderFilter = [];
     this.articleFilter = '';
+    this.orderStringFilter='';
     this.applyFilter();
   }
 
@@ -141,7 +143,15 @@ export class PostViewComponent implements OnInit, OnDestroy {
   }
 
   getOrders(works: Work[]): number[] {
-    return [...new Set(works.map(x => x.structure.orderNumber))];
+    return [...new Set(works.map(x =>
+    { return x.structure.orderNumber;}
+    ))].filter(x=>{
+      if(this.orderStringFilter.length==0){
+        return true;
+      }else{
+        return x.toString().includes(this.orderStringFilter);
+      }
+    }).sort((a, b) => a-b);
   }
 
   getTotalCost(works: Work[]): number {
@@ -160,8 +170,8 @@ export class PostViewComponent implements OnInit, OnDestroy {
 
     return this.allWorks.filter(x => {
       let filtered = true;
-      if (this.orderFilter.length > 0) {
-        filtered = filtered && this.orderFilter.indexOf(x.structure.orderNumber) >= 0;
+      if (this.orderStringFilter.length > 0) {
+        filtered = filtered && x.structure.orderNumber.toString().includes(this.orderStringFilter);
       }
       if (this.articleFilter.length > 0) {
         filtered = filtered && x.structure.article.includes(this.articleFilter);
@@ -440,4 +450,5 @@ export class PostViewComponent implements OnInit, OnDestroy {
 
   }
 
+  protected readonly console = console;
 }

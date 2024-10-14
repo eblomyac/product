@@ -833,22 +833,52 @@ result.Add(mr);
         using (BaseContext c = new BaseContext(""))
         {
             var works = c.Works.AsNoTracking().Include(x=>x.AdditionalCosts).Where(x => ids.Contains(x.Id)).ToList();
+          
             DataTable dt = new DataTable();
-            dt.Columns.Add("Заказ");
+            dt.Columns.Add("Заказ", typeof(long));
             dt.Columns.Add("Артикул");
-            dt.Columns.Add("Количество");
+            dt.Columns.Add("Количество",typeof(decimal));
             dt.Columns.Add("Комментарий");
             dt.Columns.Add("Производство");
+            dt.Columns.Add("Приоритет",typeof(int));
 
-            dt.Columns.Add("Норматив");
-            dt.Columns.Add("Доп. норматив");
+            dt.Columns.Add("Норматив",typeof(decimal));
+            dt.Columns.Add("Доп. норматив",typeof(decimal));
             
-            dt.Columns.Add("Дата сдачи");
+            dt.Columns.Add("Дата сдачи",typeof(DateTime));
             dt.Columns.Add("Операции");
             dt.Columns.Add("Статус");
-
+            
+            WorkPriorityManager wpm = new WorkPriorityManager();
+            List<long> orders = works.Select(x => x.OrderNumber).Distinct().ToList();
+            var pr = wpm.WorkPriorityList(orders);
             foreach (var w in works)
             {
+
+                var orderPriority =
+                    pr.FirstOrDefault(x => x.OrderNumber == w.OrderNumber && x.Article.Length < 1);
+                var articlePriority =
+                    pr.FirstOrDefault(x => x.OrderNumber == w.OrderNumber && x.Article == w.Article);
+                if (orderPriority == null && articlePriority == null)
+                {
+                    w.Priority = 10;
+                }
+
+                if (orderPriority != null)
+                {
+                    w.Priority = orderPriority.Priority;
+                }
+
+                if (articlePriority != null)
+                {
+                    w.Priority = articlePriority.Priority;
+                }
+            }
+            works = works.OrderByDescending(x => x.Priority).ToList();
+            foreach (var w in works)
+            {
+                
+               
                 DataRow r = dt.NewRow();
                 r["Заказ"] = w.OrderNumber;
                 r["Артикул"] = w.Article;
@@ -860,6 +890,7 @@ result.Add(mr);
                 r["Дата сдачи"] = w.DeadLine;
                 r["Операции"] = w.CommentMap.Replace("\t","\r\n");
                 r["Статус"] = w.StatusString;
+                r["Приоритет"] = w.Priority;
                 dt.Rows.Add(r);
             }
 

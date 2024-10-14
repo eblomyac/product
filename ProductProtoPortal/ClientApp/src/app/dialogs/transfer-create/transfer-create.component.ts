@@ -40,8 +40,8 @@ export class TransferCreateComponent {
   {
     this.currentPost = data.sourcePost;
     this.dataService = data.dataService;
-    this.works = data.availableWorks;
-    this.movableWorks = data.availableWorks;
+    this.works = data.availableWorks.filter(x=>x.structure.orderNumber!=100);
+    this.movableWorks = data.availableWorks.filter(x=>x.structure.orderNumber!=100);
     //this.loadWorksDestination();
     this.loadPosts();
   }
@@ -90,7 +90,7 @@ export class TransferCreateComponent {
   filterWorks(){
       this.orderFilter='';
       this.artFilter='';
-      this.movableWorks=this.data.availableWorks;
+      this.movableWorks=this.data.availableWorks.filter(x=>x.structure.orderNumber!=100);
       this.selectedWorks=[];
 
 
