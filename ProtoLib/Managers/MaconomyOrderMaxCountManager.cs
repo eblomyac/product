@@ -30,6 +30,34 @@ public class MaconomyOrderMaxCountManager
         
     }
 
+    public async Task<List<int>> GetLinesNumber(long orderNumber, string article)
+    {
+        if (this._loadTask.Status == TaskStatus.Faulted)
+        {
+            this._loadTask = this.LoadData(_orders);
+        }
+        if (this._loadTask.Status != TaskStatus.RanToCompletion)
+        {
+            await Task.Delay(15);
+            return await GetLinesNumber(orderNumber, article);
+        }
+        else
+        {
+            if (this._data == null)
+            {
+                this._data = this._loadTask.Result;
+            }
+            var rows =  this._data.Select($"TransactionNumber={orderNumber} and ITEMNUMBER='{article}'");
+            List<int> result = new List<int>();
+            foreach (DataRow row in rows)
+            {
+                result.Add((int)row.Field<decimal>("LINENUMBER"));
+            }
+
+            return result;
+        }
+    }
+
     public async Task <decimal> GetCount(long orderNumber, int line)
     {
         if (this._loadTask.Status == TaskStatus.Faulted)
