@@ -4,6 +4,7 @@ using System.Data;
 using System.Net;
 using System.Net.Http.Headers;
 using KSK_LIB.DataStructure.MQRequest;
+using KSK_LIB.Excel;
 using Microsoft.EntityFrameworkCore;
 using ProtoLib;
 using ProtoLib.Managers;
@@ -11,8 +12,53 @@ using ProtoLib.Model;
 
 namespace ProductCroner
 {
+    
     public static class Program
     {
+        public async static Task CheckCrp()
+        {
+            PlanChecker pc = new PlanChecker();
+
+            var check = pc.Check();
+
+            var lumarData = pc.CheckReport(check, "LUMAR");
+            var svetonData = pc.CheckReport(check, "SVETON");
+
+            string lumarFile = Path.Combine(Environment.CurrentDirectory, "lumar-data.xlsx");
+            string svetonFile = Path.Combine(Environment.CurrentDirectory, "sveton-data.xlsx");
+
+            if (File.Exists(lumarFile))
+            {
+                File.Delete(lumarFile);
+            }
+
+            if (File.Exists(svetonFile))
+            {
+                File.Delete(svetonFile);
+            }
+            
+            ExcelExporter ee = new ExcelExporter(lumarFile);
+            ee.ExportSet(lumarData);
+
+            ExcelExporter ee2 = new ExcelExporter(svetonFile);
+            ee2.ExportSet(svetonData);
+            
+            await EmailNotificatorSingleton.Instance.Send(new MailRequest()
+            {
+                Bcc =new List<string>() {"po@Ksk.ru"}, Body = "Во вложении отчет с расхождениями нормативов между макономи и crp, товаров LUMAR", From = "produkt@ksk.ru", CopyTo = new List<string>(),
+                IsBodyHtml = false,
+                MailAttachments = new List<MailAttachment>(){new MailAttachment(lumarFile)}, Subject = "Проверка нормативов Maconomy\\CRP (LUMAR)", 
+                To = new List<string>() {"Anton.Brik@vitaluce.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru"}
+            });  
+            await EmailNotificatorSingleton.Instance.Send(new MailRequest()
+            {
+                Bcc = new List<string>() {"po@Ksk.ru"}, Body = "Во вложении отчет с расхождениями нормативов между макономи и crp, товаров SVETON", From = "produkt@ksk.ru", CopyTo = new List<string>(),
+                IsBodyHtml = false,
+                MailAttachments = new List<MailAttachment>(){new MailAttachment(svetonFile)}, Subject = "Проверка нормативов Maconomy\\CRP (SVETON)", 
+                To = new List<string>() {"stocks@sveton.ru","Nikolay.Rezenov@sveton.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru"}
+            });
+            
+        }
         public static string HtmlRoot = "https://product.ksk.ru";
         public static async Task Main(string[] args)
         {
@@ -75,7 +121,12 @@ namespace ProductCroner
                // await SyncMac();    
                CloseTodayEnd();
             }
-            
+
+            if (args.Contains("--check-crp"))
+            {
+               await CheckCrp();
+                
+            }
             
 
         }

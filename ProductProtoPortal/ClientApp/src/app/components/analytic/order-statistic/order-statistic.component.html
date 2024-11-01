@@ -112,6 +112,7 @@
           <tbody>
           <tr class="order-stat-table-header">
             <th style="min-width: 12%; ">Артикул</th>
+            <th style="min-width: 5%">Приоритет</th>
             <th class="text-center" style="width: 8%">Количество</th>
             <th class="text-center" style="width: 8%">Норматив</th>
             <th class="text-center" style="width: 8%">Норматив CRP</th>
@@ -126,6 +127,9 @@
                 <div class="mt-1 ml-1" *ngIf="article.IsEnded">[Завершено]
 
                 </div>
+              </td>
+              <td style="width: 5%" class="text-center">
+                {{article.Priority}}
               </td>
               <td style="width: 8%" class="text-center">
                 {{ article.Count }}

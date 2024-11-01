@@ -39,6 +39,7 @@
         <th style="min-width: 5%; " class="sticky">Заказ</th>
         <th  style="min-width: 10%; " class="sticky" >Артикул</th>
         <th  style="min-width: 10%; " class="sticky" >Наименование</th>
+        <th  style="min-width: 5%; " class="sticky" >Приоритет</th>
         <th  class="sticky" >Дата сдачи</th>
         <th  class="text-center sticky" style="width: 8%; " >Количество</th>
         <th class="text-center sticky" >Текущий уч.</th>
@@ -54,6 +55,7 @@
           <td>{{article.Order}}</td>
           <td style="width: 10%" class="text-center">{{article.Article}}</td>
           <td style="width: 10%">{{article.ItemText}}</td>
+          <td style="width: 5%" class="text-center">{{article.Priority}}</td>
           <td>{{article.DeadLine | date:'dd.MM.yyyy'}}</td>
           <td style="width: 8%" class="text-center">
             {{article.Count}}

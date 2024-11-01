@@ -7,7 +7,7 @@
   </div>
   <div ><a> {{work.structure.article}} х {{work.structure.count}} (приоритет:{{work.structure.priority}})</a> <div></div></div>
   <div>{{work.structure.orderNumber}} ({{work.structure.orderLineNumber}}) - {{work.structure.productLineId}}</div>
-  <div>Дата сдачи: {{work.structure.deadLine|date:'dd.MM.yyyy'}}</div>
+  <div>Дата сдачи: {{work.structure.deadLine|date:'dd.MM.yyyy'}} <span *ngIf="work.structure.daysToDeadLine<=4" style="background-color: rgba(222,20,74,0.37)">(дней до сдачи: {{work.structure.daysToDeadLine}})</span></div>
 
   <div>Норма: {{work.structure.totalCost|number}}
     <span *ngIf="work.structure.additionalCosts!=null && work.structure.additionalCosts.length>0"> (доп. работы: {{work.additionalCostValue()}}) </span>

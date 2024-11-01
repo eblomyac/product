@@ -1,0 +1,69 @@
+<div class="mt-2">
+  <div class="container-fluid">
+    <div class="row">
+      <mat-form-field class="col-2">
+        <mat-label>Период</mat-label>
+        <mat-date-range-input [rangePicker]="periodPicker">
+          <input matStartDate placeholder="Начало" [(ngModel)]="this.from" [max]="this.to">
+          <input matEndDate placeholder="Конец" [(ngModel)]="this.to" [min]="this.from">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="periodPicker"></mat-datepicker-toggle>
+        <mat-date-range-picker #periodPicker></mat-date-range-picker>
+      </mat-form-field>
+      <mat-form-field class="col-2">
+        <mat-label>Участок</mat-label>
+        <mat-select [(ngModel)]="postId">
+          <mat-option [value]="">Не важно</mat-option>
+          <mat-option *ngFor="let p of this.postList" [value]="p.name">{{p.name}}</mat-option>
+        </mat-select>
+
+      </mat-form-field>
+      <mat-form-field class="col-2">
+        <mat-label>Пользователь</mat-label>
+        <mat-select [(ngModel)]="userBy">
+          <mat-option [value]="">Не важно</mat-option>
+          <mat-option *ngFor="let p of this.userList" [value]="p.accName">{{p.name}}</mat-option>
+        </mat-select>
+
+      </mat-form-field>
+      <mat-form-field class="col-2">
+        <mat-label>Артикул содержит</mat-label>
+        <input matInput [(ngModel)]="article" type="text">
+
+      </mat-form-field>
+      <mat-form-field class="col-2">
+        <mat-label>Относится к заказу №</mat-label>
+        <input matInput [(ngModel)]="order" type="number">
+
+      </mat-form-field>
+      <div class="offset-1 col-1">
+        <button class="mt-3" mat-raised-button color="primary" (click)="load()">Загрузить</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div>
+  <table width="100%">
+    <tr>
+    <th>Дата</th>
+    <th>Пользователь</th>
+    <th>Участок</th>
+    <th>Заказ (№ строки)</th>
+    <th>Артикул</th>
+    <th>Количество</th>
+    <th>Действие</th>
+
+    </tr>
+    <tr *ngFor="let h of this.histories">
+      <td>{{h.stamps}}</td>
+      <td>{{h.editedBy}}</td>
+      <td>{{h.postId}}</td>
+      <td>{{h.orderNumber}}({{h.orderLineNumber}})</td>
+      <td>{{h.article}}</td>
+      <td class="text-center">{{h.count}}</td>
+      <td>{{h.action}}</td>
+
+    </tr>
+  </table>
+
+</div>

@@ -38,6 +38,7 @@ export interface IWork {
   deadLine:Date;
   canClosed:boolean;
   additionalCosts:AdditionalCost[];
+  daysToDeadLine:number;
 }
 
 export class Work {

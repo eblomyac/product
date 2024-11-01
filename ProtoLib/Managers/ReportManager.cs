@@ -12,6 +12,72 @@ namespace ProtoLib.Managers;
 
 public class ReportManager
 {
+    public async Task<List<WorkStatusLog>> History(DateTime from, DateTime to, string? userBy, string? postBy, string? article, long? order)
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            var logs = c.WorkStatusLogs.Where(x => x.Stamp >= from && x.Stamp <= to);
+            if (!string.IsNullOrEmpty(userBy))
+            {
+                logs = logs.Where(x => x.EditedBy == userBy);
+            }
+
+            if (!string.IsNullOrEmpty(postBy))
+            {
+                logs = logs.Where(x => x.PostId == postBy);
+            }
+
+            if (!string.IsNullOrEmpty(article))
+            {
+                logs = logs.Where(x => x.Article.Contains(article));
+            }
+
+            if (order.HasValue)
+            {
+                logs = logs.Where(x => x.OrderNumber == order.Value);
+            }
+            return await logs.ToListAsync();
+        }
+    }
+
+    public async Task<List<object>> HistoryView(DateTime from, DateTime to, string? userBy, string? postBy,
+        string? article, long? order)
+    {
+        var data = await History(from, to, userBy, postBy, article, order);
+        var result = new List<object>();
+        using (BaseContext c = new BaseContext())
+        {
+            var users=         c.Users.ToList();
+            foreach (var log in data)
+            {
+                dynamic d = new ExpandoObject();
+                d.editedBy = users.FirstOrDefault(x => x.AccName == log.EditedBy)?.Name;
+                d.orderNumber = log.OrderNumber;
+                d.stamps = log.Stamp.ToString("dd.MM HH:mm");
+                d.stampd = log.Stamp;
+                d.postId = log.PostId;
+                d.article = log.Article;
+                d.orderLineNumber = log.OrderLineNumber;
+                d.count = log.Count;
+                d.prevStatus = WorkStatusMapper.Map(log.PrevStatus);
+                d.newStatus = WorkStatusMapper.Map(log.NewStatus);
+                d.action = "";
+                if (log.PrevStatus == WorkStatus.unkown)
+                {
+                    d.action = "Создание работы";
+                }
+                else
+                {
+                    d.action =
+                        $"Смена статуса с {WorkStatusMapper.Map(log.PrevStatus)} на {WorkStatusMapper.Map(log.NewStatus)}";
+                }
+                result.Add(d);
+            }
+
+        }
+
+        return result;
+    }
     public async Task AdditioncalCostReportPeriodMail(DateTime from, DateTime to, string accName)
     {
         DateTime d = from;
@@ -389,7 +455,7 @@ public class ReportManager
             result.EndedIssuesCount = issuesEnded.Count();
             result.EndedWorksCount = totalEndCount;
             result.EndedCost = totalEndCost;
-            result.StartedCost = startedWork.Select(x => templates.ArticleSingleCost(x.Article)*x.Count);  
+            result.StartedCost = startedWork.Select(x => templates.ArticleSingleCost(x.Article)*x.Count).Sum(x=>x.Value);  
             result.ArticleEndCount = articleEndedWorkCount;
             result.ArticleEndGoodsCount = articleEndedGoodsCount;
             return result;
@@ -841,6 +907,7 @@ result.Add(mr);
             dt.Columns.Add("Комментарий");
             dt.Columns.Add("Производство");
             dt.Columns.Add("Приоритет",typeof(int));
+            dt.Columns.Add("Дней до сдачи",typeof(int));
 
             dt.Columns.Add("Норматив",typeof(decimal));
             dt.Columns.Add("Доп. норматив",typeof(decimal));
@@ -874,7 +941,7 @@ result.Add(mr);
                     w.Priority = articlePriority.Priority;
                 }
             }
-            works = works.OrderByDescending(x => x.Priority).ToList();
+            works = works.OrderByDescending(x => x.Priority).ThenBy(x=>x.DaysToDeadLine).ToList();
             foreach (var w in works)
             {
                 
@@ -891,6 +958,7 @@ result.Add(mr);
                 r["Операции"] = w.CommentMap.Replace("\t","\r\n");
                 r["Статус"] = w.StatusString;
                 r["Приоритет"] = w.Priority;
+                r["Дней до сдачи"] = w.DaysToDeadLine;
                 dt.Rows.Add(r);
             }
 

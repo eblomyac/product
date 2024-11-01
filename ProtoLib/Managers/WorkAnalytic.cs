@@ -155,7 +155,7 @@ namespace ProtoLib.Managers
                         }
                         
                     }
-                    return works.OrderByDescending(x=>x.Priority).ThenBy(x=>x.DeadLine).ToList();
+                    return works.OrderByDescending(x=>x.Priority).ThenBy(x=>x.DaysToDeadLine).ToList();
                 }
                 else
                 {

@@ -7,6 +7,7 @@ import {DataService} from "../../../services/data.service";
 import {DialogHandlerService} from "../../../services/dialog-handler.service";
 import {DailySourceDialogComponent} from "../../../dialogs/daily-source-dialog/daily-source-dialog.component";
 import {AdditionalCostDialogComponent} from "../../../dialogs/additional-cost-dialog/additional-cost-dialog.component";
+import {W} from "@angular/cdk/keycodes";
 
 @Component({
   selector: 'app-work-compact-view',
@@ -52,8 +53,5 @@ export class WorkCompactViewComponent implements OnInit {
   }
 
 
-
-
-
-
+  protected readonly W = W;
 }

@@ -90,6 +90,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {ActHistoryComponent} from "./components/Info/act-history/act-history.component";
 import {InfoComponent} from "./components/Info/info.component";
 import {OperatorStarterComponent} from "./components/operator/operator-starter/operator-starter.component";
+import {HistoryViewComponent} from "./components/Info/history-view/history-view.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -104,7 +105,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         UserSettingsComponent,
         PostSettingsComponent,
         WorkPrepareComponent,
-        WorkStarterComponent,
+        WorkStarterComponent, HistoryViewComponent,
         OperatorComponent, OperatorStarterComponent,
         WorkCompactViewComponent, InfoComponent,
         PostDialogComponent, ActHistoryComponent,

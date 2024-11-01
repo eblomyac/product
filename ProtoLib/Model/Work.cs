@@ -64,7 +64,16 @@ namespace ProtoLib.Model
         [MaxLength(256)]
         public string Description { get; set; }
         public DateTime DeadLine { get; set; }
-        
+
+        [NotMapped]
+        public int DaysToDeadLine
+        {
+            get
+            {
+                return (int)(this.DeadLine - DateTime.Today).TotalDays;
+            }
+        }
+
         public DateTime CreatedStamp { get; set; }
         [MaxLength(32)]
         public string? MovedFrom { get; set; }

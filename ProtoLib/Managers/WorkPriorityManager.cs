@@ -4,6 +4,31 @@ using ProtoLib.Model;
 
 namespace ProtoLib.Managers;
 
+public static class WorkPriorityData{
+
+    public static int GetWorkPrioritu(this List<WorkPriority> data, string article, long order)
+    {
+        int result = 10;
+        var orderPriority =
+            data.FirstOrDefault(x => x.OrderNumber == order && x.Article.Length < 1);
+        var articlePriority =
+            data.FirstOrDefault(x => x.OrderNumber == order && x.Article == article);
+        if (orderPriority == null && articlePriority == null)
+        {
+            result=10;
+        }
+        if (orderPriority != null)
+        {
+            result= orderPriority.Priority;
+        }
+        if (articlePriority != null)
+        {
+           result = articlePriority.Priority;
+        }
+
+        return result;
+    }
+}
 public class WorkPriorityManager
 {
 

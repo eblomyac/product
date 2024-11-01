@@ -4,11 +4,40 @@ import {map, Observable} from "rxjs";
 import {HttpParams} from "@angular/common/http";
 import {ApiAnswer} from "../../model/ApiAnswer";
 import {IWork} from "../../model/Work";
+import * as http from "http";
 
 export class InfoData {
   constructor(private transportService: TransportService, private dataService: DataService) {
   }
 
+  public History(from:string, to:string, userBy:string, postId:string, article:string, order:number):Observable<any[]>{
+
+    let hp:HttpParams = new HttpParams();
+    hp = hp.append("from", from.toString());
+    hp = hp.append("to", to.toString());
+    if(userBy!=null && userBy.length>0){
+      hp = hp.append('userBy', userBy);
+    }
+    if(postId!= null && postId.length>0){
+      hp = hp.append('postId', postId);
+    }
+    if(article!= null && article.length>0){
+      hp = hp.append('article', article);
+    }
+    if(order!=null && order>0){
+      hp = hp.append('order',order);
+    }
+
+
+    return this.transportService.Get('/Info/History',hp).pipe(map<ApiAnswer|null,string[]>(x=>{
+      if(x){
+        if(x.isSuccess){
+          return (x.result as any[]);
+        }
+      }
+      return [];
+    }));
+  }
   public ArticleList():Observable<string[]>{
     return this.transportService.Get('/Info/ArticleList', new HttpParams()).pipe(map<ApiAnswer|null,string[]>(x=>{
       if(x){

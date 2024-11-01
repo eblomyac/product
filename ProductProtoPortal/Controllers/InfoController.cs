@@ -10,6 +10,18 @@ public class InfoController:Controller
 {
     [HttpGet]
     [Route("[action]")]
+    public async Task<IActionResult> History(string from, string to, string? article=null, string? userBy=null, string? postId=null, long? order=null )
+    {
+        DateTime f = DateTime.Parse(from);
+        DateTime t = DateTime.Parse(to);
+        ReportManager rm = new ReportManager();
+        var data = await rm.HistoryView(f, t, userBy, postId, article, order);
+
+        return new OkObjectResult(new ApiAnswer(data).ToString()); 
+    }
+
+    [HttpGet]
+    [Route("[action]")]
     public IActionResult ArticleList()
     {
         CrpManager cm = new CrpManager();

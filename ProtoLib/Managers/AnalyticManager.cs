@@ -60,6 +60,7 @@ namespace ProtoLib.Managers
             dt.Columns.Add("Заказ", typeof(long));
             dt.Columns.Add("Артикул");
             dt.Columns.Add("Наименование");
+            dt.Columns.Add("Приоритет",typeof(int));
             dt.Columns.Add("Дата сдачи");
             dt.Columns.Add("Количество", typeof(decimal));
 
@@ -87,6 +88,7 @@ namespace ProtoLib.Managers
                 DataRow row = dt.NewRow();
                 row["Артикул"] = line.Article;
                 row["Наименование"] = line.ItemText;
+                row["Приоритет"] = line.Priority;
                 row["Заказ"] = line.Order;
                 row["Количество"] = line.Count;
                 row["Норматив партии"] = line.TotalCost;
@@ -290,6 +292,9 @@ namespace ProtoLib.Managers
                 result.PostCost = new List<object>();
                 result.PostStatus = new List<object>();
 
+                WorkPriorityManager wpm = new WorkPriorityManager();
+                var priority = wpm.WorkPriorityList(new List<long>() { orderId });
+                
                 foreach (var p in posts)
                 {
                     var postWorks = orderWorks.Where(x => x.PostId == p.Name).ToList();
@@ -391,6 +396,7 @@ namespace ProtoLib.Managers
                             templates.ArticleSingleCost(article) *
                             articleStat.Count; //articleWorks.Sum(x => x.TotalCost);
                         articleStat.TotalCost = totalCost;
+                        articleStat.Priority = priority.GetWorkPrioritu(article, orderId);
                     }
                 }
             }
@@ -637,6 +643,9 @@ namespace ProtoLib.Managers
                     } while (loop < 100);
                 }
 
+                WorkPriorityManager wpm = new WorkPriorityManager();
+                var priorities = wpm.WorkPriorityList(orders);
+                    
                 foreach (var orderId in orders)
                 {
                     var orderWorks = c.Works.AsNoTracking()
@@ -644,6 +653,8 @@ namespace ProtoLib.Managers
                         .Include(x => x.Post).ThenInclude(x => x.PostCreationKeys)
                         .Where(x => x.OrderNumber == orderId)
                         .ToList();
+                    
+                    
                     var articles = orderWorks.Select(x => x.Article).Distinct();
                     if (!string.IsNullOrEmpty(articleFilter))
                     {
@@ -692,7 +703,7 @@ namespace ProtoLib.Managers
                             articleStat.WorkCount = articleWorks.Count;
                             articleStat.CompletedCost = completedArticleWorks.Sum(x => x.TotalCost);
                             articleStat.Issues = articleWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
-
+                            articleStat.Priority = priorities.GetWorkPrioritu(article, orderId);
                             articleStat.ByPosts = new List<object>();
                             bool isEnded = false;
                             decimal totalCost = 0;
