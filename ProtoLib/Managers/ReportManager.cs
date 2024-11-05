@@ -326,7 +326,7 @@ public class ReportManager
                 }
 
                 macResult = mb.getTableFromDB(
-                    $"SELECT SUM(NUMBEROF) FROM KSK.A___ITEMMOVEMENTSVIE WHERE APPROVALDATE='{stamp:yyyy.MM.dd}' AND ITEMNUMBER='{productionLine}' AND MOVEMENTVOUCHERTYPE='1'");
+                    $"SELECT SUM(NUMBEROF) FROM KSK.A___ITEMMOVEMENTSVIE WHERE APPROVALDATE='{stamp:yyyy.MM.dd}' AND ITEMNUMBER='{productionLine}' AND MOVEMENTVOUCHERTYPE='1' and NUMBEROF>0.001");
             }
 
             // var endedWorks = works.Where(x => x.Status == WorkStatus.ended).ToList();
