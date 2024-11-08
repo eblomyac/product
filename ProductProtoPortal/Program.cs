@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using ProtoLib.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,11 @@ app.UseStaticFiles(new StaticFileOptions()
 {
     FileProvider = new PhysicalFileProvider(downloadDir),
     RequestPath = new PathString("/download")
+});
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(TechCardManager.rootImagesDir),
+    RequestPath = new PathString("/CustomImage")
 });
 app.MapControllers();
 

@@ -5,9 +5,10 @@ import {IWork, Work} from "../../model/Work";
 import {ApiAnswer} from "../../model/ApiAnswer";
 import {map, Observable} from "rxjs";
 import {DataService} from "../data.service";
-
+import { of } from 'rxjs';
 
 export class PostData {
+  postCache:IPost[]=[];
   constructor(private transportService: TransportService, private dataService:DataService) {
   }
 
@@ -32,9 +33,24 @@ export class PostData {
     }));
   }
   public List():Observable<IPost[]>{
+    if(this.postCache != null  && this.postCache.length>0){
+      return of(this.postCache);
+    }
     return this.transportService.Get('/posts/list', new HttpParams()).pipe(map<ApiAnswer|null, IPost[]>(x=>{
       if(x){
         if(x.isSuccess){
+          this.postCache = x.result as IPost[];
+          return x.result as IPost[];
+        }
+      }
+      return [];
+    }));
+  }
+  public ListForce():Observable<IPost[]>{
+    return this.transportService.Get('/posts/list', new HttpParams()).pipe(map<ApiAnswer|null, IPost[]>(x=>{
+      if(x){
+        if(x.isSuccess){
+          this.postCache = x.result as IPost[];
           return x.result as IPost[];
         }
       }

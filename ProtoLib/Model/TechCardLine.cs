@@ -21,7 +21,6 @@ namespace ProtoLib.Model
         public string Equipment { get; set; }
         public string EquipmentInfo { get; set; }
         
-        public Guid? ImageSetId { get; set; }
         public decimal Cost { get; set; }
         
     }

@@ -1,32 +1,50 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {GalleryItem, ImageItem} from "ng-gallery";
-import {ImageSet} from "../../../model/TechCard";
+import {AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Gallery, GalleryComponent, GalleryImageDef, GalleryItem, ImageItem} from "ng-gallery";
+import {Image} from "../../../model/TechCard";
+
+
 
 @Component({
   selector: 'app-image-set-view',
   templateUrl: './image-set-view.component.html',
   styleUrls: ['./image-set-view.component.css']
 })
-export class ImageSetViewComponent implements OnInit {
+export class ImageSetViewComponent implements OnInit, AfterViewInit {
+
 
   gData:GalleryItem[]=[];
-  @Input('ImageSet')ImageSet:ImageSet|null=null;
-  constructor() { }
+  @ViewChild(GalleryImageDef, { static: true }) imageDef!: GalleryImageDef;
+  @Input('ImageSet')Images:Image[]=[];
+  constructor(public gallery: Gallery) {
+
+  }
 
   ngOnInit(): void {
+    this.gallery.ref('lightbox', {
+      imageTemplate: this.imageDef.templateRef
+    }).load(this.gData);
     this.galleryInit();
+    }
+  ngAfterViewInit() {
+
+
   }
+
+
 
   galleryInit(){
     this.gData = [];
-    if(this.ImageSet){
-      this.ImageSet.images.forEach(x=>{
-        this.gData.push(new ImageItem({ src: x.url, thumb:x.url}))
+    if(this.Images.length>0){
+      this.Images.forEach(x=>{
+        this.gData.push(new ImageItem({ src: x.url, thumb:x.url, args: x.description}))
       });
     }
+
+
   }
   getDescription(i:any){
-    return this.ImageSet?.images[i].description;
+    return this.Images[i].description;
   }
 
 }
+

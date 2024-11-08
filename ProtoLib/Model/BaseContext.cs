@@ -94,8 +94,7 @@ namespace ProtoLib.Model
             }
         }
         private User SystemUser()
-        {
-            var exist = this.Users.FirstOrDefault(x => x.AccName == "system");
+        {var exist = this.Users.FirstOrDefault(x => x.AccName == "system");
             if (exist == null)
             {
                 exist = new User();

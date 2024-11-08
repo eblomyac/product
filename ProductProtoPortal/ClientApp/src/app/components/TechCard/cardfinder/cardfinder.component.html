@@ -1,0 +1,30 @@
+<div class="container-fluid">
+  <div class="row mt-2">
+    <mat-form-field  class="col-2">
+      <mat-label>Артикул</mat-label>
+      <input type="text" matInput   [disabled]="isLoadArticles" [(ngModel)]="filter" (ngModelChange)="filterChange()">
+
+    </mat-form-field>
+    <div class="col-1">
+      <div *ngIf="isLoadArticles" class="d-flex align-items-start" style="column-gap: 10px">
+        <mat-spinner diameter="20" style="display: inline"></mat-spinner>
+        <span>Загрузка артикулов</span>
+
+      </div>
+
+    </div>
+
+
+  </div>
+<div class="row">
+  <div class="col-2">
+    <mat-list>
+      <mat-list-item [ngClass]="{'tech-card-selected-item':this.selectedArticle==a}" *ngFor="let a of this.filteredArticles" (click)="this.selectedArticle=a">{{a}}</mat-list-item>
+    </mat-list>
+  </div>
+  <div class="col-10">
+      <app-card-view [Article]="this.selectedArticle" *ngIf="selectedArticle && this.selectedArticle.length>0" ></app-card-view>
+  </div>
+</div>
+
+</div>

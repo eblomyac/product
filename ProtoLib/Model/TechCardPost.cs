@@ -15,10 +15,9 @@ namespace ProtoLib.Model
         
         [MaxLength(32)]
         public string PostId { get; set; }
+        
         public Post Post { get; set; }
         
-        public Guid? ImageSetId { get; set; }
-        public ImageSet? ImageSet { get; set; }
         
         public List<TechCardLine> Lines { get; set; }
     }

@@ -40,8 +40,7 @@ namespace ProtoLib.Model
                 return "";
 
             } }
-        public Guid? ImageSetId { get; set; }
-        public ImageSet? ImageSet { get; set; }
+       public virtual ICollection<StoredImage> Images { get; set; }
         public string Description { get; set; }
         
         public List<TechCardPost> PostParts { get; set; }

@@ -45,7 +45,7 @@ namespace ProductCroner
             
             await EmailNotificatorSingleton.Instance.Send(new MailRequest()
             {
-                Bcc =new List<string>() {"po@Ksk.ru"}, Body = "Во вложении отчет с расхождениями нормативов между макономи и crp, товаров LUMAR", From = "product@ksk.ru", CopyTo = new List<string>(),
+                Bcc =new List<string>() {"po@Ksk.ru"}, Body = "Во вложении отчет с расхождениями нормативов между макономи и crp, товаров LUMAR", From = "produkt@ksk.ru", CopyTo = new List<string>(),
                 IsBodyHtml = false,
                 MailAttachments = new List<MailAttachment>(){new MailAttachment(lumarFile)}, Subject = "Проверка нормативов Maconomy\\CRP (LUMAR)", 
                 //To = new List<string>(){"po@ksk.ru"}
@@ -53,11 +53,11 @@ namespace ProductCroner
             });  
             await EmailNotificatorSingleton.Instance.Send(new MailRequest()
             {
-                Bcc = new List<string>() {"po@Ksk.ru"}, Body = "Во вложении отчет с расхождениями нормативов между макономи и crp, товаров SVETON", From = "product@ksk.ru", CopyTo = new List<string>(),
+                Bcc = new List<string>() {"po@Ksk.ru"}, Body = "Во вложении отчет с расхождениями нормативов между макономи и crp, товаров SVETON", From = "produkt@ksk.ru", CopyTo = new List<string>(),
                 IsBodyHtml = false,
                 MailAttachments = new List<MailAttachment>(){new MailAttachment(svetonFile)}, Subject = "Проверка нормативов Maconomy\\CRP (SVETON)", 
              //   To = new List<string>(){"po@ksk.ru"}
-               To = new List<string>() {"stocks@sveton.ru","Nikolay.Rezenov@sveton.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru"}
+               To = new List<string>() {"Anton.Brik@vitaluce.ru","stocks@sveton.ru","Nikolay.Rezenov@sveton.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru"}
             });
             
         }

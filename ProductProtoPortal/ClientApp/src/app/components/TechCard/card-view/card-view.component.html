@@ -1,25 +1,35 @@
 <div class="container" >
-  <div class="row" *ngIf="card">
-    <div class="col-12" mat-dialog-title>
-      {{card.article}}
+
+  <div class="row" >
+    <div class="offset-5 col-7 mt-2 mb-2"   >
+      <span style="font-size: 18px; font-weight: bold; color: var(--post-item-color)">Артикул: {{this.partName}}</span>
     </div>
+    <div *ngIf="isLoading" class="d-flex  align-items-center justify-content-center mt-5">
+      <mat-spinner></mat-spinner>
+    </div>
+    <ng-container *ngIf="card">
+
+
     <div class="col-5">
-      <app-image-set-view [ImageSet]="card.imageSet"></app-image-set-view>
+      <app-image-set-view [ImageSet]="card.images"></app-image-set-view>
+      <button mat-raised-button color="primary" class="mt-2" (click)="addPhoto()">Добавить фотографию</button>
     </div>
-    <div class="col-7" >
+    <div class="col-3" >
+      <mat-nav-list>
+        <mat-list-item [ngClass]="{'tech-card-selected-item':this.selectedPost==p.postId}" *ngFor="let p of this.card.postParts" (click)="selectedPost = p.postId;updatePostParts()">
+          {{p.postId}}
+        </mat-list-item>
+      </mat-nav-list>
 
-        <mat-tab-group>
-          <mat-tab [label]="p.postId" *ngFor="let p of this.card.postParts"  style="overflow-x: hidden" >
-            <div mat-dialog-content style="max-width: 100%">
-              <div *ngFor="let o of p.lines" >
-                {{o.device}} => {{o.operation}} ({{o.equipment}} {{o.equipmentInfo}})
-              </div>
-            </div>
 
-          </mat-tab>
-        </mat-tab-group>
+    </div>
 
-  </div>
+   <div class="col-4">
+     <ul>
+       <li  *ngFor="let o of this.postView"> {{o.device}} => {{o.operation}} ({{o.equipment}} {{o.equipmentInfo}})</li>
+     </ul>
 
+   </div>
+    </ng-container>
 </div>
-
+</div>

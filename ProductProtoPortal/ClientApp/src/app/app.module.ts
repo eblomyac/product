@@ -91,6 +91,7 @@ import {ActHistoryComponent} from "./components/Info/act-history/act-history.com
 import {InfoComponent} from "./components/Info/info.component";
 import {OperatorStarterComponent} from "./components/operator/operator-starter/operator-starter.component";
 import {HistoryViewComponent} from "./components/Info/history-view/history-view.component";
+import {PhotoUploadComponent} from "./dialogs/photo-upload/photo-upload.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -104,14 +105,14 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         AdminSettingsComponent,
         UserSettingsComponent,
         PostSettingsComponent,
-        WorkPrepareComponent,
+        WorkPrepareComponent, CardfinderComponent,
         WorkStarterComponent, HistoryViewComponent,
         OperatorComponent, OperatorStarterComponent,
         WorkCompactViewComponent, InfoComponent,
         PostDialogComponent, ActHistoryComponent,
         InfoViewComponent, WorkCostInfoComponent,
         NumberDialogComponent, CalendarComponent,
-        AnalyticComponent, PersonnelComponent,
+        AnalyticComponent, PersonnelComponent, PhotoUploadComponent,
         IssueSettingsComponent, AdditionalCostDialogComponent,
         IssueCreateDialogComponent, AdditionalSourceSettingsComponent,
         PostStatisticComponent, DailySourceDialogComponent,

@@ -124,20 +124,6 @@ namespace ProtoLib.Migrations
                     b.ToTable("DailySources");
                 });
 
-            modelBuilder.Entity("ProtoLib.Model.ImageSet", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ImageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ImageSet");
-                });
-
             modelBuilder.Entity("ProtoLib.Model.MaconomyMovementTransaction", b =>
                 {
                     b.Property<long>("Id")
@@ -303,14 +289,22 @@ namespace ProtoLib.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ImageSetId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("InitialFileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocalPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TechCardId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UploadedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -320,7 +314,7 @@ namespace ProtoLib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageSetId");
+                    b.HasIndex("TechCardId");
 
                     b.ToTable("Images");
                 });
@@ -345,12 +339,7 @@ namespace ProtoLib.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
-                    b.Property<Guid?>("ImageSetId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ImageSetId");
 
                     b.ToTable("TechCards");
                 });
@@ -375,9 +364,6 @@ namespace ProtoLib.Migrations
                     b.Property<string>("EquipmentInfo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ImageSetId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsCustom")
                         .HasColumnType("bit");
@@ -405,9 +391,6 @@ namespace ProtoLib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ImageSetId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PostId")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -417,8 +400,6 @@ namespace ProtoLib.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ImageSetId");
 
                     b.HasIndex("PostId");
 
@@ -877,18 +858,13 @@ namespace ProtoLib.Migrations
 
             modelBuilder.Entity("ProtoLib.Model.StoredImage", b =>
                 {
-                    b.HasOne("ProtoLib.Model.ImageSet", null)
+                    b.HasOne("ProtoLib.Model.TechCard", "TechCard")
                         .WithMany("Images")
-                        .HasForeignKey("ImageSetId");
-                });
+                        .HasForeignKey("TechCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("ProtoLib.Model.TechCard", b =>
-                {
-                    b.HasOne("ProtoLib.Model.ImageSet", "ImageSet")
-                        .WithMany()
-                        .HasForeignKey("ImageSetId");
-
-                    b.Navigation("ImageSet");
+                    b.Navigation("TechCard");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.TechCardLine", b =>
@@ -902,10 +878,6 @@ namespace ProtoLib.Migrations
 
             modelBuilder.Entity("ProtoLib.Model.TechCardPost", b =>
                 {
-                    b.HasOne("ProtoLib.Model.ImageSet", "ImageSet")
-                        .WithMany()
-                        .HasForeignKey("ImageSetId");
-
                     b.HasOne("ProtoLib.Model.Post", "Post")
                         .WithMany()
                         .HasForeignKey("PostId")
@@ -917,8 +889,6 @@ namespace ProtoLib.Migrations
                         .HasForeignKey("TechCardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ImageSet");
 
                     b.Navigation("Post");
                 });
@@ -979,11 +949,6 @@ namespace ProtoLib.Migrations
                     b.Navigation("Work");
                 });
 
-            modelBuilder.Entity("ProtoLib.Model.ImageSet", b =>
-                {
-                    b.Navigation("Images");
-                });
-
             modelBuilder.Entity("ProtoLib.Model.Post", b =>
                 {
                     b.Navigation("PostCreationKeys");
@@ -991,6 +956,8 @@ namespace ProtoLib.Migrations
 
             modelBuilder.Entity("ProtoLib.Model.TechCard", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("PostParts");
                 });
 

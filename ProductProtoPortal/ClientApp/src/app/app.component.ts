@@ -51,7 +51,7 @@ export class AppComponent {
             this.availableMenu.push({caption:"Анализ",route:"/statistic"})
             this.availableMenu.push({caption:"Справочник",route:"/info"})
             //   this.router.navigate(['/operate'])
-
+            this.availableMenu.push({caption:'Тех. карточки', route:'/card-search'})
             if(this.locate.path().length==0) {
               this.router.navigate([this.availableMenu[0].route])
             }
