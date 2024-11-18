@@ -691,6 +691,9 @@ namespace ProtoLib.Managers
                             var articleWorks = orderWorks.Where(x => x.Article == article && x.OrderLineNumber == orderLine).ToList();
                             var completedArticleWorks = articleWorks.Where(x => x.Status == WorkStatus.ended);
                             articleStat.Count = 0;
+                            articleStat.ProductLine = "";
+                            articleStat.Comment = "";
+                            articleStat.DeadLine = "";
                             if (articleWorks.Count > 0)
                             {
                                 articleStat.DeadLine = articleWorks.FirstOrDefault().DeadLine;
