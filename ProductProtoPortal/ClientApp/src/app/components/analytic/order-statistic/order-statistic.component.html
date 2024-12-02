@@ -124,9 +124,7 @@
             <tr class="order-stat-table-row">
               <td style="width: 12%" class="text-center">
                 <div>{{ article.Article }}</div>
-                <div class="mt-1 ml-1" *ngIf="article.IsEnded">[Завершено]
-
-                </div>
+                <div class="mt-1 ml-1" *ngIf="article.EndedCount>0">Завершено {{article.EndedCount}}</div>
               </td>
               <td style="width: 5%" class="text-center">
                 {{article.Priority}}

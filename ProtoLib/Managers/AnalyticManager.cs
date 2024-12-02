@@ -158,7 +158,8 @@ namespace ProtoLib.Managers
                 {
                     row["Текущий участок"] = lastPosts.First();
                 }/*/
-                row["Текущий участок"] = line.CurrentPost;
+                row["Текущий участок"] = String.Join("\r\n", line.Places); 
+                    //line.CurrentPost;
 
                 dt.Rows.Add(row);
             }
@@ -390,8 +391,12 @@ namespace ProtoLib.Managers
                                 .Select(x => $"{x.Created:dd.MM HH:mm}: {x.Description}").ToList();
                         }
 
-                        articleStat.IsEnded = articleWorks.Any(x =>
-                            x.Status == WorkStatus.ended && x.MovedTo == Constants.Work.EndPosts.TotalEnd);
+
+                        articleStat.EndedCount = articleWorks.Where(x =>
+                                x.Status == WorkStatus.ended && x.MovedTo == Constants.Work.EndPosts.TotalEnd)
+                            .Sum(x => x.Count);
+                        articleStat.IsEnded =
+                            articleStat.EndedCount == articleStat.Count;
                         articleStat.TotalCostCrp =
                             templates.ArticleSingleCost(article) *
                             articleStat.Count; //articleWorks.Sum(x => x.TotalCost);
@@ -708,9 +713,10 @@ namespace ProtoLib.Managers
                             articleStat.Issues = articleWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
                             articleStat.Priority = priorities.GetWorkPrioritu(article, orderId);
                             articleStat.ByPosts = new List<object>();
-                            bool isEnded = false;
                             decimal totalCost = 0;
-                            articleStat.CurrentPost = "Не начато";
+                            int endedCount = 0;
+                            //articleStat.CurrentPost = "Не начато";
+                            articleStat.Places = new List<string>();
                             foreach (var post in posts)
                             {
                                 var articlePostWorks = articleWorks.Where(x => x.PostId == post.Name).ToList()
@@ -719,12 +725,8 @@ namespace ProtoLib.Managers
                                 var completedArticlePostWorks = articlePostWorks
                                     .Where(x => x.Status == WorkStatus.ended)
                                     .OrderBy(x => x.Post.ProductOrder);
-
-                                if (isEnded == false)
-                                {
-                                    isEnded = completedArticlePostWorks.FirstOrDefault(x =>
-                                        x.MovedTo == Constants.Work.EndPosts.TotalEnd) != null;
-                                }
+                                endedCount += completedArticlePostWorks.Where(x=>x.MovedTo == Constants.Work.EndPosts.TotalEnd).Sum(x => x.Count);
+                              
 
                                 dynamic postStat = new ExpandoObject();
                                 articleStat.ByPosts.Add(postStat);
@@ -738,9 +740,16 @@ namespace ProtoLib.Managers
                                 totalCost += postStat.TotalCost;
                                 //текущий участок
                                 var receivedWorks = articlePostWorks.Where(x => (int)x.Status > 10).ToList();
-                                if (postStat.TotalCost > 0 && receivedWorks.Count > 0)
+                                var receivedAndNotCompleted = receivedWorks.Where(x => (int)x.Status < 50).ToList();
+                                if (receivedWorks.Count > 0)
                                 {
-                                    articleStat.CurrentPost = post.Name;
+                                  //  articleStat.CurrentPost = post.Name;
+                                    int currentCount = receivedAndNotCompleted.Sum(z => z.Count);
+                                    if (currentCount > 0)
+                                    {
+                                        articleStat.Places.Add($"{post.Name}: {currentCount}");    
+                                    }
+                                    
                                 }
 
 
@@ -763,12 +772,21 @@ namespace ProtoLib.Managers
                                     .Select(x => x.Description).ToList();
                             }
 
+                            if (endedCount > 0)
+                            {
+                                articleStat.Places.Add($"Завершено: {endedCount}");
+                            }
+                            if (articleStat.Places.Count == 0)
+                            {
+                                articleStat.Places.Add("Не начато");
+                            }
+
                             articleStat.TotalCost = totalCost;
                             articleStat.TotalCostCrp =
                                 templates.ArticleSingleCost(article) *
                                 articleStat.Count; //articleWorks.Sum(x => x.TotalCost);
 
-
+                            articleStat.IsEnded = endedCount == articleStat.Count;
                             var actualPosts = (articleStat.ByPosts as List<dynamic>).Where(x => x.TotalCost > 0)
                                 .ToList();
                             var completedPosts = (articleStat.ByPosts as List<dynamic>)
@@ -778,10 +796,7 @@ namespace ProtoLib.Managers
                             var deltaPosts = actualPosts.RemoveAll(z => completedPosts.Contains(z));
                             articleStat.deltaPosts = deltaPosts;
 
-                            if (isEnded)
-                            {
-                                articleStat.CurrentPost = Constants.Work.EndPosts.TotalEnd;
-                            }
+                           
                         }
                     }
                 }

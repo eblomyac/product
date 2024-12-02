@@ -60,7 +60,11 @@
           <td style="width: 8%" class="text-center">
             {{article.Count}}
           </td>
-          <td class="text-center">{{article.CurrentPost}}</td>
+          <td class="text-center">
+            <div *ngFor="let p of article.Places">
+              {{p}}
+            </div>
+          </td>
 
           <td style="width: 8%" class="text-center">
             {{article.TotalCost|number}}

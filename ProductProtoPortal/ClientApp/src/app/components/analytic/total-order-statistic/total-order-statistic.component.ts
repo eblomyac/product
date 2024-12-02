@@ -43,7 +43,7 @@ export class TotalOrderStatisticComponent implements OnInit{
     }
     if(this.hideCompleted){
       this.articleStat = this.articleStat.filter((x:any)=>{
-        return  x.CurrentPost!='[артикул сдан]';
+        return  !x.IsEnded;
       });
     }
 

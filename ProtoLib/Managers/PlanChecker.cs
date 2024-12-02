@@ -45,6 +45,8 @@ public class PlanChecker
                 cr.FullName = MaconomyBase.makeStringRu(art.Field<string>("SUPPLEMENTARYTEXT4"));
                 cr.ProductType = MaconomyBase.makeStringRu(art.Field<string>("Name"));
               
+                
+                
                 var crpArticle = crpData.Where(x => x.Article == cr.Article).ToList();
                 if (crpArticle.Count==0)
                 {
@@ -111,8 +113,8 @@ public class PlanChecker
             r[0] = cr.Article;
             r[1] = cr.FullName;
             r[2] = cr.ProductType;
-            r[3] = cr.MaconomyValue;
-            r[4] = cr.CrpValue;
+            r[3] = Math.Round(cr.MaconomyValue,2);
+            r[4] = Math.Round(cr.CrpValue,2);
             r[5] = cr.DeltaProcent;
             r[6] = cr.Delta;
             
@@ -127,8 +129,8 @@ public class PlanChecker
                 rNot[0] = cr.Article;
                 rNot[1] = cr.FullName;
                 rNot[2] = cr.ProductType;
-                rNot[3] = cr.MaconomyValue;
-                rNot[4] = cr.CrpValue;
+                rNot[3] = Math.Round(cr.MaconomyValue,2);
+                rNot[4] = Math.Round(cr.CrpValue,2);
                 
                 rNot[5] = cr.DeltaProcent;
                 rNot[6] = cr.Delta;
