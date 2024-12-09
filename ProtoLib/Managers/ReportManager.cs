@@ -6,6 +6,7 @@ using KSK_LIB.DataStructure.MQRequest;
 using KSK_LIB.Excel;
 using KSK_LIB.Maconomy;
 using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
 using ProtoLib.Model;
 
 namespace ProtoLib.Managers;
@@ -70,6 +71,10 @@ public class ReportManager
                 {
                     d.action =
                         $"Смена статуса с {WorkStatusMapper.Map(log.PrevStatus)} на {WorkStatusMapper.Map(log.NewStatus)}";
+                    if (log.NewStatus == WorkStatus.ended && log.MovedTo == Constants.Work.EndPosts.TotalEnd)
+                    {
+                        d.action = $"{Constants.Work.EndPosts.TotalEnd} {d.action}";
+                    }
                 }
                 result.Add(d);
             }
