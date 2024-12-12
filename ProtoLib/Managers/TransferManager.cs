@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using KSK_LIB.DataStructure.MQRequest;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ProtoLib.Model;
@@ -31,7 +32,7 @@ public class TransferManager
             return "";
         }
     }
-    public Transfer Create(string postIdFrom, string postIdTo, List<Work> works, string accName)
+    public async Task<Transfer> Create(string postIdFrom, string postIdTo, List<Work> works, string accName)
     {
         
         Transfer t = new Transfer();
@@ -58,7 +59,8 @@ public class TransferManager
         
         foreach (var w in works)
         {
-            if (wmf.MoveToPostRequest(w.Id, postIdTo, new List<string>(), ""))
+            var mtpr = wmf.MoveToPostRequest(w.Id, postIdTo, new List<string>(), "", out var errorInfo);
+            if (mtpr)
             {
                 TransferLine tl = new TransferLine();
                 tl.OrderLineNumber = w.OrderLineNumber;
@@ -73,6 +75,15 @@ public class TransferManager
                 tl.SourceWorkCost = w.TotalCost;
                 tl.TargetWorkId = null;
                 t.Lines.Add(tl);
+            }
+            else
+            {
+                await EmailNotificatorSingleton.Instance.Send(new MailRequest()
+                {
+                    Bcc = new List<string>(), Subject = "error on transfer create", IsBodyHtml = false,
+                    Body = errorInfo, To = new List<string>() { "po@ksk.ru" }, From = "produkt@ksk.ru",
+                    CopyTo = new List<string>()
+                });
             }
          
         }
@@ -91,7 +102,7 @@ public class TransferManager
         
         using (BaseContext c = new BaseContext(accName))
         {
-            WorkSaveManager wsm = new WorkSaveManager();
+            WorkSaveManager wsm = new WorkSaveManager(accName);
             WorkStatusChanger wss = new WorkStatusChanger();
             var works = c.Works.AsNoTracking().Where(x => x.Status == WorkStatus.income && x.PostId == t.PostToId).ToList();
             
@@ -113,7 +124,7 @@ public class TransferManager
 
 
                         wmf.MoveToPostRequest(returnWork.Id, t.PostFromId, new List<string>(),
-                            notFullTransfer.Remark);
+                            notFullTransfer.Remark, out var errorInfo);
 
                         Debug.WriteLine(JsonConvert.SerializeObject(newWorks));
                     }
@@ -132,7 +143,7 @@ public class TransferManager
                         x.OrderNumber == notFullTransfer.OrderNumber &&
                         x.OrderLineNumber == notFullTransfer.OrderLineNumber);
                     wmf.MoveToPostRequest(currentWork.Id, t.PostFromId, new List<string>(),
-                        notFullTransfer.Remark);
+                        notFullTransfer.Remark, out var errorInfo);
                    // wss.ChangeStatus(currentWork.Id, WorkStatus.hidden, accName);
 
                  //   wsm.SaveWorks(new List<Work>() { currentWork });
@@ -232,6 +243,13 @@ public class TransferManager
         }
     }
 
+    public async Task<Transfer?> ById(long id)
+    {
+        using (BaseContext c = new BaseContext())
+        {
+            return await c.Transfers.Include(x => x.Lines).FirstOrDefaultAsync(x => x.Id == id);
+        }
+    }
     public async Task<List<Transfer>> List(int offset, TransferFilter tf)
     {
         

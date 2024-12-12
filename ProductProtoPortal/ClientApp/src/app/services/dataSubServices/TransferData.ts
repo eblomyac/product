@@ -69,4 +69,17 @@ export class TransferData{
       }))
   }
 
+  public byId(id:number){
+    return this.transportService.Get('/transfer/'+id+'/view', new HttpParams())
+      .pipe(map<ApiAnswer|null,Transfer|null>(x=>{
+
+        if(x && x.isSuccess){
+          return x.result as Transfer;
+        }else if(x?.isSuccess==false){
+          console.log(x.message);
+        }
+        return null;
+      }))
+  }
+
 }

@@ -142,7 +142,7 @@ namespace ProductCroner
                     .Include(x=>x.Issues).AsNoTracking().Where(x => x.Status == WorkStatus.sended && x.Post.CanEnd).ToList();
                 foreach (var work in works)
                 {
-                    var result = wmf.MoveToPostRequest(work.Id, Constants.Work.EndPosts.TotalEnd, new List<string>(),"");    
+                    var result = wmf.MoveToPostRequest(work.Id, Constants.Work.EndPosts.TotalEnd, new List<string>(),"", out  var errorInfo);    
                 }
                 
             }

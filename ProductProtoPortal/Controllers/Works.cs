@@ -233,7 +233,7 @@ namespace ProductProtoPortal.Controllers
             string comment = data.comment;
             var user = AuthHelper.GetADUser(this.HttpContext);
             WorkManagerFacade wmf = new WorkManagerFacade(user.SAM);
-            var result = wmf.MoveToPostRequest(id, mainPost, additional,comment);
+            var result = wmf.MoveToPostRequest(id, mainPost, additional,comment, out var errorInfo);
             return new OkObjectResult(new ApiAnswer(result, "", result).ToString());
         }
         [HttpGet]
@@ -244,7 +244,7 @@ namespace ProductProtoPortal.Controllers
             WorkManagerFacade wmf = new WorkManagerFacade(user.SAM);
             if (wmf.CanBeEnd(id, user.SAM))
             {
-                var result = wmf.MoveToPostRequest(id, Constants.Work.EndPosts.TotalEnd, new List<string>(),"");
+                var result = wmf.MoveToPostRequest(id, Constants.Work.EndPosts.TotalEnd, new List<string>(),"", out var errorInfo);
                 return new OkObjectResult(new ApiAnswer(result, "", result).ToString());
             }
             else

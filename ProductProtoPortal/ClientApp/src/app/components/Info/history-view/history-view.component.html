@@ -37,8 +37,14 @@
 
       </mat-form-field>
       <div class="offset-1 col-1">
-        <button class="mt-3" mat-raised-button color="primary" (click)="load()">Загрузить</button>
+        <div class="d-flex justify-content-end align-items-center">
+          <button  mat-raised-button color="primary" (click)="load()">Загрузить</button>
+          <button  mat-icon-button color="primary" (click)="download()"><mat-icon>download</mat-icon></button>
+        </div>
+
       </div>
+
+
     </div>
   </div>
 </div>
@@ -61,7 +67,7 @@
       <td>{{h.orderNumber}}({{h.orderLineNumber}})</td>
       <td>{{h.article}}</td>
       <td class="text-center">{{h.count}}</td>
-      <td>{{h.action}}</td>
+      <td>{{h.action}} <a style="cursor:cursor" *ngIf="h.transfer!=null" (click)="view(h.transfer)">Акт №{{h.transfer.paperId}}</a></td>
 
     </tr>
   </table>

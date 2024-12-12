@@ -10,6 +10,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StableProduction.Storage", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Croner", "Croner\Croner.csproj", "{DAC5E571-F98A-47FC-9632-D26B4C3AB36B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductNew", "ProductNew\ProductNew.csproj", "{AE370F05-14D1-44E7-BBC0-8501E84A24AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductNewLib", "ProductNewLib\ProductNewLib.csproj", "{E414EF54-62EC-4D34-8CF4-9312CEA1E259}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{DAC5E571-F98A-47FC-9632-D26B4C3AB36B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAC5E571-F98A-47FC-9632-D26B4C3AB36B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAC5E571-F98A-47FC-9632-D26B4C3AB36B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE370F05-14D1-44E7-BBC0-8501E84A24AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE370F05-14D1-44E7-BBC0-8501E84A24AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE370F05-14D1-44E7-BBC0-8501E84A24AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE370F05-14D1-44E7-BBC0-8501E84A24AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E414EF54-62EC-4D34-8CF4-9312CEA1E259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E414EF54-62EC-4D34-8CF4-9312CEA1E259}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E414EF54-62EC-4D34-8CF4-9312CEA1E259}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E414EF54-62EC-4D34-8CF4-9312CEA1E259}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

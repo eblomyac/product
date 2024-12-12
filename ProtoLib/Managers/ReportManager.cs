@@ -41,13 +41,58 @@ public class ReportManager
         }
     }
 
+    public DataTable HistoryToTable(List<object> data)
+    {
+        DataTable t = new DataTable("history");
+        t.Columns.Add("Дата");
+        t.Columns.Add("Пользователь");
+        t.Columns.Add("Заказ", typeof(long));
+        t.Columns.Add("Номер строки заказа", typeof(int));
+        t.Columns.Add("Участок");
+        t.Columns.Add("Артикул");
+        t.Columns.Add("Количество",typeof(decimal));
+        t.Columns.Add("Действие");
+        t.Columns.Add("Акт");
+
+        foreach (dynamic rec in data)
+        {
+            DataRow row = t.NewRow();
+            row[0] = rec.stampd;
+            row[1] = rec.editedBy;
+            row[2] = rec.orderNumber;
+            row[3] = rec.orderLineNumber;
+            row[4] = rec.postId;
+            row[5] = rec.article;
+            row[6] = rec.count;
+            row[7] = rec.action;
+
+            if (!rec.hasTransfer)
+            {
+                row[8] = "";
+            }
+            else
+            {
+                row[8] = new ExcelExporter.ExcelHyperlink($"https://product.ksk.ru/info?tab=transfers&transferId={rec.transfer.Id}",rec.transfer.PaperId);
+            }
+
+            t.Rows.Add(row);
+        }
+
+        return t;
+    }
+
+  
+
     public async Task<List<object>> HistoryView(DateTime from, DateTime to, string? userBy, string? postBy,
         string? article, long? order)
     {
         var data = await History(from, to, userBy, postBy, article, order);
+        
         var result = new List<object>();
         using (BaseContext c = new BaseContext())
         {
+            var acts = c.Transfers.Include(x=>x.Lines)
+                .Where(x => x.CreatedStamp.Date >= from.Date && x.CreatedStamp.Date <= to.Date).ToList();
             var users=         c.Users.ToList();
             foreach (var log in data)
             {
@@ -66,11 +111,24 @@ public class ReportManager
                 if (log.PrevStatus == WorkStatus.unkown)
                 {
                     d.action = "Создание работы";
+                    d.transfer = null;
+                    d.hasTransfer = false;
                 }
                 else
                 {
                     d.action =
                         $"Смена статуса с {WorkStatusMapper.Map(log.PrevStatus)} на {WorkStatusMapper.Map(log.NewStatus)}";
+                    var suggestedAct = acts.FirstOrDefault(x => x.Lines.Count(z => z.SourceWorkId == log.WorkId || z.TargetWorkId==log.WorkId) > 0);
+                    if (suggestedAct != null && (log.NewStatus== WorkStatus.sended || log.PrevStatus== WorkStatus.income))
+                    {
+                        d.transfer = suggestedAct;
+                        d.hasTransfer = true;
+                    }
+                    else
+                    {
+                        d.transfer = null;
+                        d.hasTransfer = false;
+                    }
                     if (log.NewStatus == WorkStatus.ended && log.MovedTo == Constants.Work.EndPosts.TotalEnd)
                     {
                         d.action = $"{Constants.Work.EndPosts.TotalEnd} {d.action}";

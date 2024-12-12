@@ -4,6 +4,9 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {DatePipe} from "@angular/common";
 import {IPost} from "../../../model/Post";
 import {IUser} from "../../../model/User";
+import {Transfer} from "../../../model/Transfer";
+import {DialogHandlerService} from "../../../services/dialog-handler.service";
+import {TransferListComponent} from "../../../dialogs/transfer-list/transfer-list.component";
 
 @Component({
   selector: 'app-history-view',
@@ -42,6 +45,28 @@ export class HistoryViewComponent {
         this.postList = x;
       }
     });
+  }
+  view(transfer:Transfer){
+    DialogHandlerService.Singleton.ask(TransferListComponent,{data: {
+        dataService:this.data,
+        type:'out',
+        transfers:[transfer],
+        viewItem:transfer
+      },
+      autoFocus: true,
+      hasBackdrop: true,
+      disableClose:true
+    })
+
+  }
+  download(){
+    this.data.InfoData.HistoryDownload(this.datePipe.transform(this.from, 'dd.MM.yyyy', "UTC+03","ru-RU")!,
+      this.datePipe.transform(this.to, 'dd.MM.yyyy', "UTC+03","ru-RU")!,
+      this.userBy,this.postId, this.article, this.order).subscribe(x=>{
+      if(x!=null){
+        window.open(x,'_blank');
+      }
+    })
   }
   load(){
 

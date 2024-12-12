@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Dynamic;
+using KSK_LIB.Excel;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ProtoLib.Managers;
 
@@ -18,6 +20,25 @@ public class InfoController:Controller
         var data = await rm.HistoryView(f, t, userBy, postId, article, order);
 
         return new OkObjectResult(new ApiAnswer(data).ToString()); 
+    }
+    [HttpGet]
+    [Route("[action]")]
+    public async Task<IActionResult> HistoryDownload(string from, string to, string? article=null, string? userBy=null, string? postId=null, long? order=null )
+    {
+        DateTime f = DateTime.Parse(from);
+        DateTime t = DateTime.Parse(to);
+        ReportManager rm = new ReportManager();
+        var data = await rm.HistoryView(f, t, userBy, postId, article, order);
+        var dataTable = rm.HistoryToTable(data);
+        string fileName = Path.Combine(Environment.CurrentDirectory, "download",
+            Guid.NewGuid().ToString() + ".xlsx");
+        ExcelExporter ee = new ExcelExporter(fileName);
+        ee.ExportTable(dataTable,false,true);
+        dynamic result = new ExpandoObject();
+        result.link = "/download/" + Path.GetFileName(fileName);
+        return new OkObjectResult(new ApiAnswer(result));
+        
+    
     }
 
     [HttpGet]

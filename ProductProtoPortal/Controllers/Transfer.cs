@@ -15,6 +15,22 @@ namespace ProductProtoPortal.Controllers
     [Route("/[controller]")]
     public class Transfer:Controller
     {
+        
+          
+        [HttpGet]
+        [Route("{id}/[action]")]
+        public async Task<IActionResult> View([FromRoute]long id)
+        {
+            TransferManager tm = new TransferManager();
+            var trasfer = await tm.ById(id);
+            if (trasfer == null)
+            {
+                return new BadRequestResult();
+            }
+            return new OkObjectResult(new ApiAnswer(trasfer).ToString());
+
+        }
+        
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> List(int offset)
@@ -89,7 +105,7 @@ namespace ProductProtoPortal.Controllers
             
             TransferManager tm = new TransferManager();
             var user = AuthHelper.GetADUser(this.HttpContext);
-            var t = tm.Create(postFromId, postToId, works, user.SAM);
+            var t = await tm.Create(postFromId, postToId, works, user.SAM);
             return new OkObjectResult(new ApiAnswer(t).ToString());
         }
 

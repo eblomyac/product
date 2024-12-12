@@ -144,7 +144,7 @@ namespace ProtoLib.Managers
             return result;
         }
 
-        public bool MoveToPostRequest(long workId, string toPostId, List<string> alsoStartOnPosts, string returnComment )
+        public bool MoveToPostRequest(long workId, string toPostId, List<string> alsoStartOnPosts, string returnComment, out string errorInfo )
         {
             
             BaseContext c = _c ?? new BaseContext(_accName);
@@ -155,6 +155,7 @@ namespace ProtoLib.Managers
 
                 if (work == null)
                 {
+                    errorInfo = $"Work with id {workId} not found";
                     return false;
                 }
 
@@ -178,7 +179,19 @@ namespace ProtoLib.Managers
                         AvailablePosts = new List<string>(),
                         SelectedPosts = new List<string>() { toPostId }
                     };
-                    return _workStarter.MoveWorkMaster(workId, toPostId, _accName, alsoStartOnPosts, currentPost);
+                    var result =
+                        _workStarter.MoveWorkMaster(workId, toPostId, _accName, alsoStartOnPosts, currentPost);
+                    if(result==false)
+                    {
+                        errorInfo = $"MoveWorkMaster({workId}.{toPostId},{_accName},{alsoStartOnPosts},{currentPost}) is false";
+                    }
+                    else
+                    {
+                        errorInfo = "";
+                    }
+                    return
+                        result;
+
 
                 }
                 else
@@ -202,11 +215,12 @@ namespace ProtoLib.Managers
                     IssueManager im = new IssueManager();
                     im.RegisterIssue(prevWork.Id, 0, returnComment, _accName, "", work.PostId);
                     _saveManager.SaveWorks(new List<Work>() { work, prevWork });
+                    errorInfo = "";
+                    return true;
                 }
 
-                //todo backward
-
-                return false;
+             
+                
 
 
 
@@ -214,6 +228,7 @@ namespace ProtoLib.Managers
             }
             catch (Exception exc)
             {
+                errorInfo = exc.Message;
                 return false;
             }
             finally
