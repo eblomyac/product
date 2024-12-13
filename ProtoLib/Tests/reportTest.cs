@@ -10,6 +10,16 @@ namespace ProtoLib.Tests;
 public class reportTest
 {
     [Test]
+    public async Task CostRep()
+    {
+        AnalyticManager am = new AnalyticManager();
+        var report = await am.CostReport();
+        var table = am.CostReportToTable(report);
+        
+        Console.WriteLine(JsonConvert.SerializeObject(report));
+        Console.WriteLine(JsonConvert.SerializeObject(table));
+    }
+    [Test]
     public void TestOrderStatRep()
     {
         AnalyticManager am = new AnalyticManager();

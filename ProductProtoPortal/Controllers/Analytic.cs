@@ -102,6 +102,22 @@ namespace ProductProtoPortal.Controllers
             
             
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> CostReportDownload()
+        {
+            AnalyticManager am = new AnalyticManager();
+            var costReport = await am.CostReport();
+            var table = am.CostReportToTable(costReport);
+            string fileName = Path.Combine(Environment.CurrentDirectory, "download",
+                Guid.NewGuid().ToString() + ".xlsx");
+            ExcelExporter ee = new ExcelExporter(fileName);
+            ee.ExportTable(table,false,false);
+            dynamic result = new ExpandoObject();
+            result.link = "/download/" + Path.GetFileName(fileName);
+            return new OkObjectResult(new ApiAnswer(result));
+        }
         
         [HttpGet]
         [Route("[action]")]

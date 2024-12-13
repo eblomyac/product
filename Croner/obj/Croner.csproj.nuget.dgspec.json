@@ -13,6 +13,9 @@
         "packagesPath": "C:\\Users\\yande\\.nuget\\packages\\",
         "outputPath": "D:\\Programming\\c-diez\\ProductNew\\product\\Croner\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
           "C:\\Users\\yande\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -22,6 +25,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\nuget-packages": {},
           "http://nuget.kck2.ksk.ru/v3/index.json": {},
           "https://api.nuget.org/v3/index.json": {}
         },
@@ -72,6 +76,9 @@
         "packagesPath": "C:\\Users\\yande\\.nuget\\packages\\",
         "outputPath": "D:\\Programming\\c-diez\\ProductNew\\product\\ProtoLib\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
           "C:\\Users\\yande\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -81,6 +88,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\nuget-packages": {},
           "http://nuget.kck2.ksk.ru/v3/index.json": {},
           "https://api.nuget.org/v3/index.json": {}
         },
@@ -102,7 +110,7 @@
           "dependencies": {
             "KSK_LIB": {
               "target": "Package",
-              "version": "[1.0.24, )"
+              "version": "[1.1.2, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",

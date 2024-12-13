@@ -9,6 +9,16 @@ export class StatisticData {
   constructor(private transportService: TransportService, private dataService: DataService) {
 
   }
+  public CostReport():Observable<string|null>{
+    return this.transportService.Get('/analytic/CostReportDownload', new HttpParams()).pipe(map<ApiAnswer|null,string>(x=>{
+      if(x){
+        if(x.isSuccess){
+          return (x.result.link);
+        }
+      }
+      return null;
+    }));
+  }
   public MaconomyCompareOrders():Observable<number[]|null>{
     return this.transportService.Get('/analytic/MaconomyOrderCompare', new HttpParams())
       .pipe(map<ApiAnswer|null,number[]|null>(x=>{

@@ -27,6 +27,13 @@ export class ReportComponent {
       this.fromDate = this.minDate;
     }
   }
+  downloadCOstReport(){
+    this.data.Statistic.CostReport().subscribe(x=>{
+      if(x){
+        window.open(x,'_blank');
+      }
+    })
+  }
   makeDailyReport(){
 
     this.isLoading=true;

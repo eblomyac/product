@@ -54,6 +54,97 @@ namespace ProtoLib.Managers
 
     public class AnalyticManager
     {
+        public DataTable CostReportToTable(dynamic rep)
+        {
+            DataTable t = new DataTable("cost_report");
+            t.Columns.Add("Участок");
+            t.Columns.Add("Ожидание, норматив собственных операций участка", typeof(decimal));
+            t.Columns.Add("Выполнение, норматив собственных операций участка", typeof(decimal));
+            t.Columns.Add("Завершение, норматив собственных операций участка", typeof(decimal));
+            t.Columns.Add("Ожидание, норматив не выполненных операций всех участков", typeof(decimal));
+            t.Columns.Add("Выполнение, норматив не выполненных операций всех участков", typeof(decimal));
+            t.Columns.Add("Завершение, норматив не выполненных операций всех участков", typeof(decimal));
+
+            foreach (var p in rep.Posts)
+            {
+                DataRow r = t.NewRow();
+                r[0] = p.Name;
+                r[1] = p.CurrentMyWait;
+                r[2] = p.CurrentMyWork;
+                r[3] = p.CurrentMyEnd;
+                r[4] = p.CurentUncompleteWait;
+                r[5] = p.CurentUncompleteWork;
+                r[6] = p.CurentUncompleteEnd;
+
+                t.Rows.Add(r);
+            }
+
+            return t;
+
+        }
+        public async Task<dynamic> CostReport()
+        {
+            dynamic result = new ExpandoObject();
+
+            result.Posts = new List<object>();
+            using (BaseContext c = new BaseContext())
+            {
+                var works = c.Works.Where(x => x.Status != WorkStatus.ended && x.OrderNumber != 100).ToList();
+                var orders = works
+                    .Select(x => x.OrderNumber).Distinct()
+                    .ToList().OrderBy(x => x).ToList();
+                var articles = works.Select(x => x.Article).Distinct().ToList();
+                WorkTemplateLoader wtl = new WorkTemplateLoader();
+                var templates = wtl.LoadOnlyCrp(articles.ToList());
+                MaconomyOrderMaxCountManager maxCountManager =
+                    new MaconomyOrderMaxCountManager(orders.Distinct().Select(x => x.ToString()).ToList());
+                
+                foreach (var post in c.Posts.Include(x=>x.PostCreationKeys).ToList().OrderBy(x=>x.ProductOrder))
+                {
+                    dynamic p = new ExpandoObject();
+                    result.Posts.Add(p);
+                    p.Name = post.Name;
+
+                    var waitWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.waiting);
+                    var runningWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.running);
+                    var endedWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.ended);
+
+                    p.CurrentMyWait = waitWorks.Sum(x => x.TotalCost);
+                    p.CurrentMyWork = runningWorks.Sum(x => x.TotalCost);
+                    p.CurrentMyEnd = endedWorks.Sum(x => x.TotalCost);
+
+
+                    p.CurentUncompleteWait = 0;
+                    p.CurentUncompleteWork = 0;
+                    p.CurentUncompleteEnd = 0;
+                    
+                    foreach (var w in waitWorks)
+                    {
+                        var completedCost = works.Where(x =>
+                            x.OrderNumber == w.OrderNumber && x.OrderLineNumber == w.OrderLineNumber && x.Status== WorkStatus.ended).Sum(x=>x.TotalCost);
+                        var allCost = templates.ArticleSingleCost(w.Article) * await maxCountManager.GetCount(w.OrderNumber, w.OrderLineNumber);
+                        p.CurentUncompleteWait += allCost - completedCost;
+                    }
+                    foreach (var w in runningWorks)
+                    {
+                        var completedCost = works.Where(x =>
+                            x.OrderNumber == w.OrderNumber && x.OrderLineNumber == w.OrderLineNumber && x.Status== WorkStatus.ended).Sum(x=>x.TotalCost);
+                        var allCost = templates.ArticleSingleCost(w.Article) * await maxCountManager.GetCount(w.OrderNumber, w.OrderLineNumber);
+                        p.CurentUncompleteWork += allCost - completedCost;
+                    }
+                    foreach (var w in endedWorks)
+                    {
+                        var completedCost = works.Where(x =>
+                            x.OrderNumber == w.OrderNumber && x.OrderLineNumber == w.OrderLineNumber && x.Status== WorkStatus.ended).Sum(x=>x.TotalCost);
+                        var allCost = templates.ArticleSingleCost(w.Article) * await maxCountManager.GetCount(w.OrderNumber, w.OrderLineNumber);
+                        p.CurentUncompleteEnd += allCost - completedCost;
+                    }
+
+                }
+            }
+            
+            return result;
+        }
         public DataTable TotalOrderToExcel(dynamic data)
         {
             DataTable dt = new DataTable();
