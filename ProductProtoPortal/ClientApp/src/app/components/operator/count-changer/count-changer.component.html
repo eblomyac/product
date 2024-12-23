@@ -1,0 +1,49 @@
+<div class="d-flex justify-content-start column-gap-2 align-items-baseline mt-2 mb-3">
+  <mat-form-field>
+    <mat-label>Заказ</mat-label>
+    <input [(ngModel)]="orderNumber" matInput type="number">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Номер строки</mat-label>
+    <input [(ngModel)]="lineNumber" matInput type="number">
+  </mat-form-field>
+  <button (click)="this.loadWorks()" [disabled]="this.orderNumber==0 || this.lineNumber==0 || isLoading" color="primary" mat-raised-button>Найти работы</button>
+</div>
+<div *ngIf="this.postData.length>0">
+  <h3>Артикул: {{ this.article }} , текущее количество в макономи: {{ this.currentCount }}</h3>
+  <div class="d-flex justify-content-between">
+    <mat-checkbox [(ngModel)]="hideEnded" color="primary">Спрятать заверешенные</mat-checkbox>
+    <button [disabled]="isLoading" mat-raised-button color="primary" (click)="saveChanges()">Сохранить изменения</button>
+  </div>
+
+  <div class="d-flex align-self-start justify-content-start column-gap-2 mt-3">
+    <div *ngFor="let p of this.postData; let pi = index">
+      <div class="text-center">
+        <h4>{{ p.PostName }}</h4>
+      </div>
+      <div *ngFor="let w of p.Works let wi=index" class="mt-2 mb-2">
+
+        <div *ngIf="!hideEnded || (hideEnded&&w.status!=50)" class="mb-2 mt-2"
+             style="border: 1px dashed gray; padding: 5px">
+          <div class="mb-2 ml-1">{{ w.statusString }}</div>
+          <div class="mb-2 ml-1" *ngIf="getChangeResult(w.id).length>0">{{getChangeResult(w.id)}}</div>
+          <mat-form-field class="mb-2 w-100">
+            <mat-label>Количество</mat-label>
+            <input [(ngModel)]="w.count" matInput type="number">
+            <mat-hint *ngIf="getSourceCount(w.id)!=w.count">Было: {{ getSourceCount(w.id) }}</mat-hint>
+
+          </mat-form-field>
+
+        </div>
+
+      </div>
+
+      <div>
+        Сумма новая: {{ TotalCountStr(p.PostName) }}
+      </div>
+      <div>
+        Сумма было: {{ TotalSourceCountStr(p.PostName) }}
+      </div>
+    </div>
+  </div>
+</div>

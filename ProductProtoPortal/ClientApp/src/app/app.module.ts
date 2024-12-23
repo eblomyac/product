@@ -92,6 +92,7 @@ import {InfoComponent} from "./components/Info/info.component";
 import {OperatorStarterComponent} from "./components/operator/operator-starter/operator-starter.component";
 import {HistoryViewComponent} from "./components/Info/history-view/history-view.component";
 import {PhotoUploadComponent} from "./dialogs/photo-upload/photo-upload.component";
+import {CountChangerComponent} from "./components/operator/count-changer/count-changer.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -103,9 +104,8 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         AppComponent,
         PostViewComponent,
         AdminSettingsComponent,
-        UserSettingsComponent,
-        PostSettingsComponent,
-        WorkPrepareComponent, CardfinderComponent,
+        UserSettingsComponent, CountChangerComponent,
+        PostSettingsComponent, WorkPrepareComponent, CardfinderComponent,
         WorkStarterComponent, HistoryViewComponent,
         OperatorComponent, OperatorStarterComponent,
         WorkCompactViewComponent, InfoComponent,

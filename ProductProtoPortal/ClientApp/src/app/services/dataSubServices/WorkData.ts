@@ -11,6 +11,7 @@ export  class WorkData{
   constructor(private transport:TransportService, private dataService:DataService) {
   }
 
+
   public CheckCrp(id:number):Observable<boolean>{
     return this.transport
       .Get(`/works/${id}/CheckCrp`, new HttpParams())

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProtoLib.Model;
 
@@ -11,9 +12,10 @@ using ProtoLib.Model;
 namespace ProtoLib.Migrations
 {
     [DbContext(typeof(BaseContext))]
-    partial class BaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241108160353_editImages2")]
+    partial class editImages2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,50 +150,6 @@ namespace ProtoLib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MaconomyMovementTransactions");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.OperatorCountChangeRecord", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Article")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("EditBy")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<int>("LineNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NewCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OldCount")
-                        .HasColumnType("int");
-
-                    b.Property<long>("OrderNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Stamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StatusWhenChanged")
-                        .HasColumnType("int");
-
-                    b.Property<long>("WorkId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OperatorCountChangeRecords");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.Post", b =>

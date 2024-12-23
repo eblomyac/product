@@ -19,7 +19,8 @@ const PROXY_CONFIG = [
       "/DailySource",
       "/AdditionalCost",
       "/Info",
-      "/CustomImage"
+      "/CustomImage",
+      "/OperatorApi"
    ],
     target: target,
     secure: false,

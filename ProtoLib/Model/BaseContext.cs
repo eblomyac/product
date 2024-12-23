@@ -64,6 +64,7 @@ namespace ProtoLib.Model
         
         public DbSet<AdditionalCostTemplate> AdditionalCostTemplates { get; set; }
         public DbSet<AdditionalCost> AdditionalCosts { get; set; }
+        public DbSet<OperatorCountChangeRecord> OperatorCountChangeRecords { get; set; }
 
         public BaseContext()
         {

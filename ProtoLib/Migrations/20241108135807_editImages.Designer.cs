@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProtoLib.Model;
 
@@ -11,9 +12,10 @@ using ProtoLib.Model;
 namespace ProtoLib.Migrations
 {
     [DbContext(typeof(BaseContext))]
-    partial class BaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241108135807_editImages")]
+    partial class editImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,6 +126,20 @@ namespace ProtoLib.Migrations
                     b.ToTable("DailySources");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.ImageSet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImageSet");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.MaconomyMovementTransaction", b =>
                 {
                     b.Property<long>("Id")
@@ -148,50 +164,6 @@ namespace ProtoLib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MaconomyMovementTransactions");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.OperatorCountChangeRecord", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Article")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("EditBy")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<int>("LineNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NewCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OldCount")
-                        .HasColumnType("int");
-
-                    b.Property<long>("OrderNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Stamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StatusWhenChanged")
-                        .HasColumnType("int");
-
-                    b.Property<long>("WorkId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OperatorCountChangeRecords");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.Post", b =>
@@ -333,6 +305,9 @@ namespace ProtoLib.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("ImageSetId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("InitialFileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -345,9 +320,6 @@ namespace ProtoLib.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TechCardId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("UploadedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -358,7 +330,7 @@ namespace ProtoLib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TechCardId");
+                    b.HasIndex("ImageSetId");
 
                     b.ToTable("Images");
                 });
@@ -383,7 +355,12 @@ namespace ProtoLib.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
+                    b.Property<Guid?>("ImageSetId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ImageSetId");
 
                     b.ToTable("TechCards");
                 });
@@ -902,13 +879,18 @@ namespace ProtoLib.Migrations
 
             modelBuilder.Entity("ProtoLib.Model.StoredImage", b =>
                 {
-                    b.HasOne("ProtoLib.Model.TechCard", "TechCard")
+                    b.HasOne("ProtoLib.Model.ImageSet", null)
                         .WithMany("Images")
-                        .HasForeignKey("TechCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ImageSetId");
+                });
 
-                    b.Navigation("TechCard");
+            modelBuilder.Entity("ProtoLib.Model.TechCard", b =>
+                {
+                    b.HasOne("ProtoLib.Model.ImageSet", "ImageSet")
+                        .WithMany()
+                        .HasForeignKey("ImageSetId");
+
+                    b.Navigation("ImageSet");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.TechCardLine", b =>
@@ -993,6 +975,11 @@ namespace ProtoLib.Migrations
                     b.Navigation("Work");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.ImageSet", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.Post", b =>
                 {
                     b.Navigation("PostCreationKeys");
@@ -1000,8 +987,6 @@ namespace ProtoLib.Migrations
 
             modelBuilder.Entity("ProtoLib.Model.TechCard", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("PostParts");
                 });
 
