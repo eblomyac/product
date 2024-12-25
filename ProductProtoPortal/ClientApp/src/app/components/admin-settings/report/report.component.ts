@@ -12,7 +12,7 @@ export class ReportComponent {
   isLoading=false;
   datepipe: DatePipe = new DatePipe('en-US')
   infoMessage="";
-  reportType: 'production' | 'article' | 'additional'='production';
+  reportType: 'production' | 'article' | 'additional'|'costreport'='production';
 
   fromDate= new Date();
   toDate= new Date();
@@ -60,14 +60,24 @@ export class ReportComponent {
       case "production":
         req =  this.data.Statistic.PeriodReport(fromDate,toDate, this.moveDay)
         break;
+      case "costreport":
+        this.data.Statistic.CostPeriodReport(fromDate, toDate).subscribe(x=>{
+          if(x){
+            this.isLoading = false;
+            window.open(x,'_blank');
+          }
+        });
+        break;
     }
-    req.subscribe(x=>{
-      this.infoMessage = "Отчет будет доставлен на почту в ближайшее время"
-      setTimeout(x=>{
-        this.isLoading=false;
-        this.infoMessage='';
-      }, 3000)
-    });
+    if(req) {
+      req.subscribe(x => {
+        this.infoMessage = "Отчет будет доставлен на почту в ближайшее время"
+        setTimeout(x => {
+          this.isLoading = false;
+          this.infoMessage = '';
+        }, 3000)
+      });
+    }
 
   }
 

@@ -118,6 +118,23 @@ namespace ProductProtoPortal.Controllers
             result.link = "/download/" + Path.GetFileName(fileName);
             return new OkObjectResult(new ApiAnswer(result));
         }
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> CostPeriodReportDownload(string from,string to)
+        {
+            AnalyticManager am = new AnalyticManager();
+            DateTime from_date = DateTime.ParseExact(from, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime to_date = DateTime.ParseExact(to, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var costReport = am.CostReportPeriod(from_date,to_date);
+           
+            string fileName = Path.Combine(Environment.CurrentDirectory, "download",
+                Guid.NewGuid().ToString() + ".xlsx");
+            ExcelExporter ee = new ExcelExporter(fileName);
+            ee.ExportTable(costReport,false,false);
+            dynamic result = new ExpandoObject();
+            result.link = "/download/" + Path.GetFileName(fileName);
+            return new OkObjectResult(new ApiAnswer(result));
+        }
         
         [HttpGet]
         [Route("[action]")]

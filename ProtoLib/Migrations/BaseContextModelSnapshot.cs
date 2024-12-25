@@ -82,6 +82,44 @@ namespace ProtoLib.Migrations
                     b.ToTable("AdditionalCostTemplates");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.CostReportRecord", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<decimal>("CurrentMyEnd")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CurrentMyWait")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CurrentMyWork")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CurrentUncompleteEnd")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CurrentUncompleteWait")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CurrentUncompleteWork")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Stamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CostReportRecords");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.DailySource", b =>
                 {
                     b.Property<long>("Id")

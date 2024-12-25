@@ -54,6 +54,38 @@ namespace ProtoLib.Managers
 
     public class AnalyticManager
     {
+        public void SaveTodayCostReport(dynamic rep)
+        {
+            using ( BaseContext c = new BaseContext())
+            {
+               var todayReports =  c.CostReportRecords.Where(x => x.Stamp.Date == DateTime.Today).ToList();
+               foreach (var p in rep.Posts)
+               {
+                   var existReport = todayReports.FirstOrDefault(x => x.PostId == p.Name);
+                   if (existReport == null)
+                   {
+                       existReport = new CostReportRecord();
+                       existReport.PostId = p.Name;
+                       existReport.Stamp = DateTime.Today;
+                       c.CostReportRecords.Add(existReport);
+                   }
+                   
+
+                   
+                   existReport.CurrentMyEnd = p.CurrentMyEnd;
+                   existReport.CurrentUncompleteEnd = p.CurrentUncompleteEnd;
+                   existReport.CurrentMyWait = p.CurrentMyWait;
+                   existReport.CurrentUncompleteWait = p.CurrentUncompleteWait;
+                   existReport.CurrentUncompleteWork = p.CurrentUncompleteWork;
+                   existReport.CurrentMyWork = p.CurrentMyWork;
+                  
+                   
+               }
+
+               c.SaveChanges();
+
+            }
+        }
         public DataTable CostReportToTable(dynamic rep)
         {
             DataTable t = new DataTable("cost_report");
@@ -72,9 +104,9 @@ namespace ProtoLib.Managers
                 r[1] = p.CurrentMyWait;
                 r[2] = p.CurrentMyWork;
                 r[3] = p.CurrentMyEnd;
-                r[4] = p.CurentUncompleteWait;
-                r[5] = p.CurentUncompleteWork;
-                r[6] = p.CurentUncompleteEnd;
+                r[4] = p.CurrentUncompleteWait;
+                r[5] = p.CurrentUncompleteWork;
+                r[6] = p.CurrentUncompleteEnd;
 
                 t.Rows.Add(r);
             }
@@ -114,36 +146,71 @@ namespace ProtoLib.Managers
                     p.CurrentMyEnd = endedWorks.Sum(x => x.TotalCost);
 
 
-                    p.CurentUncompleteWait = 0;
-                    p.CurentUncompleteWork = 0;
-                    p.CurentUncompleteEnd = 0;
+                    p.CurrentUncompleteWait = 0;
+                    p.CurrentUncompleteWork = 0;
+                    p.CurrentUncompleteEnd = 0;
                     
                     foreach (var w in waitWorks)
                     {
                         var completedCost = works.Where(x =>
                             x.OrderNumber == w.OrderNumber && x.OrderLineNumber == w.OrderLineNumber && x.Status== WorkStatus.ended).Sum(x=>x.TotalCost);
                         var allCost = templates.ArticleSingleCost(w.Article) * await maxCountManager.GetCount(w.OrderNumber, w.OrderLineNumber);
-                        p.CurentUncompleteWait += allCost - completedCost;
+                        p.CurrentUncompleteWait += allCost - completedCost;
                     }
                     foreach (var w in runningWorks)
                     {
                         var completedCost = works.Where(x =>
                             x.OrderNumber == w.OrderNumber && x.OrderLineNumber == w.OrderLineNumber && x.Status== WorkStatus.ended).Sum(x=>x.TotalCost);
                         var allCost = templates.ArticleSingleCost(w.Article) * await maxCountManager.GetCount(w.OrderNumber, w.OrderLineNumber);
-                        p.CurentUncompleteWork += allCost - completedCost;
+                        p.CurrentUncompleteWork += allCost - completedCost;
                     }
                     foreach (var w in endedWorks)
                     {
                         var completedCost = works.Where(x =>
                             x.OrderNumber == w.OrderNumber && x.OrderLineNumber == w.OrderLineNumber && x.Status== WorkStatus.ended).Sum(x=>x.TotalCost);
                         var allCost = templates.ArticleSingleCost(w.Article) * await maxCountManager.GetCount(w.OrderNumber, w.OrderLineNumber);
-                        p.CurentUncompleteEnd += allCost - completedCost;
+                        p.CurrentUncompleteEnd += allCost - completedCost;
                     }
 
                 }
             }
             
             return result;
+        }
+
+        public DataTable CostReportPeriod(DateTime from, DateTime to)
+        {
+            using (BaseContext c = new BaseContext())
+            {
+                var reps= c.CostReportRecords.Where(x => x.Stamp.Date >= from.Date && x.Stamp.Date <= to.Date).ToList();
+                
+                DataTable t = new DataTable("cost_report");
+                t.Columns.Add("Дата", typeof(DateTime));
+                t.Columns.Add("Участок");
+                t.Columns.Add("Ожидание, норматив собственных операций участка", typeof(decimal));
+                t.Columns.Add("Выполнение, норматив собственных операций участка", typeof(decimal));
+                t.Columns.Add("Завершение, норматив собственных операций участка", typeof(decimal));
+                t.Columns.Add("Ожидание, норматив не выполненных операций всех участков", typeof(decimal));
+                t.Columns.Add("Выполнение, норматив не выполненных операций всех участков", typeof(decimal));
+                t.Columns.Add("Завершение, норматив не выполненных операций всех участков", typeof(decimal));
+
+                foreach (var p in reps)
+                {
+                    DataRow r = t.NewRow();
+                    r[0] = p.Stamp.Date;
+                    r[1] = p.PostId;
+                    r[2] = p.CurrentMyWait;
+                    r[3] = p.CurrentMyWork;
+                    r[4] = p.CurrentMyEnd;
+                    r[5] = p.CurrentUncompleteWait;
+                    r[6] = p.CurrentUncompleteWork;
+                    r[7] = p.CurrentUncompleteEnd;
+
+                    t.Rows.Add(r);
+                }
+
+                return t;
+            }
         }
         public DataTable TotalOrderToExcel(dynamic data)
         {

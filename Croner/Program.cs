@@ -115,7 +115,10 @@ namespace ProductCroner
             }
             if (args.Contains("--daily-report-yesterday"))
             {
-                await Report(DateTime.Today.AddDays(-1));    
+                await Report(DateTime.Today.AddDays(-1));
+                AnalyticManager am = new AnalyticManager();
+                var rep = await am.CostReport();
+                am.SaveTodayCostReport(rep);
             }
 
             if (args.Contains("--auto-close"))

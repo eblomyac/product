@@ -10,6 +10,15 @@ namespace ProtoLib.Tests;
 public class reportTest
 {
     [Test]
+    public async Task MakeCostReport()
+    {
+        AnalyticManager am = new AnalyticManager();
+        var rep = await am.CostReport();
+        am.SaveTodayCostReport(rep);
+        
+    }
+    
+    [Test]
     public async Task CostRep()
     {
         AnalyticManager am = new AnalyticManager();
