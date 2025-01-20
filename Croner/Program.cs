@@ -49,7 +49,7 @@ namespace ProductCroner
                 IsBodyHtml = false,
                 MailAttachments = new List<MailAttachment>(){new MailAttachment(lumarFile)}, Subject = "Проверка нормативов Maconomy\\CRP (LUMAR)", 
                 //To = new List<string>(){"po@ksk.ru"}
-                 To = new List<string>() {"Anton.Brik@vitaluce.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru"}
+                 To = new List<string>() {"Anton.Brik@vitaluce.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru","Victor.Romanchuk@vitaluce.ru"}
             });  
             await EmailNotificatorSingleton.Instance.Send(new MailRequest()
             {
@@ -57,7 +57,7 @@ namespace ProductCroner
                 IsBodyHtml = false,
                 MailAttachments = new List<MailAttachment>(){new MailAttachment(svetonFile)}, Subject = "Проверка нормативов Maconomy\\CRP (SVETON)", 
              //   To = new List<string>(){"po@ksk.ru"}
-               To = new List<string>() {"Anton.Brik@vitaluce.ru","stocks@sveton.ru","Nikolay.Rezenov@sveton.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru"}
+               To = new List<string>() {"Anton.Brik@vitaluce.ru","stocks@sveton.ru","Nikolay.Rezenov@sveton.ru","artur.vagapov@ksk.ru","Anatoliy.Kalinichenko@vitaluce.ru","Oleg.Topalov@vitaluce.ru","Victor.Romanchuk@vitaluce.ru"}
             });
             
         }

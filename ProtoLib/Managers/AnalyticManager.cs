@@ -139,7 +139,7 @@ namespace ProtoLib.Managers
 
                     var waitWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.waiting);
                     var runningWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.running);
-                    var endedWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.ended);
+                    var endedWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.ended || x.Status== WorkStatus.sended);
 
                     p.CurrentMyWait = waitWorks.Sum(x => x.TotalCost);
                     p.CurrentMyWork = runningWorks.Sum(x => x.TotalCost);
