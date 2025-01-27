@@ -20,5 +20,6 @@
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.mactest.TestLineCount&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.reportTest.CostRep&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.reportTest.MakeCostReport&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::2D6CBD8C-C12D-4B2A-90D6-2E670D3A2002::net6.0::ProtoLib.Tests.reportTest.MakeDailyReport&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

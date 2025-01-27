@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Data;
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 using KSK_LIB.DataStructure.MQRequest;
@@ -64,6 +65,12 @@ namespace ProductCroner
         public static string HtmlRoot = "https://product.ksk.ru";
         public static async Task Main(string[] args)
         {
+            if (args.Contains("--make-all-time-report"))
+            {
+                
+                await MakeAllReportHistory(DateTime.ParseExact(args[1], "dd.MM.yyyy", CultureInfo.InvariantCulture));
+                return;
+            }
             if (args.Contains("--maintenance"))
             {
                 MaintenanceManager mm = new MaintenanceManager();
@@ -115,10 +122,13 @@ namespace ProductCroner
             }
             if (args.Contains("--daily-report-yesterday"))
             {
-                await Report(DateTime.Today.AddDays(-1));
-                AnalyticManager am = new AnalyticManager();
+                
+              
+              await Report(DateTime.Today.AddDays(-1));
+               AnalyticManager am = new AnalyticManager();
                 var rep = await am.CostReport();
                 am.SaveTodayCostReport(rep);
+                await StoreYesterdayReport();
             }
 
             if (args.Contains("--auto-close"))
@@ -134,6 +144,38 @@ namespace ProductCroner
             }
             
 
+        }
+
+        public static async Task StoreYesterdayReport()
+        {
+            ReportManager rm = new ReportManager();
+
+            var request = await rm.PeriodReport(DateTime.Today.AddDays(-1),
+                DateTime.Today.AddDays(-1), true, true);
+    
+            rm.StoreDailyReports(request);
+            var s = rm.DailyReportsToExcel(new DateTime(2024,1,1), DateTime.Today.AddDays(-1));
+            ExcelExporter ee = new ExcelExporter(Constants.FileStorage.ReportFullFileName);
+            ee.ExportSet(s);
+            
+        }
+
+        public static async Task MakeAllReportHistory(DateTime start)
+        {
+            ReportManager rm = new ReportManager();
+           
+            while (start < DateTime.Today)
+            {
+                Console.WriteLine($"Taking report from: {start:dd.MM.yyyy}");
+                var request = await rm.PeriodReport(start,
+                    start, true,true);
+                Console.WriteLine("Saving");
+                rm.StoreDailyReports(request);
+                start = start.AddDays(1);
+            }
+            var s = rm.DailyReportsToExcel(new DateTime(2024,1,1), DateTime.Today.AddDays(-1));
+            ExcelExporter ee = new ExcelExporter(Constants.FileStorage.ReportFullFileName);
+            ee.ExportSet(s);
         }
 
         public static void CloseTodayEnd()

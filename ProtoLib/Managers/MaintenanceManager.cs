@@ -118,8 +118,8 @@ public class MaintenanceManager
             foreach (var issue in possibleStackedIssues)
             {
                 var allSameWorks = c.Works.AsNoTracking().Where(x => x.PostId == issue.ReturnBackPostId
-                                                                              && issue.Work.OrderNumber == x.OrderNumber
-                                                                              && x.OrderLineNumber == issue.Work.OrderLineNumber).ToList();
+                                                                              && x.OrderNumber==100
+                                                                              && x.Description.Contains(x.Article) && x.Description.Contains(x.OrderNumber.ToString())).ToList();
                 var connectedWork = allSameWorks.FirstOrDefault(x=>x.Count == issue.Work.Count);
                 if (allSameWorks.Count == 0)
                 {

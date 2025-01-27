@@ -23,8 +23,11 @@ namespace ProtoLib
             }
         }
 
-      
-        
+
+        public static class FileStorage
+        {
+            public static string ReportFullFileName = "C:\\api\\protoprod\\report\\full-product-report.xlsx";
+        }
         public static class Database
         {
             private static string connectionStringFile ="database.connection-string";

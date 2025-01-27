@@ -120,6 +120,153 @@ namespace ProtoLib.Migrations
                     b.ToTable("CostReportRecords");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.DailyReport.ArticleOrderDaily", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<decimal>("AdditionalCompletedCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Article")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CompletedCount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompletedWeight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CostCompleted")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Line")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxOrderLineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("OrderCount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("OrderLineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("OrderNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Post")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("RemainPart")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("RemainsWeight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Stamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalCompletedWeight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArticleOrderDaily", "DailyReport");
+                });
+
+            modelBuilder.Entity("ProtoLib.Model.DailyReport.LineDaily", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<decimal>("AdditionalCostCompleted")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CostCompleted")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DailyBudget")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ItemsDone")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ItemsDoneCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ItemsReceived")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Line")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Stamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LineDaily", "DailyReport");
+                });
+
+            modelBuilder.Entity("ProtoLib.Model.DailyReport.PostDaily", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<decimal>("AdditionalCostCompleted")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompletedWeight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CostCompleted")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DailyBudget")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ItemsDone")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Line")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Post")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("RemainsWeight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Stamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PostDaily", "DailyReport");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.DailySource", b =>
                 {
                     b.Property<long>("Id")

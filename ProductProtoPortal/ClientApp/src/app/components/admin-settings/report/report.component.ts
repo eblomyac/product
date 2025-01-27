@@ -27,6 +27,9 @@ export class ReportComponent {
       this.fromDate = this.minDate;
     }
   }
+  downloadExcel(){
+    window.open('/download/fullreportonlinedata.xlsx',"_blank")
+  }
   downloadCOstReport(){
     this.data.Statistic.CostReport().subscribe(x=>{
       if(x){

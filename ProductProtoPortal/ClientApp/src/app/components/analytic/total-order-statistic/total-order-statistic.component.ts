@@ -17,6 +17,7 @@ export class TotalOrderStatisticComponent implements OnInit{
   articleFilter='';
   orderFilter='';
   hideCompleted = true;
+  onlyPartlyEnded = false;
   constructor(private data:DataService) {
 
   }
@@ -24,8 +25,30 @@ export class TotalOrderStatisticComponent implements OnInit{
       this.load();
   }
   filterUpdate(){
+    this.articleStat = this.stat;
+    if(this.hideCompleted){
+      this.articleStat = this.articleStat.filter((x:any)=>{
+        return  !x.IsEnded;
+      })
+    }
+    if(this.onlyPartlyEnded){
+      this.articleStat = this.articleStat.filter((x:any)=>{
+        return x.EndedCount>0 && x.EndedCount!=x.Count;
+      });
+    }
+    if(this.articleFilter.length>0){
+      this.articleStat = this.articleStat.filter((x:any)=>{
+        return x.Article.toString().includes(this.articleFilter)
+      })
+    }
+    if(this.orderFilter.length>0){
+      this.articleStat = this.articleStat.filter((x:any)=>{
+        return x.Order.toString().includes(this.orderFilter)
+      })
+    }
 
 
+    /*
     if(this.articleFilter.length < 1 && this.orderFilter.length<1){
       this.articleStat = this.stat;
     }else if(this.articleFilter.length>0 && this.orderFilter.length>0){
@@ -46,6 +69,8 @@ export class TotalOrderStatisticComponent implements OnInit{
         return  !x.IsEnded;
       });
     }
+    */
+
 
   }
   print(){

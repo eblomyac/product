@@ -139,7 +139,7 @@ namespace ProtoLib.Managers
 
                     var waitWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.waiting);
                     var runningWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.running);
-                    var endedWorks = works.Where(x => x.PostId == post.Name && x.Status == WorkStatus.ended || x.Status== WorkStatus.sended);
+                    var endedWorks = works.Where(x => x.PostId == post.Name && (x.Status == WorkStatus.ended || x.Status== WorkStatus.sended));
 
                     p.CurrentMyWait = waitWorks.Sum(x => x.TotalCost);
                     p.CurrentMyWork = runningWorks.Sum(x => x.TotalCost);
@@ -221,6 +221,7 @@ namespace ProtoLib.Managers
             dt.Columns.Add("Приоритет",typeof(int));
             dt.Columns.Add("Дата сдачи");
             dt.Columns.Add("Количество", typeof(decimal));
+            dt.Columns.Add("Завершено", typeof(decimal));
 
             dt.Columns.Add("Текущий участок");
 
@@ -249,6 +250,7 @@ namespace ProtoLib.Managers
                 row["Приоритет"] = line.Priority;
                 row["Заказ"] = line.Order;
                 row["Количество"] = line.Count;
+                row["Завершено"] = line.EndedCount;
                 row["Норматив партии"] = line.TotalCost;
                 row["Норматив партии (CRP)"] = line.TotalCostCrp;
                 row["Норматив выполнено"] = line.CompletedCost;
@@ -857,6 +859,7 @@ namespace ProtoLib.Managers
                             articleStat.ProductLine = "";
                             articleStat.Comment = "";
                             articleStat.DeadLine = "";
+                            articleStat.EnedCount = 0;
                             if (articleWorks.Count > 0)
                             {
                                 articleStat.DeadLine = articleWorks.FirstOrDefault().DeadLine;
@@ -929,10 +932,11 @@ namespace ProtoLib.Managers
                                     .Where(x => x.Resolved == null)
                                     .Select(x => x.Description).ToList();
                             }
-
+                            articleStat.EndedCount = endedCount;
                             if (endedCount > 0)
                             {
-                                articleStat.Places.Add($"Завершено: {endedCount}");
+                              
+                                //articleStat.Places.Add($"Завершено: {endedCount}");
                             }
                             if (articleStat.Places.Count == 0)
                             {

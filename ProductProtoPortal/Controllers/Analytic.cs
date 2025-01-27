@@ -44,10 +44,14 @@ namespace ProductProtoPortal.Controllers
                 var user = AuthHelper.GetADUser(this.HttpContext);
                 DateTime pDateFrom = DateTime.ParseExact(dateFrom, "dd-MM-yyyy", CultureInfo.InvariantCulture);
                 DateTime pDateTo = DateTime.ParseExact(dateTo, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
                 ReportManager rm = new ReportManager();
-                var request = await rm.PeriodReport(pDateFrom,pDateTo, moveDay);
-                var r =rm.PeriodReportToMail(request, user.SAM);
-                await EmailNotificatorSingleton.Instance.Send(r);  
+                var s = rm.DailyReportsToExcel(pDateFrom, pDateTo);
+
+
+
+                var mr = rm.DataSetToMail(s, user.SAM);
+                await EmailNotificatorSingleton.Instance.Send(mr);
                 return new OkObjectResult(new ApiAnswer(true));
             }
             catch (Exception exc)

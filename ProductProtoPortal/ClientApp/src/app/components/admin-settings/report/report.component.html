@@ -41,5 +41,6 @@
   <div class="d-flex justify-content-center" *ngIf="infoMessage.length>0" >
     <div>{{infoMessage}}</div>
   </div>
-
+  <mat-divider></mat-divider>
+  <button class="mt-2" mat-raised-button color="primary" (click)="downloadExcel()">Отчет по периоду (источники данных)</button>
 </div>

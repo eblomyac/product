@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualBasic;
 using ProtoLib.Managers;
+using ProtoLib.Model.DailyReport;
 
 namespace ProtoLib.Model
 {
@@ -66,6 +67,10 @@ namespace ProtoLib.Model
         public DbSet<AdditionalCost> AdditionalCosts { get; set; }
         public DbSet<OperatorCountChangeRecord> OperatorCountChangeRecords { get; set; }
         public DbSet<CostReportRecord> CostReportRecords { get; set; }
+        
+        public DbSet<ArticleOrderDaily> ReportArticleOrderDailies { get; set; }
+        public DbSet<LineDaily> ReportLineDailies { get; set; }
+        public DbSet<PostDaily> ReportPostDailies { get; set; }
 
         public BaseContext()
         {
@@ -89,7 +94,7 @@ namespace ProtoLib.Model
               //  #else
              optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
                #if DEBUG
-               //   optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
+                 //    optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
                 #endif
                 
                

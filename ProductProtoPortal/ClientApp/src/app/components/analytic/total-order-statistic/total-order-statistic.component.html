@@ -23,6 +23,9 @@
         <mat-checkbox [(ngModel)]="hideCompleted" color="primary" (ngModelChange)="filterUpdate()">
           Спрятать завершенные
         </mat-checkbox>
+        <mat-checkbox [(ngModel)]="onlyPartlyEnded" color="primary" (ngModelChange)="filterUpdate()">
+          Показать незавершенку
+        </mat-checkbox>
       </div>
       <button mat-icon-button color="primary" (click)="print()"><mat-icon>download</mat-icon></button>
     </div>
@@ -42,6 +45,7 @@
         <th  style="min-width: 5%; " class="sticky" >Приоритет</th>
         <th  class="sticky" >Дата сдачи</th>
         <th  class="text-center sticky" style="width: 8%; " >Количество</th>
+        <th  class="text-center sticky" style="width: 8%; " >Завершено</th>
         <th class="text-center sticky" >Текущий уч.</th>
         <th class="text-center sticky" style="width: 8%; ">Норматив</th>
         <th class="text-center sticky" style="width: 8%; ">Норматив CRP</th>
@@ -59,6 +63,9 @@
           <td>{{article.DeadLine | date:'dd.MM.yyyy'}}</td>
           <td style="width: 8%" class="text-center">
             {{article.Count}}
+          </td>
+          <td style="width: 8%" class="text-center">
+            {{article.EndedCount}}
           </td>
           <td class="text-center">
             <div *ngFor="let p of article.Places">

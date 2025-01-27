@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using ClosedXML.Excel;
+using KSK_LIB.Excel;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using ProtoLib.Managers;
@@ -8,7 +9,28 @@ namespace ProtoLib.Tests;
 
 [TestFixture]
 public class reportTest
+
+
 {
+    [Test]
+    public async Task MakeDailyReport()
+    {
+
+        ReportManager rm = new ReportManager();
+        var pDateFrom = new DateTime(2024, 2, 5);
+        var pDateTo = new DateTime(2024, 2, 5);
+
+        var request = await rm.PeriodReport(pDateFrom,pDateTo, true);
+        rm.StoreDailyReports(request);
+        
+     
+
+        /*
+         *    var s = rm.DailyReportsToExcel(pDateFrom, pDateTo);
+        ExcelExporter ee = new ExcelExporter("full-report.xlsx");
+        ee.ExportSet(s);
+     */
+    }
     [Test]
     public async Task MakeCostReport()
     {
