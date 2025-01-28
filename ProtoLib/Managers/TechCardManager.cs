@@ -5,8 +5,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
+using System.Text;
 using KSK_LIB.Maconomy;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto.Parameters;
 using ProtoLib.Model;
@@ -270,6 +272,62 @@ namespace ProtoLib.Managers
             }
             File.Move(tempFileName, fileStorageName);
             return fileStorageName;
+        }
+
+        public DataTable ItemComposition(string article)
+        {
+            using (MaconomyBase mb = new MaconomyBase())
+            {
+                string query = @"SELECT BOMPART.LINENUMBER, BOMPART.BOMITEMPARTNUMBER, BOMPART.NUMBEROF, POPUPITEM.NAME, ITEMINFORMATION.SUPPLEMENTARYTEXT4,
+       ITEMINFORMATION.PICTUREREFERENCE, WAREHOUSEINFORMATION.AVAILABLEINVENTORY,  INVENTORY.INVENTORYNAME
+FROM BOMPART
+    left join ItemInformation on BOMPART.BOMITEMPARTNUMBER = ITEMINFORMATION.ITEMNUMBER
+    left join popupitem on ITEMINFORMATION.ITEMPOPUP3 = popupitem.POPUPITEMNUMBER and POPUPTYPENAME='ItemPopupType3'
+    left join WAREHOUSEINFORMATION on BOMITEMPARTNUMBER=WAREHOUSEINFORMATION.ITEMNUMBER  and WAREHOUSEINFORMATION.AVAILABLEINVENTORY>0
+    left join INVENTORY on INVENTORY.INVENTORYNUMBER = WAREHOUSEINFORMATION.INVENTORYNUMBER" +$" where BOMPART.ITEMNUMBER=:article and BOMPART.BOM=1 ORDER BY BOMPART.LINENUMBER";
+                OracleCommand oc = new OracleCommand(query);
+                oc.Parameters.Add(new OracleParameter("article", $"{article}"));
+                
+                var table = mb.getTableFromDB(oc);
+
+                DataTable t = new DataTable();
+                t.Columns.Add("item");
+                t.Columns.Add("itemName");
+                t.Columns.Add("type");
+                t.Columns.Add("count", typeof(decimal));
+                t.Columns.Add("image");
+                t.Columns.Add("stock");
+                
+                for (int loop = 1; loop <= table.Rows.Count+1; loop++)
+                {
+                    var lineRows = table.Select($"LINENUMBER='{loop}'");
+                    if (lineRows.Length == 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        
+                        DataRow newRow = t.NewRow();
+                        newRow[0] = lineRows[0]["BOMITEMPARTNUMBER"].ToString();
+                        newRow[1] = MaconomyBase.makeStringRu(lineRows[0]["SUPPLEMENTARYTEXT4"].ToString());
+                        newRow[2] =  MaconomyBase.makeStringRu(lineRows[0]["NAME"].ToString());
+                        newRow[3] = lineRows[0]["NUMBEROF"];
+                        newRow[4] = lineRows[0]["PICTUREREFERENCE"].ToString();
+                        List<string> sb = new(); 
+                        foreach (var invRow in lineRows)
+                        {
+                            sb.Add($"{MaconomyBase.makeStringRu(invRow["INVENTORYNAME"].ToString())}: { invRow["AVAILABLEINVENTORY"]}");
+                        }
+
+                        newRow[5] = string.Join("\r\n",sb);
+                        t.Rows.Add(newRow);
+                    }
+                    
+                }
+
+                return t;
+            }
         }
 
     }

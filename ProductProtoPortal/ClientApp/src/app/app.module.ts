@@ -93,6 +93,7 @@ import {OperatorStarterComponent} from "./components/operator/operator-starter/o
 import {HistoryViewComponent} from "./components/Info/history-view/history-view.component";
 import {PhotoUploadComponent} from "./dialogs/photo-upload/photo-upload.component";
 import {CountChangerComponent} from "./components/operator/count-changer/count-changer.component";
+import {PictureViewComponent} from "./dialogs/picture-view/picture-view.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -103,7 +104,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
     declarations: [
         AppComponent,
         PostViewComponent,
-        AdminSettingsComponent,
+        AdminSettingsComponent, PictureViewComponent,
         UserSettingsComponent, CountChangerComponent,
         PostSettingsComponent, WorkPrepareComponent, CardfinderComponent,
         WorkStarterComponent, HistoryViewComponent,

@@ -10,6 +10,7 @@ import {DialogHandlerService} from "../../../services/dialog-handler.service";
 import {DailySourceDialogComponent} from "../../../dialogs/daily-source-dialog/daily-source-dialog.component";
 import {PostDialogComponent} from "../../../dialogs/post-dialog/post-dialog.component";
 import {PhotoUploadComponent} from "../../../dialogs/photo-upload/photo-upload.component";
+import {PictureViewComponent} from "../../../dialogs/picture-view/picture-view.component";
 
 @Component({
   selector: 'app-card-view',
@@ -25,6 +26,8 @@ export class CardViewComponent implements OnInit, OnDestroy, OnChanges {
   postView: Line[] = [];
   isDialog=false;
   isLoading = false;
+  composition :any=null;
+  showUrl:string|null=null;
   set Article(value: string) {
     this.partName = value;
     this.load();
@@ -54,6 +57,21 @@ export class CardViewComponent implements OnInit, OnDestroy, OnChanges {
 
     }
 
+
+  }
+  showPicture(url:string){
+    this.dialogService.open(PictureViewComponent, {
+      data: {
+       img:url,
+      },
+
+
+      autoFocus: true,
+      hasBackdrop: true,
+
+
+
+    });
 
   }
 
@@ -116,8 +134,11 @@ export class CardViewComponent implements OnInit, OnDestroy, OnChanges {
         }
         this.updatePostParts();
       }
-
-
+    })
+    this.data.TechCard.Composition(this.partName).subscribe(x=>{
+      if(x){
+        this.composition = x;
+      }
     })
   }
 

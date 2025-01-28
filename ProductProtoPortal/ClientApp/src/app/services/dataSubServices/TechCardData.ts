@@ -10,6 +10,17 @@ export class TechCardData{
   constructor(private transportService: TransportService, private dataService: DataService) {
 
   }
+  public Composition(article:string):Observable<any|null>{
+    return this.transportService.Get('/techcard/Composition?article='+encodeURIComponent(article), new HttpParams())
+      .pipe(map<ApiAnswer|null,any|null>(x=>{
+        if(x){
+          if(x.isSuccess){
+            return (x.result);
+          }
+        }
+        return null;
+      }));
+  }
   public UploadPhoto(article:string, data:any[]):Observable<boolean|null>{
     return this.transportService.Post('/techcard/uploadPhoto?article='+encodeURIComponent(article), new HttpParams(), data)
       .pipe(map<ApiAnswer|null,boolean|null>(x=>{

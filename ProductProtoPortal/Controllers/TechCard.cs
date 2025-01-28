@@ -1,4 +1,6 @@
-﻿using System.Dynamic;
+﻿using System.Data;
+using System.Dynamic;
+using DocumentFormat.OpenXml.Presentation;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ProtoLib.Managers;
@@ -10,6 +12,15 @@ namespace ProductProtoPortal.Controllers
     [Route("/[controller]/[action]")]
     public class TechCard:Controller
     {
+        [HttpGet]
+        public IActionResult Composition(string article)
+        {
+            TechCardManager tcm = new TechCardManager();
+            var table = tcm.ItemComposition(article);
+ 
+            return  new OkObjectResult(new ApiAnswer(table).ToString());
+
+        }
         [HttpGet]
         public IActionResult Card(string article)
         {

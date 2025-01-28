@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.ExtendedProperties;
 using iText.Kernel.Crypto.Securityhandler;
 using KSK_LIB.Maconomy;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using ProtoLib.Managers;
 using ProtoLib.Model;
@@ -13,6 +14,13 @@ namespace ProtoLib.Tests;
 public class mactest
 
 {
+    [Test]
+    public void Composition()
+    {
+        TechCardManager tcm = new TechCardManager();
+        Console.WriteLine(JsonConvert.SerializeObject(tcm.ItemComposition("V3715/3PL")));
+    }
+    
     [Test]
     public async Task TestLineCount()
     {
