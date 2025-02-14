@@ -6,6 +6,7 @@ export interface AdditionalCost{
   additionalCostTemplate?:AdditionalCostTemplate;
   additionalCostTemplateId:number;
   workId:number;
+  subPost:string;
 }
 export interface AdditionalCostTemplate{
   id:number;

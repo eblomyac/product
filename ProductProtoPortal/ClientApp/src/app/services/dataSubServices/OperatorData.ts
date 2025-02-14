@@ -12,8 +12,8 @@ export class OperatorData {
     return this.transportService.Get('/OperatorApi/WorkList', new HttpParams()
       .append('orderNumber',orderNumber)
       .append('lineNumber', lineNumber))
-      .pipe(map<ApiAnswer|null,any>(x=>{
-      if(x){
+      .pipe(map<ApiAnswer|null|'not ended',any>(x=>{
+        if (x != null && x!='not ended') {
         if(x.isSuccess){
           return (x.result);
         }
@@ -23,8 +23,8 @@ export class OperatorData {
   }
   public ChangeCount(data:any[]):Observable<null | any[] >{
     return this.transportService.Post('/OperatorApi/ChangeCount', new HttpParams(), data)
-      .pipe(map<ApiAnswer|null,any>(x=> {
-        if (x) {
+      .pipe(map<ApiAnswer|null|'not ended',any>(x=> {
+        if (x != null && x!='not ended') {
           if (x.isSuccess) {
             return (x.result);
           }

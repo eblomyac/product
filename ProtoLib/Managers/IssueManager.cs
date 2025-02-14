@@ -141,7 +141,7 @@ namespace ProtoLib.Managers
                                 AdditionalCostTemplate = c.AdditionalCostTemplates
                                     .FirstOrDefault(x => x.Name == "Исправление"),
                                 Comment = wi.Id.ToString(),
-                                Description = wi.Description, Cost = 0
+                                Description = wi.Description, Cost = 0, SubPost = "Возврат"
                             }
                         }, $"Возврат от {work.PostId}",  $"Заказ: {work.OrderNumber}, Артикул: {work.Article} x {work.Count}");
                         returnedWork.MovedFrom = work.PostId;

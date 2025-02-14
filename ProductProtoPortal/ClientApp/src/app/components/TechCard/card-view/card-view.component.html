@@ -6,63 +6,96 @@
     </div>
   </div>
   <div class="row">
-    <div *ngIf="isLoading" class="d-flex  align-items-center justify-content-center mt-5">
+    <div *ngIf="isLoadCard||isLoadPartOf||isLoadRecipe" class="d-flex  align-items-center justify-content-center mt-5">
       <mat-spinner></mat-spinner>
     </div>
   </div>
-  <div class="row" *ngIf="card && composition">
+
+  <div *ngIf="!isLoadCard && !isLoadPartOf && !isLoadRecipe" class="row">
     <mat-tab-group >
-      <mat-tab label="Операции">
-        <div class=row >
+      <mat-tab *ngIf="card" label="Операции"  >
+        <div class="d-flex mt-2 mb-4">
+          <div class="col-5">
+            <app-image-set-view [ImageSet]="card.images"></app-image-set-view>
+            <button (click)="addPhoto()" class="mt-2" color="primary" mat-raised-button>Добавить фотографию</button>
+          </div>
+          <div class="col-3" >
+            <mat-nav-list>
+              <mat-list-item (click)="selectedPost = p.postId;updatePostParts()" *ngFor="let p of this.card.postParts" [ngClass]="{'tech-card-selected-item':this.selectedPost==p.postId}">
+                {{p.postId}}
+              </mat-list-item>
+            </mat-nav-list>
+          </div>
+          <div class="col-4">
+            <ul>
+              <li  *ngFor="let o of this.postView"> {{o.device}} => {{o.operation}} ({{o.equipment}} {{o.equipmentInfo}})</li>
+            </ul>
 
-
-
-        <div class="col-5">
-          <app-image-set-view [ImageSet]="card.images"></app-image-set-view>
-          <button mat-raised-button color="primary" class="mt-2" (click)="addPhoto()">Добавить фотографию</button>
+          </div>
         </div>
-        <div class="col-3" >
-          <mat-nav-list>
-            <mat-list-item [ngClass]="{'tech-card-selected-item':this.selectedPost==p.postId}" *ngFor="let p of this.card.postParts" (click)="selectedPost = p.postId;updatePostParts()">
-              {{p.postId}}
-            </mat-list-item>
-          </mat-nav-list>
 
 
-        </div>
-
-        <div class="col-4">
-          <ul>
-            <li  *ngFor="let o of this.postView"> {{o.device}} => {{o.operation}} ({{o.equipment}} {{o.equipmentInfo}})</li>
-          </ul>
-
-        </div>
-        </div>
       </mat-tab>
-      <mat-tab label="Состав">
-        <table>
-          <tr>
-            <th>Элемент</th>
-            <th>Наименование</th>
+      <mat-tab *ngIf="composition" label="Состав">
+        <table *ngIf="composition.length>0; else emptyComposition" class="w-100" style="border: 1px dashed #ffffff">
+          <tr class="order-stat-table-header">
+            <th class="text-center">Элемент</th>
+            <th class="text-center">Наименование</th>
             <th>Тип продвижения</th>
-            <th>Количество</th>
-            <th>Изображение</th>
+            <th class="text-end">Количество</th>
+            <th class="text-center">Изображение</th>
             <th>Наличие</th>
           </tr>
-          <tr *ngFor="let r of this.composition">
+          <tr *ngFor="let r of this.composition" class="order-stat-table-row">
             <td>{{r.item}}</td>
             <td>{{r.itemName}}</td>
             <td>{{r.type}}</td>
-            <td>{{r.count}}</td>
-            <td>
-              <img style="width: auto; height: 50px; cursor:zoom-in" *ngIf="r.image.length>0;"
-                   [src]="r.image" (click)="showPicture(r.image)"/>
+            <td class="text-end">{{r.count}}</td>
+            <td class="text-center">
+              <img (click)="showPicture(r.image)" *ngIf="r.image.length>0;"
+                   [src]="r.image" style="width: auto; height: 50px; cursor:zoom-in"/>
 
             </td>
             <td><div style="white-space: pre">{{r.stock}}</div></td>
           </tr>
         </table>
+        <ng-template #emptyComposition><h3>Не обнаружено записей в maconomy о составе изделия</h3></ng-template>
       </mat-tab>
+      <mat-tab *ngIf="partOf" label="Входит в состав">
+        <div *ngIf="this.partOf && this.partOf.length>0" class="row">
+          <div class="col-6">
+            <h3>Наименование: {{this.partOf[0].itemName}}</h3>
+            <h3>Тип продвижения: {{this.partOf[0].itemType}}</h3>
+            <h3 >Наличие: {{this.partOf[0].stock}}</h3>
+          </div>
+          <div class="col-2 offset-4">
+            <button (click)="download_partOf()" class="mt-5" color="primary" mat-raised-button> Скачать в xlsx
+            </button>
+          </div>
+        </div>
+
+
+        <table *ngIf="partOf.length>0; else emptyPartOf" class="w-100" style="border: 1px dashed #ffffff">
+          <tr class="order-stat-table-header">
+            <th class="text-center">Изделие</th>
+            <th class="text-end">Количество</th>
+            <th class="text-center">Наименование изделия</th>
+            <th class="text-center">Тип продвижения изделия</th>
+
+
+          </tr>
+          <tr *ngFor="let r of this.partOf" class="order-stat-table-row">
+            <td>{{r.partOf}}</td>
+            <td class="text-end">{{r.count}}</td>
+            <td class="text-end">{{r.partOfName}}</td>
+            <td class="text-end">{{r.partOfType}}</td>
+
+
+
+          </tr>
+        </table>
+        <ng-template #emptyPartOf><h3>Не обнаружено записей в maconomy о вхождении в состав других изделий</h3></ng-template>
+      </mat-tab >
     </mat-tab-group>
 
   </div>

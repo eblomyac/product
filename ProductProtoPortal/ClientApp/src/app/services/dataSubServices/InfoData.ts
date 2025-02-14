@@ -29,8 +29,8 @@ export class InfoData {
     }
 
 
-    return this.transportService.Get('/Info/HistoryDownload',hp).pipe(map<ApiAnswer|null,string>(x=>{
-      if(x){
+    return this.transportService.Get('/Info/HistoryDownload',hp).pipe(map<ApiAnswer|null|'not ended',string>(x=>{
+      if(x && x!='not ended'){
         if(x.isSuccess){
           return (x.result.link);
         }
@@ -57,8 +57,8 @@ export class InfoData {
     }
 
 
-    return this.transportService.Get('/Info/History',hp).pipe(map<ApiAnswer|null,string[]>(x=>{
-      if(x){
+    return this.transportService.Get('/Info/History',hp).pipe(map<ApiAnswer|null|'not ended',string[]>(x=>{
+      if (x != null && x!='not ended') {
         if(x.isSuccess){
           return (x.result as any[]);
         }
@@ -67,8 +67,8 @@ export class InfoData {
     }));
   }
   public ArticleList():Observable<string[]>{
-    return this.transportService.Get('/Info/ArticleList', new HttpParams()).pipe(map<ApiAnswer|null,string[]>(x=>{
-      if(x){
+    return this.transportService.Get('/Info/ArticleList', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',string[]>(x=>{
+      if (x != null && x!='not ended') {
         if(x.isSuccess){
           return (x.result as string[]);
         }
@@ -77,8 +77,8 @@ export class InfoData {
     }));
   }
   public PostList():Observable<string[]>{
-    return this.transportService.Get('/Info/CrpPostList', new HttpParams()).pipe(map<ApiAnswer|null,string[]>(x=>{
-      if(x){
+    return this.transportService.Get('/Info/CrpPostList', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',string[]>(x=>{
+      if (x != null && x!='not ended') {
         if(x.isSuccess){
           return (x.result as string[]);
         }
@@ -86,8 +86,8 @@ export class InfoData {
       return [];
     }));
   }public CostData(art:string):Observable<number[]>{
-    return this.transportService.Get('/Info/ArticleCost', new HttpParams().append('article',art)).pipe(map<ApiAnswer|null,number[]>(x=>{
-      if(x){
+    return this.transportService.Get('/Info/ArticleCost', new HttpParams().append('article',art)).pipe(map<ApiAnswer|null|'not ended',number[]>(x=>{
+      if (x != null && x!='not ended') {
         if(x.isSuccess){
           return (x.result as number[]);
         }
@@ -96,8 +96,8 @@ export class InfoData {
     }));
   }
   public CostDataBatch(arts:string[]):Observable<number[][]>{
-    return this.transportService.Post('/Info/ArticleCostBatch', new HttpParams(), arts).pipe(map<ApiAnswer|null,number[][]>(x=>{
-      if(x){
+    return this.transportService.Post('/Info/ArticleCostBatch', new HttpParams(), arts).pipe(map<ApiAnswer|null|'not ended',number[][]>(x=>{
+      if (x != null && x!='not ended') {
         if(x.isSuccess){
           return (x.result as number[][]);
         }

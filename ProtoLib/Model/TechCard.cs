@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProtoLib.Model
 {
@@ -44,5 +45,6 @@ namespace ProtoLib.Model
         public string Description { get; set; }
         
         public List<TechCardPost> PostParts { get; set; }
+        
     }
 }

@@ -938,9 +938,12 @@ namespace ProtoLib.Managers
                               
                                 //articleStat.Places.Add($"Завершено: {endedCount}");
                             }
-                            if (articleStat.Places.Count == 0)
+                            if (articleStat.Places.Count == 0 && endedCount==0)
                             {
                                 articleStat.Places.Add("Не начато");
+                            }else if (endedCount == articleStat.Count)
+                            {
+                                articleStat.Places.Add("Завершено");
                             }
 
                             articleStat.TotalCost = totalCost;

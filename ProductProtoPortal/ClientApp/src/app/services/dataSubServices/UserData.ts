@@ -9,8 +9,8 @@ export class UserData{
   constructor(private transportService:TransportService) {
   }
   public Login():Observable<IUser|null>{
-    return this.transportService.Get('/users/login', new HttpParams()).pipe(map<ApiAnswer|null, IUser|null>(x=>{
-      if(x){
+    return this.transportService.Get('/users/login', new HttpParams()).pipe(map<ApiAnswer|null|'not ended', IUser|null>(x=>{
+      if(x && x!='not ended'){
         if(x.isSuccess){
           return x.result as IUser;
         }
@@ -19,8 +19,8 @@ export class UserData{
     }));
   }
   public List():Observable<IUser[]>{
-    return this.transportService.Get('/users/list', new HttpParams()).pipe(map<ApiAnswer|null, IUser[]>(x=>{
-      if(x){
+    return this.transportService.Get('/users/list', new HttpParams()).pipe(map<ApiAnswer|null|'not ended', IUser[]>(x=>{
+      if(x && x!='not ended'){
         if(x.isSuccess){
           return x.result as IUser[];
         }
@@ -29,8 +29,8 @@ export class UserData{
     }));
   }
   public Update(users:IUser[]):Observable<IUser|null>{
-    return this.transportService.Put('/users/update', new HttpParams(), users).pipe(map<ApiAnswer|null, IUser|null>(x=>{
-      if(x){
+    return this.transportService.Put('/users/update', new HttpParams(), users).pipe(map<ApiAnswer|null|'not ended', IUser|null>(x=>{
+      if(x && x!='not ended'){
         if(x.isSuccess){
           return x.result as IUser;
         }

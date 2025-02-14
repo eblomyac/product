@@ -150,7 +150,8 @@ export class Work {
     let sourceDialog = await DialogHandlerService.Singleton.ask(AdditionalCostDialogComponent, {
       data:{
         work:this,
-        dataService:this.dataService
+        dataService:this.dataService,
+        postId:this.structure.postId
       },
     })
   }

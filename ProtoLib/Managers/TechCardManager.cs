@@ -17,6 +17,32 @@ namespace ProtoLib.Managers
 {
     public class TechCardManager
     {
+        private string articleCacheFileName = "article_cache.data";
+        public List<string> ArticleList()
+        {
+            string cacheFile = Path.Combine(Environment.CurrentDirectory, articleCacheFileName);
+            if (File.Exists(cacheFile))
+            {
+                DateTime lastWrite = File.GetLastWriteTime(cacheFile);
+                if ((DateTime.Now - lastWrite).Hours < 1)
+                {
+                    return File.ReadAllLines(articleCacheFileName).ToList();
+                }
+                
+            }
+            //CrpManager crpManager = new CrpManager();
+            //crpManager.CrpArticles();
+            using (MaconomyBase mb = new MaconomyBase())
+            {
+                var dt = mb.getTableFromDB("SELECT ITEMNUMBER FROM ITEMINFORMATION");
+                List<string> list = dt.Rows.OfType<DataRow>()
+                    .Select(dr => dr.Field<string>(0)).ToList();
+                File.WriteAllLines(cacheFile, list);
+                return list;
+            }
+
+        }
+        
         public static string rootImagesDir = "\\\\kweb.kck2.ksk.ru\\h$\\product.ksk.ru";
         public TechCard? Get(string identity)
         {
@@ -136,6 +162,7 @@ namespace ProtoLib.Managers
             tc.PostParts = tc.PostParts.OrderBy(x => x.Post.ProductOrder).ToList();
             return tc;
         }
+        
 
         public TechCard LoadAdditionalLocal(TechCard tc)
         {
@@ -325,6 +352,71 @@ FROM BOMPART
                     }
                     
                 }
+
+                return t;
+            }
+        }
+
+        public DataTable ItemPartMemberOf(string article)
+        {
+            using (MaconomyBase mb = new MaconomyBase())
+            {
+                string query = @"SELECT BOMPART.BOMITEMPARTNUMBER, BOMPART.NUMBEROF, piBom.NAME, bomInfo.SUPPLEMENTARYTEXT4, BomPart.ITEMNUMBER,
+       WAREHOUSEINFORMATION.AVAILABLEINVENTORY,  INVENTORY.INVENTORYNAME, articleInfo.SUPPLEMENTARYTEXT4 , piArtcile.NAME
+FROM BOMPART
+    left join ItemInformation bomInfo on BOMPART.BOMITEMPARTNUMBER = bomInfo.ITEMNUMBER
+    left join popupitem piBom on bomInfo.ITEMPOPUP3 = piBom.POPUPITEMNUMBER and POPUPTYPENAME='ItemPopupType3'
+    left join ITEMINFORMATION articleInfo on BOMPART.ITEMNUMBER = articleInfo.ITEMNUMBER
+    left join popupitem piArtcile on articleInfo.ITEMPOPUP3 = piArtcile.POPUPITEMNUMBER and piArtcile.POPUPTYPENAME='ItemPopupType3'
+    left join WAREHOUSEINFORMATION on BOMITEMPARTNUMBER=WAREHOUSEINFORMATION.ITEMNUMBER  and WAREHOUSEINFORMATION.AVAILABLEINVENTORY>0
+    left join INVENTORY on INVENTORY.INVENTORYNUMBER = WAREHOUSEINFORMATION.INVENTORYNUMBER
+where BOMPART.BOMITEMPARTNUMBER=:article and BOMPART.BOM=1 ORDER BY BOMPART.LINENUMBER";
+                OracleCommand oc = new OracleCommand(query);
+                oc.Parameters.Add(new OracleParameter("article", $"{article}"));
+
+                var table = mb.getTableFromDB(oc);
+
+                DataTable t = new DataTable();
+                t.Columns.Add("item");
+                t.Columns.Add("itemName");
+                t.Columns.Add("itemType");
+                t.Columns.Add("count", typeof(decimal));
+                t.Columns.Add("partOf");
+                t.Columns.Add("partOfName");
+                t.Columns.Add("partOfType");
+                t.Columns.Add("stock");
+
+                var arts = table.DefaultView.ToTable(true, "ITEMNUMBER");
+                foreach (DataRow artRow in arts.Rows)
+                {
+                    var lineRows = table.Select($"ITEMNUMBER='{artRow[0]}'");
+                    if (lineRows.Length == 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        
+                        DataRow newRow = t.NewRow();
+                        newRow[0] = lineRows[0]["BOMITEMPARTNUMBER"].ToString();
+                        newRow[1] = MaconomyBase.makeStringRu(lineRows[0]["SUPPLEMENTARYTEXT4"].ToString());
+                        newRow[2] = MaconomyBase.makeStringRu(lineRows[0]["NAME"].ToString());
+                        newRow[3] = lineRows[0]["NUMBEROF"];
+                        newRow[4] = lineRows[0]["ITEMNUMBER"].ToString();
+                        newRow[5] = MaconomyBase.makeStringRu(lineRows[0]["SUPPLEMENTARYTEXT41"].ToString());
+                        newRow[6] = MaconomyBase.makeStringRu(lineRows[0]["NAME1"].ToString());
+                    
+                        List<string> sb = new(); 
+                        foreach (var invRow in lineRows)
+                        {
+                            sb.Add($"{MaconomyBase.makeStringRu(invRow["INVENTORYNAME"].ToString())}: { invRow["AVAILABLEINVENTORY"]}");
+                        }
+
+                        newRow[7] = string.Join("\r\n",sb);
+                        t.Rows.Add(newRow);
+                    }    
+                }
+                
 
                 return t;
             }

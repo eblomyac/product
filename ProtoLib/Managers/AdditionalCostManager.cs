@@ -58,6 +58,7 @@ public class AdditionalCostManager
             acn.WorkId = ac.WorkId;
             acn.Cost = ac.Cost;
             acn.Comment = ac.Comment;
+            acn.SubPost = ac.SubPost;
             c.AdditionalCosts.Add(acn);
             c.SaveChanges();
             acn.AdditionalCostTemplate =

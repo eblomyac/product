@@ -6,4 +6,5 @@
   productOrder:number;
   isShared:boolean;
   canEnd:boolean;
+  postCreationKeys:any[];
 }

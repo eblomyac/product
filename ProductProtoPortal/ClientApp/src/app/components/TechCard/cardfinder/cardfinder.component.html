@@ -3,7 +3,7 @@
     <mat-form-field  class="col-2">
       <mat-label>Артикул</mat-label>
       <input type="text" matInput   [disabled]="isLoadArticles" [(ngModel)]="filter" (ngModelChange)="filterChange()">
-
+      <mat-hint>Введите не менее 3 символов</mat-hint>
     </mat-form-field>
     <div class="col-1">
       <div *ngIf="isLoadArticles" class="d-flex align-items-start" style="column-gap: 10px">

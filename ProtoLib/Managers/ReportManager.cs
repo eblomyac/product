@@ -209,6 +209,7 @@ public class ReportManager
             t.Columns.Add("Заказ", typeof(long));
             t.Columns.Add("Номер строки", typeof(int));
             t.Columns.Add("Участок");
+            t.Columns.Add("Пост");
             t.Columns.Add("Линия пр-ва");
             t.Columns.Add("Общее назанчение работы");
             t.Columns.Add("Описание");
@@ -238,10 +239,11 @@ public class ReportManager
                     r[5] = w.OrderNumber!=100? orderNumber:0;
                     r[6] = w.OrderNumber!=100?orderLineNumber:0;
                     r[7] = post;
-                    r[8] = prodLine;
-                    r[9] = acType;
-                    r[10] = description;
-                    r[11] = cost;
+                    r[8] = ac.SubPost;
+                    r[9] = prodLine;
+                    r[10] = acType;
+                    r[11] = description;
+                    r[12] = cost;
 
                     t.Rows.Add(r);
                 }

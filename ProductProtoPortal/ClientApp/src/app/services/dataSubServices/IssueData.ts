@@ -13,8 +13,8 @@ export class IssueData {
   }
 
   public ListTemplates():Observable<IssueTemplate[]|null>{
-    return this.transportService.Get('/issues/', new HttpParams()).pipe(map<ApiAnswer|null,IssueTemplate[]|null>(x=> {
-      if (x != null) {
+    return this.transportService.Get('/issues/', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',IssueTemplate[]|null>(x=> {
+      if (x != null && x!='not ended') {
         if (x.isSuccess) {
           return x.result as IssueTemplate[];
         } else {
@@ -25,8 +25,8 @@ export class IssueData {
     }));
   }
   public UpdateTemplates(templates:IssueTemplate[]):Observable<IssueTemplate[]|null> {
-    return this.transportService.Put('/issues/update', new HttpParams(), templates).pipe(map<ApiAnswer | null, IssueTemplate[] | null>(x => {
-      if (x != null) {
+    return this.transportService.Put('/issues/update', new HttpParams(), templates).pipe(map<ApiAnswer|null|'not ended', IssueTemplate[] | null>(x => {
+      if (x != null && x!='not ended') {
         if (x.isSuccess) {
           return x.result as IssueTemplate[];
         } else {
@@ -39,8 +39,8 @@ export class IssueData {
   }
 
   public Register(wi:Issue, workId:number):Observable<Issue|null>{
-    return this.transportService.Post('/issues/register', new HttpParams().append('workId',workId), wi).pipe(map<ApiAnswer | null, Issue | null>(x => {
-      if (x != null) {
+    return this.transportService.Post('/issues/register', new HttpParams().append('workId',workId), wi).pipe(map<ApiAnswer|null|'not ended', Issue | null>(x => {
+      if (x != null && x!='not ended') {
         if (x.isSuccess) {
           return x.result as Issue;
         } else {
@@ -53,8 +53,8 @@ export class IssueData {
   }
 
   public Resolve(id:number):Observable<boolean|null>{
-    return this.transportService.Get(`/issues/${id}/resolve`, new HttpParams()).pipe(map<ApiAnswer|null,boolean|null>(x=> {
-      if (x != null) {
+    return this.transportService.Get(`/issues/${id}/resolve`, new HttpParams()).pipe(map<ApiAnswer|null|'not ended',boolean|null>(x=> {
+      if (x != null && x!='not ended') {
        return x.isSuccess;
       }
       return null;

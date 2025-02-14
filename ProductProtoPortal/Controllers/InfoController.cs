@@ -45,8 +45,10 @@ public class InfoController:Controller
     [Route("[action]")]
     public IActionResult ArticleList()
     {
-        CrpManager cm = new CrpManager();
-        var result = cm.CrpArticles();
+        //CrpManager cm = new CrpManager();
+        //var result = cm.CrpArticles();
+        TechCardManager tcm = new TechCardManager();
+        var result = tcm.ArticleList();
         return new OkObjectResult(new ApiAnswer(result).ToString());
     }
 

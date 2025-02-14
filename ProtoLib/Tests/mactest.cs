@@ -20,6 +20,12 @@ public class mactest
         TechCardManager tcm = new TechCardManager();
         Console.WriteLine(JsonConvert.SerializeObject(tcm.ItemComposition("V3715/3PL")));
     }
+    [Test]
+    public void MemberOf()
+    {
+        TechCardManager tcm = new TechCardManager();
+        Console.WriteLine(JsonConvert.SerializeObject(tcm.ItemPartMemberOf("AV0012P")));
+    }
     
     [Test]
     public async Task TestLineCount()

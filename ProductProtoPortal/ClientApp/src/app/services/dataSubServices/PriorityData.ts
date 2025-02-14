@@ -21,8 +21,8 @@ export class PriorityData {
     }));
   }
   public List():Observable<OrderPriority[]|null>{
-    return this.transportService.Get('/priority/', new HttpParams()).pipe(map<ApiAnswer|null,OrderPriority[]|null>(x=> {
-      if (x != null) {
+    return this.transportService.Get('/priority/', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',OrderPriority[]|null>(x=> {
+      if (x != null && x!='not ended') {
         if (x.isSuccess) {
           return x.result as OrderPriority[];
         } else {

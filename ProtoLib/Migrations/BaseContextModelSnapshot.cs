@@ -46,6 +46,10 @@ namespace ProtoLib.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("SubPost")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("WorkId")
                         .HasColumnType("bigint");
 

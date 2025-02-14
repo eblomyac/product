@@ -1,4 +1,4 @@
-import {Component, Inject, Injector, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Inject, Injector, Input, NgZone, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 
 import {ActivatedRoute} from "@angular/router";
 import {firstValueFrom, lastValueFrom, Subscription} from "rxjs";
@@ -24,32 +24,40 @@ export class CardViewComponent implements OnInit, OnDestroy, OnChanges {
   card: TechCard | null = null;
   selectedPost = '';
   postView: Line[] = [];
-  isDialog=false;
-  isLoading = false;
-  composition :any=null;
-  showUrl:string|null=null;
+  isDialog = false;
+
+  isLoadCard = false;
+  isLoadRecipe = false;
+  isLoadPartOf = false;
+  composition: any = null;
+  partOf: any = null;
+  showUrl: string | null = null;
+
   set Article(value: string) {
     this.partName = value;
-    this.load();
+    if(value!=null && value.length>0){
+      this.load();
+    }
+
   }
 
   partName: string = '';
   public dialogRef: MatDialogRef<any> | null = null;
   private dialogData;
 
-  constructor(private injector: Injector, private data: DataService, private dialogService:MatDialog) {
+  constructor(private injector: Injector, private data: DataService, private dialogService: MatDialog) {
 
     let dialog = this.injector.get(MatDialogRef, null);
     if (dialog) {
-      this.isDialog=true;
+      this.isDialog = true;
       this.dialogRef = dialog;
       this.dialogData = this.injector.get(MAT_DIALOG_DATA, null);
       if (this.dialogData && this.dialogData.partName) {
         this.Article = this.dialogData.partName;
       }
 
-     // console.log('card-view ' +this.Article+ ' dialog');
-    } else  {
+      // console.log('card-view ' +this.Article+ ' dialog');
+    } else {
 
       this.Article = this.inputArticle;
 
@@ -59,10 +67,11 @@ export class CardViewComponent implements OnInit, OnDestroy, OnChanges {
 
 
   }
-  showPicture(url:string){
+
+  showPicture(url: string) {
     this.dialogService.open(PictureViewComponent, {
       data: {
-       img:url,
+        img: url,
       },
 
 
@@ -70,20 +79,21 @@ export class CardViewComponent implements OnInit, OnDestroy, OnChanges {
       hasBackdrop: true,
 
 
-
     });
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(!this.isDialog){
-      this.Article = changes.inputArticle.currentValue;
-      this.load();
-    }
+    if (!this.isDialog) {
+      if(changes.inputArticle.currentValue != changes.inputArticle.previousValue){
+        this.Article = changes.inputArticle.currentValue;
+      }
+
 
     }
 
-    async addPhoto(){
+  }
+  async addPhoto(){
       let x = this.dialogService.open(PhotoUploadComponent, {
         data: {
           article:this.card?.article,
@@ -120,24 +130,52 @@ export class CardViewComponent implements OnInit, OnDestroy, OnChanges {
     }
 
   }
+  download_partOf(){
+    this.data.TechCard.PartItemOf(this.partName,"xlsx").subscribe(x=>{
+      if(x){
+       window.open(x.link,"_blank")
+      }
+    })
+  }
 
   load(){
       //console.log(this.partName);
     this.card=null;
-    this.isLoading=true;
+    this.isLoadCard=true;
+    this.isLoadRecipe = true;
+    this.isLoadPartOf = true;
     this.data.TechCard.Card(this.partName).subscribe(x=>{
-      if(x){
-        this.isLoading=false;
+
+      if(x!= 'load'){
+        this.isLoadCard=false;
         this.card = x;
         if(x && x.postParts.length>0){
           this.selectedPost = x.postParts[0].postId;
         }
         this.updatePostParts();
       }
+      if(x=='load'){
+        this.isLoadCard=true;
+      }
     })
     this.data.TechCard.Composition(this.partName).subscribe(x=>{
-      if(x){
+
+      if(x && x!= 'load'){
+        this.isLoadRecipe=false;
         this.composition = x;
+      }
+      if(x=='load'){
+        this.isLoadRecipe=true;
+      }
+    })
+    this.data.TechCard.PartItemOf(this.partName,"json").subscribe(x=>{
+
+      if(x && x!= 'load'){
+        this.isLoadPartOf=false;
+        this.partOf = x;
+      }
+      if(x=='load'){
+        this.isLoadPartOf=true;
       }
     })
   }

@@ -13,22 +13,26 @@ export class CardfinderComponent implements OnInit {
   filteredArticles :string[] = [];
   filter:string='';
   selectedArticle:string='';
+  showedArticles:string[]=[];
   constructor(private data:DataService) {
     this.data.InfoData.ArticleList().subscribe(x=>{
       if(x && x.length>0){
         this.articles = x;
         this.isLoadArticles=false;
-        this.filteredArticles = x;
+     //   this.filteredArticles = x;
       }
 
     })
   }
   filterChange(){
     if(this.filter.length==0){
-      this.filteredArticles=this.articles;
+      //this.filteredArticles=this.articles;
     }
     else{
-      this.filteredArticles = this.articles.filter(x=>x.includes(this.filter));
+      if(this.filter.length>2) {
+        this.filteredArticles = this.articles.filter(x => x.includes(this.filter));
+        this.showedArticles = this.filteredArticles;
+      }
 
     }
   }

@@ -14,9 +14,9 @@ public class AdditionalCost
     
     public long WorkId { get; set; }
     public Work Work { get; set; }
-    
-   
-    
+
+
+    public string SubPost { get; set; } = "";
     public long AdditionalCostTemplateId { get; set; }
     public AdditionalCostTemplate AdditionalCostTemplate { get; set; }
     

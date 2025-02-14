@@ -96,11 +96,11 @@ export class TransportService {
 
   }
 
-  public Get(apiUrl: string, qParams: HttpParams): Observable<ApiAnswer|null> {
+  public Get(apiUrl: string, qParams: HttpParams): Observable<ApiAnswer|null|'not ended'> {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append("Content-type", "application/json");
-    let get = new HttpRequest('GET',apiUrl, {headers, params:qParams, withCredentials:true, responseType:"json"});
-    return this.http.request<ApiAnswer>(get).pipe(map<HttpEvent<ApiAnswer>,ApiAnswer|null>(x=>{
+    let get = new HttpRequest('GET',apiUrl, {headers, params:qParams, withCredentials:true, responseType:"json", reportProgress:false});
+    return this.http.request<ApiAnswer>(get).pipe(map<HttpEvent<ApiAnswer>,ApiAnswer|null|'not ended'>(x=>{
       if(x.type == HttpEventType.Response){
         if(x.status!= 200 && x.body){
           this.errorSub.next(x.body?.message);
@@ -108,8 +108,8 @@ export class TransportService {
         }else{
           return x.body;
         }
-      }      else{
-        return null;
+      }else{
+        return 'not ended';
       }
     }));
     /*

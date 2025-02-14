@@ -11,8 +11,8 @@ export class DailySourceData {
   }
   public FillValues(dailySource:DailySource[]):Observable<DailySource[]|null>{
     return this.transportService.Post('/DailySource/FillTodayByLines', new HttpParams(), dailySource)
-      .pipe(map<ApiAnswer | null, DailySource[] | null>(x => {
-        if (x != null) {
+      .pipe(map<ApiAnswer|null|'not ended', DailySource[] | null>(x => {
+        if (x != null && x!='not ended') {
           if (x.isSuccess) {
             return x.result as DailySource[];
           } else {
@@ -24,8 +24,8 @@ export class DailySourceData {
   }
   public Update(dailySource:DailySource[]):Observable<DailySource[]|null>{
     return this.transportService.Post('/DailySource/Update', new HttpParams(), dailySource)
-      .pipe(map<ApiAnswer | null, DailySource[] | null>(x => {
-        if (x != null) {
+      .pipe(map<ApiAnswer|null|'not ended', DailySource[] | null>(x => {
+        if (x != null && x!='not ended') {
           if (x.isSuccess) {
             return x.result as DailySource[];
           } else {
@@ -37,8 +37,8 @@ export class DailySourceData {
   }
   public TodayValues(postId:string):Observable<DailySource[]|null>{
     return this.transportService.Get('/DailySource/TodayValues', new HttpParams().append('postId', postId))
-      .pipe(map<ApiAnswer | null, DailySource[] | null>(x => {
-        if (x != null) {
+      .pipe(map<ApiAnswer|null|'not ended', DailySource[] | null>(x => {
+        if (x != null && x!='not ended') {
           if (x.isSuccess) {
             return x.result as DailySource[];
           } else {
@@ -50,8 +50,8 @@ export class DailySourceData {
   }
   public isFilledToday(postId:string):Observable<number|null> {
     return this.transportService.Get('/DailySource/IsFilledToday', new HttpParams().append('postId', postId))
-      .pipe(map<ApiAnswer | null, number | null>(x => {
-        if (x != null) {
+      .pipe(map<ApiAnswer|null|'not ended', number | null>(x => {
+        if (x != null && x!='not ended') {
           if (x.isSuccess) {
             return x.result as number;
           } else {
@@ -63,8 +63,8 @@ export class DailySourceData {
   }
   public fillToday(postId:string, value:number):Observable<boolean|null>{
     return this.transportService.Get('/DailySource/FillToday', new HttpParams().append('postId', postId).append('value',value))
-      .pipe(map<ApiAnswer | null, boolean | null>(x => {
-        if (x != null) {
+      .pipe(map<ApiAnswer|null|'not ended', boolean | null>(x => {
+        if (x != null && x!='not ended') {
           return x.isSuccess;
         }
         return null;
@@ -73,8 +73,8 @@ export class DailySourceData {
 
   public LastValues(postId:string):Observable<DailySource[]|null>{
     return this.transportService.Get('/DailySource/LastValues', new HttpParams().append('postId', postId))
-      .pipe(map<ApiAnswer | null, DailySource[] | null>(x => {
-        if (x != null) {
+      .pipe(map<ApiAnswer|null|'not ended', DailySource[] | null>(x => {
+        if (x != null && x!='not ended') {
           if (x.isSuccess) {
             return x.result as DailySource[];
           } else {

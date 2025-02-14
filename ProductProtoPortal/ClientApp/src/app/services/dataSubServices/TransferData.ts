@@ -17,9 +17,9 @@ export class TransferData{
       works:works
     }
     return this.transportService.Post('/transfer/create', new HttpParams(), d)
-      .pipe(map<ApiAnswer|null,Transfer|null>(x=>{
+      .pipe(map<ApiAnswer|null|'not ended',Transfer|null>(x=>{
 
-        if(x && x.isSuccess){
+        if(x && x!='not ended' && x.isSuccess){
           return x.result as Transfer;
         }
         return null;
@@ -27,11 +27,11 @@ export class TransferData{
   }
   public list(offset:number, filter:any){
     return this.transportService.Post('/transfer/list', new HttpParams().append('offset',offset), filter)
-      .pipe(map<ApiAnswer|null,Transfer[]|null>(x=>{
+      .pipe(map<ApiAnswer|null|'not ended',Transfer[]|null>(x=>{
 
-      if(x && x.isSuccess){
+      if(x && x!='not ended' && x.isSuccess ){
         return x.result as Transfer[];
-      }else if(x?.isSuccess==false){
+      }else if( x!='not ended' && x?.isSuccess==false){
         console.log(x.message);
       }
       return null;
@@ -40,9 +40,9 @@ export class TransferData{
   }
   public inTransfers(post:string):Observable<Transfer[]|null>{
     return this.transportService.Get('/transfer/listin', new HttpParams().append('postId',post))
-      .pipe(map<ApiAnswer|null,Transfer[]|null>(x=>{
+      .pipe(map<ApiAnswer|null|'not ended',Transfer[]|null>(x=>{
 
-        if(x && x.isSuccess){
+        if(x && x!='not ended' && x.isSuccess){
           return x.result as Transfer[];
         }
         return null;
@@ -50,9 +50,9 @@ export class TransferData{
   }
   public outTransfers(post:string):Observable<Transfer[]|null>{
     return this.transportService.Get('/transfer/listout', new HttpParams().append('postId',post))
-      .pipe(map<ApiAnswer|null,Transfer[]|null>(x=>{
+      .pipe(map<ApiAnswer|null|'not ended',Transfer[]|null>(x=>{
 
-        if(x && x.isSuccess){
+        if(x && x!='not ended' && x.isSuccess){
           return x.result as Transfer[];
         }
         return null;
@@ -60,9 +60,9 @@ export class TransferData{
   }
   public applyTransfer(transfer:Transfer):Observable<boolean|null>{
     return this.transportService.Post('/transfer/apply', new HttpParams(), transfer)
-      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
+      .pipe(map<ApiAnswer|null|'not ended',boolean|null>(x=>{
 
-        if(x && x.isSuccess){
+        if(x && x!='not ended'&& x.isSuccess){
          return true;
         }
         return null;
@@ -71,11 +71,11 @@ export class TransferData{
 
   public byId(id:number){
     return this.transportService.Get('/transfer/'+id+'/view', new HttpParams())
-      .pipe(map<ApiAnswer|null,Transfer|null>(x=>{
+      .pipe(map<ApiAnswer|null|'not ended',Transfer|null>(x=>{
 
-        if(x && x.isSuccess){
+        if(x && x!='not ended'&& x.isSuccess){
           return x.result as Transfer;
-        }else if(x?.isSuccess==false){
+        }else if( x!='not ended' && x?.isSuccess==false){
           console.log(x.message);
         }
         return null;

@@ -10,8 +10,8 @@ export class StatisticData {
 
   }
   public CostPeriodReport(from:string,to:string):Observable<string|null>{
-    return this.transportService.Get('/analytic/CostPeriodReportDownload', new HttpParams().append('from',from).append('to',to)).pipe(map<ApiAnswer|null,string>(x=>{
-      if(x){
+    return this.transportService.Get('/analytic/CostPeriodReportDownload', new HttpParams().append('from',from).append('to',to)).pipe(map<ApiAnswer|null|'not ended',string>(x=>{
+      if(x!=null && x!='not ended'){
         if(x.isSuccess){
           return (x.result.link);
         }
@@ -20,8 +20,8 @@ export class StatisticData {
     }));
   }
   public CostReport():Observable<string|null>{
-    return this.transportService.Get('/analytic/CostReportDownload', new HttpParams()).pipe(map<ApiAnswer|null,string>(x=>{
-      if(x){
+    return this.transportService.Get('/analytic/CostReportDownload', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',string>(x=>{
+      if(x!=null && x!='not ended'){
         if(x.isSuccess){
           return (x.result.link);
         }
@@ -31,8 +31,8 @@ export class StatisticData {
   }
   public MaconomyCompareOrders():Observable<number[]|null>{
     return this.transportService.Get('/analytic/MaconomyOrderCompare', new HttpParams())
-      .pipe(map<ApiAnswer|null,number[]|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',number[]|null>(x=>{
+        if(x!=null && x!='not ended'){
           if(x.isSuccess){
             return x.result as number[];
           }
@@ -42,8 +42,8 @@ export class StatisticData {
   }
   public AdditionalCostReport(dateFrom:string,dateTo:string, moveDay:boolean):Observable<boolean|null>{
     return this.transportService.Get('/analytic/AdditionalCostReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo).append('moveDay',moveDay))
-      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',boolean|null>(x=>{
+        if(x!=null && x!='not ended'){
           x.isSuccess
         }
         return null;
@@ -51,8 +51,8 @@ export class StatisticData {
   }
   public PeriodReport(dateFrom:string,dateTo:string, moveDay:boolean):Observable<boolean|null>{
     return this.transportService.Get('/analytic/PeriodReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo).append('moveDay',moveDay))
-      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',boolean|null>(x=>{
+        if(x!=null && x!='not ended'){
           x.isSuccess
         }
         return null;
@@ -60,8 +60,8 @@ export class StatisticData {
   }
   public ArticlePeriodReport(dateFrom:string,dateTo:string, moveDay:boolean):Observable<boolean|null>{
     return this.transportService.Get('/analytic/ArticlePeriodReport', new HttpParams().append('dateFrom',dateFrom).append('dateTo',dateTo).append('moveDay',moveDay))
-      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',boolean|null>(x=>{
+        if(x!=null && x!='not ended'){
           x.isSuccess
         }
         return null;
@@ -69,8 +69,8 @@ export class StatisticData {
   }
   public DateReport(date:string):Observable<boolean|null>{
     return this.transportService.Get('/analytic/DailyReport', new HttpParams().append('date',date))
-      .pipe(map<ApiAnswer|null,boolean|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',boolean|null>(x=>{
+        if(x!=null && x!='not ended'){
           x.isSuccess
         }
         return null;
@@ -87,8 +87,8 @@ export class StatisticData {
     params = params.append('articleFilter',articleFilter);
     params = params.append('orderFilter',orderFilter);
     return this.transportService.Get('/analytic/PrintTotalOrderStat', params)
-      .pipe(map<ApiAnswer|null,any|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',any|null>(x=>{
+        if(x!=null && x!='not ended'){
           if(x.isSuccess){
             return x.result;
           }
@@ -100,8 +100,8 @@ export class StatisticData {
   }
   public TotalOrderStat():Observable<any|null>{
     return this.transportService.Get('/analytic/TotalOrderStat', new HttpParams())
-      .pipe(map<ApiAnswer|null,any|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',any|null>(x=>{
+        if(x!=null && x!='not ended'){
           if(x.isSuccess){
             return x.result;
           }
@@ -113,8 +113,8 @@ export class StatisticData {
   }
   public OrderTimeLine(orderNumber:number):Observable<any|null>{
     return this.transportService.Get('/analytic/OrderTimeLine', new HttpParams().append('orderNumber',orderNumber))
-      .pipe(map<ApiAnswer|null,any|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',any|null>(x=>{
+        if(x!=null && x!='not ended'){
           if(x.isSuccess){
             return x.result;
           }
@@ -125,8 +125,8 @@ export class StatisticData {
   }
   public PostStatistic():Observable<any|null>{
     return this.transportService.Get('/analytic/postStatistic', new HttpParams())
-      .pipe(map<ApiAnswer|null,any|null>(x=>{
-      if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',any|null>(x=>{
+        if(x!=null && x!='not ended'){
         if(x.isSuccess){
           return x.result as any;
         }
@@ -136,8 +136,8 @@ export class StatisticData {
     }));
   }
   public ActualOrders():Observable<number[]|null>{
-    return this.transportService.Get('/analytic/actualOrders', new HttpParams()).pipe(map<ApiAnswer|null,number[]|null>(x=>{
-      if(x!=null){
+    return this.transportService.Get('/analytic/actualOrders', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',number[]|null>(x=>{
+      if(x!=null && x!='not ended'){
         if(x.isSuccess){
           return x.result as number[];
         }
@@ -147,8 +147,8 @@ export class StatisticData {
     }));
   }
   public OrderStatisticArticleFiltered(orderId:number, artilceIds:Array<string>):Observable<any|null>{
-    return this.transportService.Post('/analytic/OrderStatistic', new HttpParams().append('orderId',orderId), artilceIds).pipe(map<ApiAnswer|null,any|null>(x=>{
-      if(x!=null){
+    return this.transportService.Post('/analytic/OrderStatistic', new HttpParams().append('orderId',orderId), artilceIds).pipe(map<ApiAnswer|null|'not ended',any|null>(x=>{
+      if(x!=null && x!='not ended'){
         if(x.isSuccess){
           return x.result;
         }
@@ -158,8 +158,8 @@ export class StatisticData {
     }))
   }
   public OrderStatistic(orderId:number):Observable<any|null>{
-    return this.transportService.Get('/analytic/OrderStatistic', new HttpParams().append('orderId',orderId)).pipe(map<ApiAnswer|null,any|null>(x=>{
-      if(x!=null){
+    return this.transportService.Get('/analytic/OrderStatistic', new HttpParams().append('orderId',orderId)).pipe(map<ApiAnswer|null|'not ended',any|null>(x=>{
+      if(x!=null && x!='not ended'){
         if(x.isSuccess){
           return x.result;
         }
@@ -170,8 +170,8 @@ export class StatisticData {
   }
   public PostRetroStatistic(from:Date,to:Date):Observable<any|null>{
     return this.transportService.Get('/analytic/PostRetroStat', new HttpParams().append('from',from.toISOString()).append('to',to.toISOString()))
-      .pipe(map<ApiAnswer|null,any|null>(x=>{
-        if(x!=null){
+      .pipe(map<ApiAnswer|null|'not ended',any|null>(x=>{
+        if(x!=null && x!='not ended'){
           if(x.isSuccess){
             return x.result;
           }

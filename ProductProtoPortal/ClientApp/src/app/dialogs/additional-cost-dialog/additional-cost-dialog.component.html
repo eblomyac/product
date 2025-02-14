@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="currentPost">
   <div mat-dialog-title>
     <span>Дополнительные работы {{this.data.work?'для позиции':'для участка'}}</span>
   </div>
@@ -8,6 +8,7 @@
       <div>
         <div *ngFor="let ac of this.data.work.structure.additionalCosts; let i = index" class="d-flex justify-content-between">
           <div>{{i+1}}.{{ac.additionalCostTemplate?.name}}</div>
+          <div>{{ac.subPost}}</div>
           <div>{{ac.description}}</div>
           <div>{{ac.cost}}
           </div>
@@ -24,17 +25,27 @@
               <mat-option *ngFor="let t of this.templates" [value]="t.id">{{t.name}}</mat-option>
             </mat-select>
           </mat-form-field>
+          <mat-form-field style="flex: 1 1 0">
+            <mat-label>
+              Пост
+            </mat-label>
+            <mat-select #subPostId>
+              <mat-option [value]="null">Не указан</mat-option>
+              <mat-option *ngFor="let pk of currentPost.postCreationKeys" [value]="pk.key">{{pk.key}}</mat-option>
+            </mat-select>
+          </mat-form-field>
           <mat-form-field style="flex: 2 1 0">
             <mat-label>Описание</mat-label>
             <input #desc matInput type="text" [defaultValue]="''">
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field style="flex: 1 1 0">
             <mat-label>Норма</mat-label>
             <input #cost type="number" matInput min="0" [defaultValue]="'0'">
           </mat-form-field>
         </div>
         <div class="d-flex justify-content-end">
-          <button mat-raised-button color="primary" (click)="create(templateId.value,desc.value,Number(cost.value))" [disabled]="templateId.value==null || Number(cost.value)==0 || isLoading" >Создать</button>
+          <button mat-raised-button color="primary" (click)="create(templateId.value,desc.value,Number(cost.value), subPostId.value)"
+                  [disabled]="templateId.value==null || Number(cost.value)==0 || isLoading || subPostId.value==null" >Создать</button>
         </div>
       </div>
 
@@ -61,6 +72,7 @@
         </div>
         <div *ngFor="let ac of this.workCosts; let i = index" class="d-flex justify-content-between">
           <div style="font-size: 16px; font-weight: bold">{{i+1}}.{{ac.additionalCostTemplate?.name}}</div>
+          <div style="font-size: 16px; font-weight: bold">{{ac.subPost}}</div>
           <div style="font-size: 16px; font-weight: bold">{{ac.description}}</div>
           <div style="font-size: 16px; font-weight: bold">{{ac.cost}}
           </div>
@@ -77,19 +89,28 @@
                 <mat-option *ngFor="let t of this.templates" [value]="t">{{t.name}}</mat-option>
               </mat-select>
             </mat-form-field>
+            <mat-form-field style="flex: 1 1 0">
+              <mat-label>
+                Пост
+              </mat-label>
+              <mat-select #subPostId>
+                <mat-option [value]="null">Не указан</mat-option>
+                <mat-option *ngFor="let pk of currentPost.postCreationKeys" [value]="pk.key">{{pk.key}}</mat-option>
+              </mat-select>
+            </mat-form-field>
             <mat-form-field style="flex: 2 1 0">
               <mat-label>Описание</mat-label>
               <input #desc matInput type="text" [defaultValue]="''">
             </mat-form-field>
-            <mat-form-field>
+            <mat-form-field style="flex: 1 1 0">
               <mat-label>Норма</mat-label>
               <input #cost type="number" matInput min="0" [defaultValue]="'0'">
             </mat-form-field>
           </div>
           <div class="d-flex justify-content-end">
             <button mat-raised-button color="primary"
-                    (click)="addCost(templateId.value,desc.value,Number(cost.value)); templateId.value=null;desc.value='';cost.value=''"
-                    [disabled]="templateId.value==null || Number(cost.value)==0" > Добавить</button>
+                    (click)="addCost(templateId.value,desc.value,Number(cost.value),subPostId.value); templateId.value=null;desc.value='';cost.value=''"
+                    [disabled]="templateId.value==null || Number(cost.value)==0 || subPostId.value==null" > Добавить</button>
           </div>
         </div>
 
