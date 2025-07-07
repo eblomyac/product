@@ -311,7 +311,7 @@ FROM BOMPART
     left join ItemInformation on BOMPART.BOMITEMPARTNUMBER = ITEMINFORMATION.ITEMNUMBER
     left join popupitem on ITEMINFORMATION.ITEMPOPUP3 = popupitem.POPUPITEMNUMBER and POPUPTYPENAME='ItemPopupType3'
     left join WAREHOUSEINFORMATION on BOMITEMPARTNUMBER=WAREHOUSEINFORMATION.ITEMNUMBER  and WAREHOUSEINFORMATION.AVAILABLEINVENTORY>0
-    left join INVENTORY on INVENTORY.INVENTORYNUMBER = WAREHOUSEINFORMATION.INVENTORYNUMBER" +$" where BOMPART.ITEMNUMBER=:article and BOMPART.BOM=1 ORDER BY BOMPART.LINENUMBER";
+    left join INVENTORY on INVENTORY.INVENTORYNUMBER = WAREHOUSEINFORMATION.INVENTORYNUMBER where BOMPART.ITEMNUMBER=:article and BOMPART.BOM=1 ORDER BY BOMPART.LINENUMBER";
                 OracleCommand oc = new OracleCommand(query);
                 oc.Parameters.Add(new OracleParameter("article", $"{article}"));
                 
@@ -330,7 +330,7 @@ FROM BOMPART
                     var lineRows = table.Select($"LINENUMBER='{loop}'");
                     if (lineRows.Length == 0)
                     {
-                        break;
+                       continue;
                     }
                     else
                     {
@@ -392,7 +392,7 @@ where BOMPART.BOMITEMPARTNUMBER=:article and BOMPART.BOM=1 ORDER BY BOMPART.LINE
                     var lineRows = table.Select($"ITEMNUMBER='{artRow[0]}'");
                     if (lineRows.Length == 0)
                     {
-                        break;
+                        continue;
                     }
                     else
                     {

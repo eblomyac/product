@@ -94,6 +94,8 @@ import {HistoryViewComponent} from "./components/Info/history-view/history-view.
 import {PhotoUploadComponent} from "./dialogs/photo-upload/photo-upload.component";
 import {CountChangerComponent} from "./components/operator/count-changer/count-changer.component";
 import {PictureViewComponent} from "./dialogs/picture-view/picture-view.component";
+import {OtkOperationsComponent} from "./components/admin-settings/otk-operations/otk-operations.component";
+import {OtkCheckComponent} from "./dialogs/otk-check/otk-check.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -102,8 +104,8 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
 
 @NgModule({
     declarations: [
-        AppComponent,
-        PostViewComponent,
+        AppComponent, OtkCheckComponent,
+        PostViewComponent, OtkOperationsComponent,
         AdminSettingsComponent, PictureViewComponent,
         UserSettingsComponent, CountChangerComponent,
         PostSettingsComponent, WorkPrepareComponent, CardfinderComponent,

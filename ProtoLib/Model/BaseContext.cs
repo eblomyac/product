@@ -57,6 +57,11 @@ namespace ProtoLib.Model
         public DbSet<TechCardPost> TechCardPosts { get; set; }
         public DbSet<TechCardLine> TechCardLines { get; set; }
         
+        public DbSet<OTKAvailableOperation> OTKAvailableOperations { get; set; }
+        public DbSet<OTKCheck> OTKChecks { get; set; }
+        public DbSet<OTKCheckLine> OTKCheckLines { get; set; }
+        public DbSet<OTKWorker> OTKWorkers { get; set; }
+        
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<TransferLine> TransferLines { get; set; }
         public DbSet<DailySource> DailySources { get; set; }
@@ -92,9 +97,9 @@ namespace ProtoLib.Model
               
                optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
               //  #else
-             optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
+                 optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct;User=sa;Password=-c2h5oh-");
                #if DEBUG
-                 //    optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
+               //      optionsBuilder.UseSqlServer("Server=kdb1.kck2.ksk.ru;Database=protoproduct-dev;User=sa;Password=-c2h5oh-");
                 #endif
                 
                

@@ -20,6 +20,7 @@ namespace ProtoLib
             {
               //  public const string JustEnd = "[завершить]";
                 public const string TotalEnd = "[артикул сдан]";
+                public const string OTK = "ОТК";
             }
         }
 

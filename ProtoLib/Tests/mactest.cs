@@ -15,10 +15,18 @@ public class mactest
 
 {
     [Test]
+    public async Task TestMacArticles()
+    {
+     AnalyticManager am = new AnalyticManager();
+     var a = await am.OrderStat(544326 , new List<string>());
+     int g = 0;
+    }
+    
+    [Test]
     public void Composition()
     {
         TechCardManager tcm = new TechCardManager();
-        Console.WriteLine(JsonConvert.SerializeObject(tcm.ItemComposition("V3715/3PL")));
+        Console.WriteLine(JsonConvert.SerializeObject(tcm.ItemComposition("V2728-0/3S")));
     }
     [Test]
     public void MemberOf()

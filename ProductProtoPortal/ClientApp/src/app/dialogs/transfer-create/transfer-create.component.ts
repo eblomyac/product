@@ -54,6 +54,12 @@ export class TransferCreateComponent {
           this.currentPostEntity = this.posts[delIndex];
           this.posts.splice(delIndex,1);
       }
+
+      let delIndexOTK = this.posts.findIndex(z=>z.name == 'ОТК');
+
+      if(delIndexOTK != -1){
+        this.posts.splice(delIndexOTK,1);
+      }
     })
   }
   loadWorksDestination(){

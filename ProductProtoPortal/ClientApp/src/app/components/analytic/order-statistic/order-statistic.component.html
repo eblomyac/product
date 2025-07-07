@@ -131,6 +131,8 @@
               </td>
               <td style="width: 8%" class="text-center">
                 {{ article.Count }}
+                <div *ngIf="article.OrderCount>0">(заказ: {{article.OrderCount}})</div>
+
               </td>
 
 
@@ -160,9 +162,14 @@
                     <div style="display: flex; justify-content: center">
                       <div style="margin-top: 2px">{{ articlePost.Percentage|number }}%</div>
                       <div style="margin-left: 2px">
-                        <mat-icon style="color: #beb41c" *ngIf="articlePost.Issues>0"
+                       <!-- <mat-icon style="color: #beb41c" *ngIf="articlePost.Issues>0"
                                   [matTooltip]="articlePost.IssuesText" matTooltipClass='theme-tooltip'>highlight_off
-                        </mat-icon>
+                        </mat-icon> -->
+                        <div class="html-tooltip" style="margin-left: 2px">
+                          <span class="html-tooltiptext">{{articlePost.IssuesText}}</span>
+                          <mat-icon style="color: #beb41c" *ngIf="articlePost.Issues>0" >highlight_off
+                          </mat-icon>
+                        </div>
                       </div>
 
                     </div>

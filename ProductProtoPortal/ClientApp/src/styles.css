@@ -12,6 +12,9 @@
   --post-bg-item-color:rgba(79, 79, 79, 0.18);
   --post-item-color: rgb(255, 255, 255);
 
+  --bg-tooltip-color:rgba(108, 108, 108, 0.70);
+  --tooltip-color:rgba(108, 108, 108, 0.70);
+
   --table-hover-bg-color:rgb(2,2,2,0.2);
   --table-even-bg-color:rgb(2,2,2,0.2);
   --table-sticky-bg-color:rgba(2,2,2,1);
@@ -263,14 +266,16 @@ th.sticky{
 
 .html-tooltip .html-tooltiptext {
   visibility: hidden;
-  width: 500px;
+  width: max-content;
   font-size: 12px;
-  background-color: var(--post-bg-item-color);
-  color: var(--post-item-color);
+  background-color: var(--bg-tooltip-color);
+  color: var(--tooltip-color);
   text-align: left;
   border-radius: 6px;
-  padding-left: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
   padding-top: 5px;
+  padding-bottom: 5px;
   position: absolute;
   z-index: 1;
   white-space: pre-line;

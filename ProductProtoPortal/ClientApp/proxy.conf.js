@@ -20,7 +20,8 @@ const PROXY_CONFIG = [
       "/AdditionalCost",
       "/Info",
       "/CustomImage",
-      "/OperatorApi"
+      "/OperatorApi",
+      "/otk"
    ],
     target: target,
     secure: false,

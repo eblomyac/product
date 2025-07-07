@@ -419,7 +419,7 @@ namespace ProtoLib.Managers
         public async Task<object> OrderStat(long orderId, List<string> articleIds)
         {
             dynamic result = new ExpandoObject();
-
+            
             MaconomyOrderMaxCountManager maxCountManager = new MaconomyOrderMaxCountManager(orderId.ToString());
             using (BaseContext c = new BaseContext(""))
             {
@@ -427,7 +427,7 @@ namespace ProtoLib.Managers
                 var orderWorks = c.Works.AsNoTracking().Include(x => x.Issues).Where(x => x.OrderNumber == orderId)
                     .ToList();
                 WorkTemplateLoader wtl = new WorkTemplateLoader();
-                var articles = orderWorks.Select(x => x.Article).Distinct();
+                var articles = await maxCountManager.Articles(orderId.ToString());// orderWorks.Select(x => x.Article).Distinct();
                 var templates = wtl.LoadOnlyCrp(articles.ToList());
                 if (articleIds.Count > 0)
                 {
@@ -487,7 +487,7 @@ namespace ProtoLib.Managers
                     postStatus.Issues = postWorks.SelectMany(x => x.Issues).Count(x => x.Resolved == null);
                 }
 
-
+                
                 result.ArticleStat = new List<object>();
                 foreach (var article in articles)
                 {
@@ -506,10 +506,12 @@ namespace ProtoLib.Managers
                         {
                             articleStat.Count =
                                 await maxCountManager.GetCount(orderId, orderLine);
+                            articleStat.OrderCount = 0;
                         }
                         else
                         {
                             articleStat.Count = 0;
+                            articleStat.OrderCount = await maxCountManager.GetCount(orderId, orderLine);
                         }
 
                         //articleStat.TotalCost = //articleWorks.Sum(x => x.TotalCost);

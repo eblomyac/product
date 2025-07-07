@@ -37,8 +37,11 @@ export class ThemeService {
     document.documentElement.style.setProperty( '--post-bg-grad-to-color','rgba(0, 0, 0, 0.00)');
 
 
+    document.documentElement.style.setProperty( '--bg-tooltip-color','rgba(108, 108, 108, 0.70)');
+    document.documentElement.style.setProperty( '--tooltip-color','rgb(255,255,255)');
 
-    document.documentElement.style.setProperty( '--post-bg-item-color','rgba(79, 79, 79, 0.18)');
+
+    document.documentElement.style.setProperty( '--post-bg-item-color','rgba(79, 79, 79, 0.25)');
     document.documentElement.style.setProperty( '--post-item-color','rgb(255, 255, 255)');
 
 
@@ -61,7 +64,10 @@ export class ThemeService {
     document.documentElement.style.setProperty( '--post-bg-grad-from-color','rgba(255, 255, 255, 1)');
     document.documentElement.style.setProperty( '--post-bg-grad-to-color','rgba(200, 200, 200, 0.00)');
 
-    document.documentElement.style.setProperty( '--post-bg-item-color','rgba(153,181,204,0.18)');
+    document.documentElement.style.setProperty( '--bg-tooltip-color','rgba(63,80,180,0.95)');
+    document.documentElement.style.setProperty( '--tooltip-color','rgba(255,255,255,1)');
+
+    document.documentElement.style.setProperty( '--post-bg-item-color','rgba(153,181,204,0.25)');
     document.documentElement.style.setProperty( '--post-item-color','rgb(0,0,0)');
 
     document.documentElement.style.setProperty( '--table-hover-bg-color','#3F50B420');

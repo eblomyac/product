@@ -21,9 +21,9 @@ export  class WorkData{
         }
       }));
   }
-  public EndProduction(work:Work):Observable<boolean|null>{
+  public EndProduction(work:Work, forceEnd:boolean):Observable<boolean|null>{
     return this.transport
-      .Get(`/works/${work.structure.id}/endProduction`, new HttpParams())
+      .Get(`/works/${work.structure.id}/endProduction`, new HttpParams().append('forceEnd',forceEnd))
       .pipe(map<ApiAnswer|null|'not ended',boolean>(x=>{
         if(x!=null && x!='not ended'){
           return x.result;

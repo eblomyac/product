@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProtoLib.Model;
 
@@ -11,9 +12,10 @@ using ProtoLib.Model;
 namespace ProtoLib.Migrations
 {
     [DbContext(typeof(BaseContext))]
-    partial class BaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250209103728_subPost")]
+    partial class subPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -381,138 +383,6 @@ namespace ProtoLib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OperatorCountChangeRecords");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.OTKAvailableOperation", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.Property<string>("ProductLine")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("ShortName")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OTKAvailableOperations");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.OTKCheck", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Article")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<decimal>("CheckedCount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Iteration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderLineNumber")
-                        .HasColumnType("int");
-
-                    b.Property<long>("OrderNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("ProductCount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProductLine")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTime>("Stamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("WorkId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Worker")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OTKChecks");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.OTKCheckLine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.Property<long>("OTKCheckId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ShortName")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OTKCheckId");
-
-                    b.ToTable("OTKCheckLines");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.OTKWorker", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OTKWorkers");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.Post", b =>
@@ -1203,17 +1073,6 @@ namespace ProtoLib.Migrations
                     b.Navigation("ProductLine");
                 });
 
-            modelBuilder.Entity("ProtoLib.Model.OTKCheckLine", b =>
-                {
-                    b.HasOne("ProtoLib.Model.OTKCheck", "OTKCheck")
-                        .WithMany("Lines")
-                        .HasForeignKey("OTKCheckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OTKCheck");
-                });
-
             modelBuilder.Entity("ProtoLib.Model.PostCreationKey", b =>
                 {
                     b.HasOne("ProtoLib.Model.Post", null)
@@ -1323,11 +1182,6 @@ namespace ProtoLib.Migrations
                     b.Navigation("Template");
 
                     b.Navigation("Work");
-                });
-
-            modelBuilder.Entity("ProtoLib.Model.OTKCheck", b =>
-                {
-                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.Post", b =>

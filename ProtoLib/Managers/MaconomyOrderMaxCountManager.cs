@@ -30,6 +30,36 @@ public class MaconomyOrderMaxCountManager
         
     }
 
+    public async Task<List<string>> Articles(string order)
+    {
+        if (this._loadTask.Status == TaskStatus.Faulted)
+        {
+            this._loadTask = this.LoadData(_orders);
+        }
+        if (this._loadTask.Status != TaskStatus.RanToCompletion)
+        {
+            await Task.Delay(15);
+            return await Articles(order);
+        }
+        else
+        {
+            if (this._data == null)
+            {
+                this._data = this._loadTask.Result;
+            }
+
+            this._data.DefaultView.Sort = "LineNumber ASC";
+            var rows =  this._data.Select($"TransactionNumber='{order}'");
+            List<string> result = new List<string>();
+            foreach (DataRow row in rows)
+            {
+                result.Add((string)row.Field<string>("ITEMNUMBER"));
+            }
+
+            return result;
+        }
+    }
+
     public async Task<List<int>> GetLinesNumber(long orderNumber, string article)
     {
         if (this._loadTask.Status == TaskStatus.Faulted)
@@ -97,7 +127,7 @@ public class MaconomyOrderMaxCountManager
             {
                 string order = String.Join(',', orders.Select(x => $"'{x}'"));
                 return mb.getTableFromDB(
-                        $"SELECT ProductionLine.TransactionNumber,LINENUMBER, ITEMNUMBER, NUMBEROF as numberof from ProductionLine left join ProductionVoucher on ProductionLine.TransactionNumber = ProductionVoucher.TransactionNumber where ProductionLine.TransactionNumber in ({order})");
+                        $"SELECT ProductionLine.TransactionNumber,LINENUMBER, ITEMNUMBER, NUMBEROF as numberof from ProductionLine left join ProductionVoucher on ProductionLine.TransactionNumber = ProductionVoucher.TransactionNumber where ProductionLine.TransactionNumber in ({order}) ORDER BY ProductionLine.LineNumber ");
                 
             }
         });

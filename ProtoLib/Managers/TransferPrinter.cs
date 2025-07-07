@@ -129,5 +129,31 @@ public class TransferPrinter
 
     }
 
+    public string MakeOtkReportKsk(string article, string orderNumber)
+    {
+        Thread.CurrentThread.CurrentCulture = new CultureInfo("ru-RU");
+        //font = PdfFontFactory.CreateFont(baseFont, "cp1251", false);
+        string pdfName = Guid.NewGuid().ToString() + ".pdf";
+        string fullFileName = Path.Combine(PdfFolder, pdfName);
+        Directory.CreateDirectory(PdfFolder);
+        PdfWriter pw = new PdfWriter(fullFileName);
+        var pdfDoc = new PdfDocument(pw);
+        pdfDoc.SetDefaultPageSize(PageSize.A4);
+        var doc = new Document(pdfDoc);
+        doc.SetFont(font);
+        doc.SetFontSize(9);
+        
+        doc.SetBottomMargin(10);
+        doc.SetLeftMargin(20);
+        doc.SetRightMargin(10);
+        doc.SetTopMargin(10);
+        
+        
+        doc.Close();
+        return pdfName;
+    }
+    
+    
+
 
 }

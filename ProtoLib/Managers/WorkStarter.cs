@@ -90,7 +90,7 @@ namespace ProtoLib.Managers
                     //JUST SET 50 status
 //                    wss.ChangeStatus(currentWork, WorkStatus.ended, accName);
 //                }
-                if (toPostId == Constants.Work.EndPosts.TotalEnd)
+                if (toPostId == Constants.Work.EndPosts.TotalEnd || toPostId == Constants.Work.EndPosts.OTK)
                 {
                     wss.ChangeStatus(currentWork, WorkStatus.ended, accName);
                     //JUST SET 50 status
@@ -134,7 +134,12 @@ namespace ProtoLib.Managers
                         sharedWork.Count = currentWork.Count;
                         sharedWork.DeadLine = currentWork.DeadLine;
                         sharedWork.CommentMap =template.Count>0? string.Join('\t', template.Select(x => x.Comment)):"Произв. плана не найдено";
-                    
+
+                        if (toPostId == Constants.Work.EndPosts.OTK)
+                        {
+                            sharedWork.Status = WorkStatus.running;
+                        }
+                        
                         c.Works.Add(sharedWork);
                         c.SaveChanges();
                     

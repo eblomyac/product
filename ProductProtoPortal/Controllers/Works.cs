@@ -238,13 +238,14 @@ namespace ProductProtoPortal.Controllers
         }
         [HttpGet]
         [Route("{id}/[action]")]
-        public IActionResult EndProduction([FromRoute] long id)
+        public IActionResult EndProduction([FromRoute] long id, bool forceEnd=false)
         {
             var user = AuthHelper.GetADUser(this.HttpContext);
             WorkManagerFacade wmf = new WorkManagerFacade(user.SAM);
             if (wmf.CanBeEnd(id, user.SAM))
             {
-                var result = wmf.MoveToPostRequest(id, Constants.Work.EndPosts.TotalEnd, new List<string>(),"", out var errorInfo);
+                string postId = forceEnd ? Constants.Work.EndPosts.TotalEnd : Constants.Work.EndPosts.OTK;
+                var result = wmf.MoveToPostRequest(id, postId, new List<string>(),"", out var errorInfo);
                 return new OkObjectResult(new ApiAnswer(result, "", result).ToString());
             }
             else

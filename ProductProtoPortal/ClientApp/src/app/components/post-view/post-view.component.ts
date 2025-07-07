@@ -231,9 +231,14 @@ export class PostViewComponent implements OnInit, OnDestroy {
       }
     });
     workEvent.OnNewWorkBySplit.subscribe(x => {
+      //this.updateWorks();
       this.allWorks.unshift(x);
       this.getArrayByStatus(x.structure.status).unshift(x);
     });
+    workEvent.OnPossibleNewWork.subscribe(x => {
+      console.log('update works');
+      this.loadWorks();
+    })
   }
 
   ngOnDestroy(): void {
@@ -241,8 +246,8 @@ export class PostViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.loadWorks();
-    this.updateWorks();
+     this.loadWorks();
+    //this.updateWorks();
   }
 
   checkRightStatus(work: Work, from: number, to: number) {

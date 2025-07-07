@@ -12,6 +12,7 @@ import {IssueCreateDialogComponent} from "../dialogs/issue-create-dialog/issue-c
 import {CardViewComponent} from "../components/TechCard/card-view/card-view.component";
 import {AdditionalCost} from "./AdditionalCost";
 import {AdditionalCostDialogComponent} from "../dialogs/additional-cost-dialog/additional-cost-dialog.component";
+import {OtkCheckComponent} from "../dialogs/otk-check/otk-check.component";
 
 export interface IWork {
   id: number;
@@ -93,7 +94,18 @@ export class Work {
     if (this.structure) {
 
       if((this.structure.canClosed||this.structure.orderNumber==100) && this.structure.status>20 && this.structure.movedTo.length<2){
-        result.push('[ЗАВЕРШИТЬ ПРОИЗВОДСТВО]')
+        if(this.structure.postId != 'ОТК'){
+        if(this.structure.orderNumber!=100){
+          result.push('[ПЕРЕДАТЬ В  ОТК]')
+        }else{
+          result.push('[ЗАВЕРШИТЬ РАБОТУ]');
+        }
+
+        }else{
+          result.push('[СОЗДАТЬ АКТ КАЧЕСТВА]')
+        }
+
+
       }
 
       if (this.structure.status < 40) {
@@ -133,9 +145,9 @@ export class Work {
     return result;
 
   }
-  endProduction(){
+  endProduction(force:boolean){
     this.isLoading=true;
-    this.dataService.Work.EndProduction(this).subscribe(x=>{
+    this.dataService.Work.EndProduction(this,force).subscribe(x=>{
       if(x!=null){
         this.isLoading=false;
         if(x==true){
@@ -156,10 +168,17 @@ export class Work {
     })
   }
 
+
   async runAction(action: string) {
     switch (action) {
-      case '[ЗАВЕРШИТЬ ПРОИЗВОДСТВО]':
-        this.endProduction();
+      case '[СОЗДАТЬ АКТ КАЧЕСТВА]':
+        await this.otk();
+        break;
+      case '[ПЕРЕДАТЬ В  ОТК]':
+        this.endProduction(false);
+        break;
+      case '[ЗАВЕРШИТЬ РАБОТУ]':
+        this.endProduction(true);
         break;
       case 'Проверить нормы и операции':
         this.dataService.Work.CheckCrp(this.structure.id).subscribe(x=>{
@@ -250,6 +269,14 @@ export class Work {
         this.loadIssues();
       }
     });
+  }
+  async otk(){
+    let template = await lastValueFrom(this.dataService.OTK.Template(this.structure));
+    let otk = await DialogHandlerService.Singleton.ask(OtkCheckComponent, {data: {template:template,dataService:this.dataService}, height:'95%', width:'95%', disableClose:true});
+    if(otk){
+      console.log(otk);
+      this.workEventService.PossibleNewWork();
+    }
   }
   async registerIssue(){
     let issue = await DialogHandlerService.Singleton.ask(IssueCreateDialogComponent, {data: {forWork:this}});
