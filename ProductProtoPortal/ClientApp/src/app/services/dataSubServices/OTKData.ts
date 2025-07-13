@@ -4,12 +4,32 @@ import {HttpParams} from "@angular/common/http";
 import {ApiAnswer} from "../../model/ApiAnswer";
 import {IWork} from "../../model/Work";
 import {DataService} from "../data.service";
-import {OTKAvailableOperation, OTKWorker} from "../../model/OTKAvailableOperation";
+import {OTKAvailableOperation, OTKTargetValue, OTKWorker} from "../../model/OTKAvailableOperation";
 import {OTKCheck} from "../../model/OTKCheck";
 
 export class OTKData {
   constructor(private transportService: TransportService, private dataService: DataService) {
 
+  }
+  public OtkChecks(filter:any):Observable<OTKCheck[]> {
+    return this.transportService.Post('/otk/OKTCheckList', new HttpParams(),filter).pipe(map<ApiAnswer|null|'not ended',OTKCheck[]>(x=>{
+      if(x!=null && x!='not ended'){
+        if(x.isSuccess){
+          return (x.result);
+        }
+      }
+      return null;
+    }));
+  }
+  public TargetValues():Observable<OTKTargetValue[]>{
+    return this.transportService.Get('/otk/TargetValues', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',OTKTargetValue[]>(x=>{
+      if(x!=null && x!='not ended'){
+        if(x.isSuccess){
+          return (x.result);
+        }
+      }
+      return null;
+    }));
   }
   public WorkerList():Observable<OTKWorker[]>{
     return this.transportService.Get('/otk/workerList', new HttpParams()).pipe(map<ApiAnswer|null|'not ended',OTKWorker[]>(x=>{

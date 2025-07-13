@@ -10,6 +10,8 @@ export interface OTKCheck {
   checkedCount: number;
   worker: string;
   lines: OTKCheckLine[];
+  name:string;
+  result:string;
 }
 
 export interface OTKCheckLine {
@@ -20,4 +22,6 @@ export interface OTKCheckLine {
   fullName: string;
   value: string;
   description?: string;
+  targetValue: string;
+  measuredValue: string;
 }

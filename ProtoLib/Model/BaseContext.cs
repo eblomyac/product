@@ -61,6 +61,7 @@ namespace ProtoLib.Model
         public DbSet<OTKCheck> OTKChecks { get; set; }
         public DbSet<OTKCheckLine> OTKCheckLines { get; set; }
         public DbSet<OTKWorker> OTKWorkers { get; set; }
+        public DbSet<OTKTargetValue> OTKTargetValues { get; set; }
         
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<TransferLine> TransferLines { get; set; }

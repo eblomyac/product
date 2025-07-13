@@ -96,6 +96,7 @@ import {CountChangerComponent} from "./components/operator/count-changer/count-c
 import {PictureViewComponent} from "./dialogs/picture-view/picture-view.component";
 import {OtkOperationsComponent} from "./components/admin-settings/otk-operations/otk-operations.component";
 import {OtkCheckComponent} from "./dialogs/otk-check/otk-check.component";
+import {OtkViewComponent} from "./components/Info/otk-view/otk-view.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -104,7 +105,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
 
 @NgModule({
     declarations: [
-        AppComponent, OtkCheckComponent,
+        AppComponent, OtkCheckComponent, OtkViewComponent,
         PostViewComponent, OtkOperationsComponent,
         AdminSettingsComponent, PictureViewComponent,
         UserSettingsComponent, CountChangerComponent,
@@ -126,57 +127,58 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         CardfinderComponent, OperatorUtilityComponent,
         ImageSetViewComponent, TotalOrderStatisticComponent
     ],
-  imports: [
-    BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
-    HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot([
-      {path: '*', redirectTo: '', pathMatch: 'full'},
-      {path: 'post', component: PostViewComponent},
-      {path: 'admin', component: AdminSettingsComponent},
-      {path: 'operate', component: OperatorComponent},
-      {path: 'statistic', component: AnalyticComponent},
-      {path: 'personnel', component: PersonnelComponent},
-      {path: 'card', component: CardViewComponent},
-      {path: 'card-search', component: CardfinderComponent},
-      {path: 'work-priority', component: PriorityListComponent},
-      {path: 'info', component: InfoComponent}
-    ]),
-    NgxEchartsModule.forRoot({
-      echarts: () => import('echarts')
-    }),
-    BrowserAnimationsModule,
-    MatIconModule,
-    DragDropModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    NgApexchartsModule,
-    MatButtonToggleModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatExpansionModule,
-    GalleryModule,
-    LightboxModule,
-    MatTabsModule,
-    MatProgressSpinnerModule,
-    MatButtonModule,
-    MatInputModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatTooltipModule,
-    MatListModule,
-    MatMenuModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    NgxEchartsDirective,
-    MatChipsModule,
-    MatBadgeModule,
-    MatAutocompleteModule,
-    ReactiveFormsModule,
+    imports: [
+        BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
+        HttpClientModule,
+        FormsModule,
+        RouterModule.forRoot([
+            {path: '*', redirectTo: '', pathMatch: 'full'},
+            {path: 'post', component: PostViewComponent},
+            {path: 'admin', component: AdminSettingsComponent},
+            {path: 'operate', component: OperatorComponent},
+            {path: 'statistic', component: AnalyticComponent},
+            {path: 'personnel', component: PersonnelComponent},
+            {path: 'card', component: CardViewComponent},
+            {path: 'card-search', component: CardfinderComponent},
+            {path: 'work-priority', component: PriorityListComponent},
+            {path: 'info', component: InfoComponent}
+        ]),
+        NgxEchartsModule.forRoot({
+            echarts: () => import('echarts')
+        }),
+        BrowserAnimationsModule,
+        MatIconModule,
+        DragDropModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        NgApexchartsModule,
+        MatButtonToggleModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatExpansionModule,
+        GalleryModule,
+        LightboxModule,
+        MatTabsModule,
+        MatProgressSpinnerModule,
+        MatButtonModule,
+        MatInputModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatTooltipModule,
+        MatListModule,
+        MatMenuModule,
+        MatDialogTitle,
+        MatDialogContent,
+        MatDialogActions,
+        NgxEchartsDirective,
+        MatChipsModule,
+        MatBadgeModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
 
 
-  ],
+
+    ],
     providers: [TransportService, DataService, SessionService, WorkEventService, StyleManagerService,ThemeService, DialogHandlerService,
       { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }, { provide: LOCALE_ID, useValue: "ru-RU" },
       { provide: DateAdapter, useClass: CustomDateAdapter },DatePipe],

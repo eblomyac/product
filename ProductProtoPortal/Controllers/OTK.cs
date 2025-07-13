@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Dynamic;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ProtoLib.Managers;
 using ProtoLib.Model;
@@ -33,6 +34,22 @@ public class OTK:Controller
         List<OTKWorker> lines  = JsonConvert.DeserializeObject<List<OTKWorker>>(toParse);
         return new OkObjectResult(new ApiAnswer(manager.SaveWorkers(lines), "", true));
     }
+
+    [HttpPost]
+    [Route("[action]")]
+    public async Task<IActionResult> OKTCheckList()
+    {
+        string toParse = "";
+        using (StreamReader st = new StreamReader(this.Request.Body))
+        {
+            toParse= await st.ReadToEndAsync();
+        }
+        var user = AuthHelper.GetADUser(this.HttpContext);
+        OTKManager manager = new OTKManager(user.SAM);
+        OTKFilter d = JsonConvert.DeserializeObject<OTKFilter>(toParse);
+        return new OkObjectResult(
+           new ApiAnswer(manager.GetOTKChecks(d)));
+    }
     
     [HttpGet]
     [Route("[action]")]
@@ -42,6 +59,16 @@ public class OTK:Controller
         OTKManager manager = new OTKManager(user.SAM);
         
         return new OkObjectResult(new ApiAnswer(manager.Operations(), "", true));
+    }
+
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult TargetValues()
+    {
+        var user = AuthHelper.GetADUser(this.HttpContext);
+        OTKManager manager = new OTKManager(user.SAM);
+
+        return new OkObjectResult(new ApiAnswer(manager.Targets(), "", true));
     }
     
     [HttpPost]

@@ -30,14 +30,16 @@
       <col span="1" style="width: 15%;">
     </colgroup>
     <tr>
-      <th>Название</th>
+      <th>Контролируемый параметр</th>
       <th>Описание</th>
+      <th>Требуемое значение</th>
       <th>Продукция</th>
       <th></th>
     </tr>
     <tr *ngFor="let o of this.operations">
       <td>{{o.shortName}}</td>
       <td>{{o.fullName}}</td>
+      <td>{{o.targetValue}}</td>
       <td>{{o.productLine}}</td>
       <td><button mat-icon-button color="primary" (click)="remove(o)"><mat-icon>remove</mat-icon></button></td>
     </tr>
@@ -59,6 +61,14 @@
         <mat-form-field class="w-100">
           <mat-label></mat-label>
           <textarea type="text" rows="1" matInput [(ngModel)]="newOperation.fullName"></textarea>
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field class="w-100">
+          <mat-label>Требуемое значение</mat-label>
+          <mat-select [(ngModel)]="newOperation.targetValue">
+            <mat-option [value]="tv.target" *ngFor="let tv of this.targetValues">{{tv.displayName}} ({{tv.source}})</mat-option>
+          </mat-select>
         </mat-form-field>
       </td>
       <td>

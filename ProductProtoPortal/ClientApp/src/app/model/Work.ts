@@ -272,7 +272,7 @@ export class Work {
   }
   async otk(){
     let template = await lastValueFrom(this.dataService.OTK.Template(this.structure));
-    let otk = await DialogHandlerService.Singleton.ask(OtkCheckComponent, {data: {template:template,dataService:this.dataService}, height:'95%', width:'95%', disableClose:true});
+    let otk = await DialogHandlerService.Singleton.ask(OtkCheckComponent, {data: {template:template,dataService:this.dataService, onlyView:false}, height:'95%', width:'95%', disableClose:true});
     if(otk){
       console.log(otk);
       this.workEventService.PossibleNewWork();

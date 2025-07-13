@@ -15,8 +15,9 @@ export class OtkCheckComponent {
   isLoading = false;
   workers:OTKWorker[] = [];
   allSelected = false;
+  allValues=false;
   constructor(public dialogRef:MatDialogRef<OtkCheckComponent>,@Inject(MAT_DIALOG_DATA)
-  public data: {template:OTKCheck,dataService:DataService}) {
+  public data: {template:OTKCheck,dataService:DataService, onlyView:boolean}) {
     this.data.dataService.OTK.WorkerList().subscribe(x=>{
       this.workers = x;
     })
@@ -32,6 +33,9 @@ export class OtkCheckComponent {
   }
   valueSelected(line:OTKCheckLine,value:string){
     this.allSelected = this.data.template.lines.length == this.data.template.lines.filter(x=>x.value.length>1).length;
+  }
+  valueInputed(line:OTKCheckLine,value:string){
+    this.allValues = this.data.template.lines.filter(x=>x.targetValue.length>0).length == this.data.template.lines.filter(x=>x.measuredValue.length>0).length;
   }
 
 }

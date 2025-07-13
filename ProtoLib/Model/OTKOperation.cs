@@ -10,6 +10,10 @@ public class OTKAvailableOperation
     public string ShortName { get; set; }
     [MaxLength(1024)]
     public string FullName { get; set; }
+    
+    [MaxLength(256)]
+    public string TargetValue { get; set; }
+    
     [MaxLength(128)]
     public string ProductLine { get; set; }
     

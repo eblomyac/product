@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../../../services/data.service";
-import {OTKAvailableOperation, OTKWorker} from "../../../model/OTKAvailableOperation";
+import {OTKAvailableOperation, OTKTargetValue, OTKWorker} from "../../../model/OTKAvailableOperation";
 
 @Component({
   selector: 'app-otk-operations',
@@ -13,14 +13,15 @@ export class OtkOperationsComponent implements OnInit {
   loading: boolean = false;
   workers:OTKWorker[]=[];
   operations: OTKAvailableOperation[] = [];
-
-  newOperation: OTKAvailableOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[]};
+  targetValues: OTKTargetValue[] =[];
+  newOperation: OTKAvailableOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[], targetValue:''};
   constructor(private dataService:DataService){
 
   }
   ngOnInit() {
     this.loadOperations();
-    this.loadWorkers()
+    this.loadWorkers();
+    this.loadTargetValues();
   }
 
   addWorker(e:any){
@@ -30,6 +31,14 @@ export class OtkOperationsComponent implements OnInit {
     }
    console.log(e);
     e.input.value = '';
+  }
+  loadTargetValues(){
+    this.loading=true;
+    this.targetValues=[];
+    this.dataService.OTK.TargetValues().subscribe(x=>{
+      this.loading =false;
+      this.targetValues=x;
+    });
   }
 
   loadOperations(){
@@ -72,7 +81,7 @@ export class OtkOperationsComponent implements OnInit {
 
     this.newOperation.productLine = this.newOperation.productLines.join(', ');
     this.operations.push(this.newOperation);
-    this.newOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[]};
+    this.newOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[], targetValue:''};
   }
 
 }
