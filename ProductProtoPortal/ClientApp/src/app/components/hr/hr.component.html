@@ -1,0 +1,20 @@
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="col-12">
+      <mat-tab-group (selectedTabChange)="activeTabInex= $event.index" >
+        <mat-tab label="Календарь" [disabled]="isLoading">
+          <app-calendar (Saving)="saving($event)"[Posts]="posts" [isActive]="activeTabInex==0"></app-calendar>
+        </mat-tab>
+        <mat-tab label="Сотрудники" [disabled]="isLoading">
+          <app-product-workers [Workers]="workers" (Saving)="saving($event)" [Posts]="posts"  [PostCrpData]="postTargetsCrp" ></app-product-workers>
+        </mat-tab>
+        <mat-tab label="Настройки" [disabled]="isLoading">
+          <app-hr-settings [Workers]="workers" (Saving)="saving($event)" ></app-hr-settings>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+
+  </div>
+
+</div>

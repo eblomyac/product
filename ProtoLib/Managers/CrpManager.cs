@@ -27,6 +27,57 @@ namespace ProtoLib.Managers
             }
         }
 
+        public class CrpTarget
+        {
+            public string TargetName {
+                get
+                {
+                    return $"{TargetCrpCenter}-{TargetCrpPost}-{TargetCrpPostDescription}";
+                }}
+    
+           
+            public string TargetCrpCenter { get; set; }
+           
+            public string TargetCrpPost { get; set; }
+    
+         
+            public string TargetCrpCenterDescription { get; set; }
+           
+            public string TargetCrpPostDescription { get; set; }
+
+        }
+        public Dictionary<string,List<CrpTarget>> GetTargetHrList(List<string> keys)
+        {
+            Dictionary<string, List<CrpTarget>> result = new();
+            string q =string.Join(',', keys.Select(x => "'" + x + "'"));
+            string query = $"SELECT Center_Name as cn, Post_Name as pn, Center_Description as cd, Post_Description as pd FROM tbl_Centers left join tbl_Posts on tbl_Centers.IDC = tbl_Posts.IDC  where Center_Name in ({q}) order by tbl_Centers.SortNum";
+            using (SqlConnection sql =
+                   new SqlConnection(Constants.Database.CrpConnectionString))
+            {
+                SqlDataAdapter sda = new SqlDataAdapter(query, sql);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    if(!result.ContainsKey(row[0].ToString()))
+                    {
+                        result.Add(row[0].ToString(), new List<CrpTarget>());
+                    }
+
+                    CrpTarget ct = new CrpTarget();
+                    ct.TargetCrpCenterDescription = row["cd"].ToString();
+                    ct.TargetCrpPostDescription = row["pd"].ToString();
+                    ct.TargetCrpCenter = row["cn"].ToString();
+                    ct.TargetCrpPost = row["pn"].ToString();
+                    
+                    result[row[0].ToString()].Add(ct);
+                }
+
+                return result;
+            }
+        }
+        
         public List<string> CrpPosts()
         {
             if (post_list.Count == 0)

@@ -1,0 +1,78 @@
+<div class="container-fluid">
+  <div class="row mt-2">
+
+    <div class="col-8">
+      <!--ФИО + роли-->
+      <table class="w-100">
+        <colgroup>
+          <col span="1" style="width: 15%;">
+          <col span="1" style="width: 85%;">
+
+        </colgroup>
+        <tr class="order-stat-table-header">
+          <th>Сотрудник</th>
+          <th class="text-center">Роли</th>
+        </tr>
+        <tr *ngFor="let w of this.activeWorkers(); let i = index" class="order-stat-table-row" >
+          <td>{{w.name}}</td>
+          <td>
+            <div class="w-100" [id]="(i+1).toString()"  cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop(w,$event)" >
+
+              <mat-chip class="m-2" style="background: var(--post-bg-item-color)"
+                *ngFor="let r of w.targets;let ri = index">{{r.postId}} : {{r.targetName}}
+                <button matChipRemove (click)="remove(w,ri)">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+              <mat-chip>...</mat-chip>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="col-4">
+
+      <div class="d-flex justify-content-between mb-2">
+        <mat-form-field class="col-6">
+          <mat-label>ФИО</mat-label>
+          <input matInput type="text" [(ngModel)]="filterName">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="Save()" >Сохранить</button>
+      </div>
+
+
+      <mat-form-field class="w-100">
+        <mat-label>
+          Участок ДП
+        </mat-label>
+        <mat-select [(ngModel)]="newRole.postId">
+          <mat-option *ngFor="let p of this.Posts" [value]="p">{{p}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="w-100" *ngIf="PostCrpData[newRole.postId]">
+        <mat-label>
+          Участок CRP
+        </mat-label>
+        <mat-select [(ngModel)]="tmp" (ngModelChange)="crpCenterChange($event, this.PostCrpData[newRole.postId][$event])">
+          <mat-option *ngFor="let p of objectKeys(this.PostCrpData[newRole.postId])" [value]="p">{{p}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="w-100" *ngIf="PostCrpData[newRole.postId] && tmp && tmp.length>0">
+        <mat-label>Пост CRP</mat-label>
+        <mat-select [(ngModel)]="tmp2"  (ngModelChange)="crpPostChange($event)"> >
+          <mat-option *ngFor="let p of this.PostCrpData[newRole.postId][tmp].sub" [value]="p">{{p.crpPost}} ({{p.desc}})</mat-option>
+        </mat-select>
+      </mat-form-field>
+    <!--  <mat-form-field class="w-100">
+        <mat-label>Или введите свое название поста</mat-label>
+        <input matInput type="text" [(ngModel)]="newRole.targetName">
+      </mat-form-field> -->
+      <div cdkDropList [cdkDropListConnectedTo]="q"  >
+        <mat-chip cdkDrag [cdkDragData]="newRole" *ngIf="newRole.postId.length>0 && newRole.targetName.length >0" >
+          {{newRole.postId}} : {{newRole.targetName}}
+        </mat-chip>
+      </div>
+
+    </div>
+  </div>
+</div>

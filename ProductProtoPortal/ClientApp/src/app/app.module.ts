@@ -79,7 +79,6 @@ import {
   AdditionalSourceSettingsComponent
 } from "./components/admin-settings/additional-source-settings/additional-source-settings.component";
 import {AdditionalCostDialogComponent} from "./dialogs/additional-cost-dialog/additional-cost-dialog.component";
-import {PersonnelComponent} from "./components/hr/personnel/personnel.component";
 import {CalendarComponent} from "./components/hr/calendar/calendar.component";
 
 
@@ -97,6 +96,10 @@ import {PictureViewComponent} from "./dialogs/picture-view/picture-view.componen
 import {OtkOperationsComponent} from "./components/admin-settings/otk-operations/otk-operations.component";
 import {OtkCheckComponent} from "./dialogs/otk-check/otk-check.component";
 import {OtkViewComponent} from "./components/Info/otk-view/otk-view.component";
+import {HrComponent} from "./components/hr/hr.component";
+import {ProductWorkersComponent} from "./components/hr/product-workers/product-workers.component";
+import {HrSettingsComponent} from "./components/hr/hr-settings/hr-settings.component";
+import {HrActionDialogComponent} from "./dialogs/hr-action-dialog/hr-action-dialog.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -116,7 +119,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         PostDialogComponent, ActHistoryComponent,
         InfoViewComponent, WorkCostInfoComponent,
         NumberDialogComponent, CalendarComponent,
-        AnalyticComponent, PersonnelComponent, PhotoUploadComponent,
+        AnalyticComponent,  PhotoUploadComponent, HrComponent, ProductWorkersComponent, HrSettingsComponent,
         IssueSettingsComponent, AdditionalCostDialogComponent,
         IssueCreateDialogComponent, AdditionalSourceSettingsComponent,
         PostStatisticComponent, DailySourceDialogComponent,
@@ -125,7 +128,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         OrderTimeLineComponent, ReportComponent,
         CardViewComponent, PriorityListComponent,
         CardfinderComponent, OperatorUtilityComponent,
-        ImageSetViewComponent, TotalOrderStatisticComponent
+        ImageSetViewComponent, TotalOrderStatisticComponent, HrActionDialogComponent
     ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -137,7 +140,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
             {path: 'admin', component: AdminSettingsComponent},
             {path: 'operate', component: OperatorComponent},
             {path: 'statistic', component: AnalyticComponent},
-            {path: 'personnel', component: PersonnelComponent},
+            {path: 'calendar', component: HrComponent},
             {path: 'card', component: CardViewComponent},
             {path: 'card-search', component: CardfinderComponent},
             {path: 'work-priority', component: PriorityListComponent},

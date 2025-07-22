@@ -13,6 +13,7 @@ import {AdditionalCostData} from "./dataSubServices/AdditionalCostData";
 import {InfoData} from "./dataSubServices/InfoData";
 import {OperatorData} from "./dataSubServices/OperatorData";
 import {OTKData} from "./dataSubServices/OTKData";
+import {HrData} from "./dataSubServices/hrData";
 
 
 @Injectable({
@@ -34,6 +35,7 @@ export class DataService {
   InfoData:InfoData;
   OTK:OTKData;
   OperatorData:OperatorData;
+  HR:HrData;
   constructor(public transport:TransportService) {
       this.User = new UserData(transport);
       this.Post = new PostData(transport,this);
@@ -48,5 +50,6 @@ export class DataService {
       this.InfoData = new InfoData(transport,this);
       this.OperatorData = new OperatorData(transport,this);
       this.OTK = new OTKData(transport,this);
+      this.HR = new HrData(transport,this);
   }
 }

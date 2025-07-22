@@ -41,7 +41,7 @@ export class AppComponent {
 
           }
           if(this.session.currentUser.structure.isOperator){
-            this.availableMenu.push({caption:"Кадры",route:"/personnel"})
+            this.availableMenu.push({caption:"Кадры",route:"/calendar"})
             //   this.router.navigate(['/operate'])
           }
           if(this.session.currentUser.structure.isAdmin || this.session.currentUser.structure.isOperator){

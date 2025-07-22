@@ -78,6 +78,12 @@ namespace ProtoLib.Model
         public DbSet<LineDaily> ReportLineDailies { get; set; }
         public DbSet<PostDaily> ReportPostDailies { get; set; }
 
+        
+       
+        public DbSet<ProductWorker> ProductWorkers { get; set; }
+        public DbSet<ProductTarget> ProductTargets { get; set; }
+        public DbSet<ProductCalendarRecord> ProductCalendarRecords { get; set; }
+     
         public BaseContext()
         {
             

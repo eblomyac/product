@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProtoLib.Model;
 
@@ -11,9 +12,10 @@ using ProtoLib.Model;
 namespace ProtoLib.Migrations
 {
     [DbContext(typeof(BaseContext))]
-    partial class BaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250714091746_hr1")]
+    partial class hr1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -650,70 +652,15 @@ namespace ProtoLib.Migrations
                     b.ToTable("PostStatistics");
                 });
 
-            modelBuilder.Entity("ProtoLib.Model.ProductCalendarRecord", b =>
+            modelBuilder.Entity("ProtoLib.Model.ProductAvailableRole", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<decimal>("EffectiveHours")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PlanToWorkConst")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PlanningHours")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PostId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("ProductWorkerName")
-                        .IsRequired()
+                    b.Property<string>("Name")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("TargetCrpCenter")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                    b.HasKey("Name");
 
-                    b.Property<string>("TargetCrpCenterDescription")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("TargetCrpPost")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("TargetCrpPostDescription")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProductCalendarRecords");
+                    b.ToTable("ProductAvailableRoles");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.ProductionLine", b =>
@@ -727,7 +674,7 @@ namespace ProtoLib.Migrations
                     b.ToTable("ProductionLines");
                 });
 
-            modelBuilder.Entity("ProtoLib.Model.ProductTarget", b =>
+            modelBuilder.Entity("ProtoLib.Model.ProductRole", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -737,28 +684,13 @@ namespace ProtoLib.Migrations
 
                     b.Property<string>("PostId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<long>("ProductWorkerId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("TargetCrpCenter")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("TargetCrpCenterDescription")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("TargetCrpPost")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("TargetCrpPostDescription")
+                    b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
@@ -767,7 +699,7 @@ namespace ProtoLib.Migrations
 
                     b.HasIndex("ProductWorkerId");
 
-                    b.ToTable("ProductTargets");
+                    b.ToTable("ProductRoles");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.ProductWorker", b =>
@@ -782,11 +714,6 @@ namespace ProtoLib.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
@@ -1401,13 +1328,15 @@ namespace ProtoLib.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProtoLib.Model.ProductTarget", b =>
+            modelBuilder.Entity("ProtoLib.Model.ProductRole", b =>
                 {
-                    b.HasOne("ProtoLib.Model.ProductWorker", null)
-                        .WithMany("Targets")
+                    b.HasOne("ProtoLib.Model.ProductWorker", "ProductWorker")
+                        .WithMany("Roles")
                         .HasForeignKey("ProductWorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ProductWorker");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.Role", b =>
@@ -1524,7 +1453,7 @@ namespace ProtoLib.Migrations
 
             modelBuilder.Entity("ProtoLib.Model.ProductWorker", b =>
                 {
-                    b.Navigation("Targets");
+                    b.Navigation("Roles");
                 });
 
             modelBuilder.Entity("ProtoLib.Model.TechCard", b =>

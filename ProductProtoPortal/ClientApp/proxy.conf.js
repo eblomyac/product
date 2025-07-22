@@ -21,7 +21,8 @@ const PROXY_CONFIG = [
       "/Info",
       "/CustomImage",
       "/OperatorApi",
-      "/otk"
+      "/otk",
+      "/hr"
    ],
     target: target,
     secure: false,

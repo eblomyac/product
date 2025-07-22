@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="row">
+
+    <div class="col-12 row mt-2" >
+      <mat-form-field class="col-2">
+        <mat-label>
+          Новый сотрудник
+        </mat-label>
+        <input #newWorker matInput type="text">
+      </mat-form-field>
+      <mat-form-field class="col-2">
+        <mat-label>
+          Должность
+        </mat-label>
+        <input #newTitle matInput type="text">
+      </mat-form-field>
+      <div class="col-1">
+        <button mat-raised-button color="primary" (click)="addWorker(newWorker.value, newTitle.value)">Добавить</button>
+      </div>
+      <div class="offset-6 col-1">
+        <button  mat-raised-button color="primary" (click)="Save()">Сохранить</button>
+      </div>
+    </div>
+    <div class="col-12">
+      <div>
+        <table class="w-100">
+          <colgroup>
+            <col span="1" style="width: 40%;">
+            <col span="1" style="width: 40%;">
+            <col span="1" style="width: 10%;">
+
+          </colgroup>
+          <tr class="order-stat-table-header">
+            <th class="text-center">ФИО</th>
+            <th class="text-center">
+              Должность
+            </th>
+            <th class="text-center">
+
+              Активен?
+            </th>
+          </tr>
+          <tr *ngFor="let w of this.Workers" class="order-stat-table-row">
+            <td class="text-center">{{w.name}}</td>
+            <td class="text-center"><mat-form-field class="w-50 mt-2">
+              <input type="text" matInput [(ngModel)]="w.title"></mat-form-field></td>
+            <td class="text-center"><mat-checkbox [(ngModel)]="w.isActive" color="primary"></mat-checkbox></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>

@@ -33,6 +33,9 @@ export class ThemeService {
     document.documentElement.style.setProperty( '--drag-placeholder-bg-color','rgba(108, 108, 108, 0.35)');
 
 
+
+
+
     document.documentElement.style.setProperty( '--post-bg-grad-from-color','rgba(50, 50, 50, 1)');
     document.documentElement.style.setProperty( '--post-bg-grad-to-color','rgba(0, 0, 0, 0.00)');
 
@@ -61,6 +64,8 @@ export class ThemeService {
     document.documentElement.style.setProperty('--drag-preview-color', 'rgb(30,30,30)');
     document.documentElement.style.setProperty( '--drag-placeholder-bg-color','rgba(229,229,229,0.35)');
 
+
+
     document.documentElement.style.setProperty( '--post-bg-grad-from-color','rgba(255, 255, 255, 1)');
     document.documentElement.style.setProperty( '--post-bg-grad-to-color','rgba(200, 200, 200, 0.00)');
 
@@ -79,21 +84,23 @@ export class ThemeService {
 
   setDark(){
 
-    this.setDarkColorValues();
+
     this.styleManager.setStyle(
       "theme",
       `/assets/theme-css/pink-bluegrey.css`
     );
+    this.setDarkColorValues();
     this.theme = 'dark';
     localStorage.setItem('theme',this.theme)
     this.themeChanged.next(this.theme);
   }
   setLight(){
-    this.setLightColorValues();
+
     this.styleManager.setStyle(
       "theme",
       `/assets/theme-css/indigo-pink.css`
     );this.theme = 'light';
+    this.setLightColorValues();
     localStorage.setItem('theme',this.theme)
     this.themeChanged.next(this.theme);
   }

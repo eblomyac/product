@@ -1,0 +1,11 @@
+.weekend{
+  background: rgba(16,115,255,0.4);
+}
+.selected{
+  background: rgba(68, 184, 19, 0.5);
+}
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}

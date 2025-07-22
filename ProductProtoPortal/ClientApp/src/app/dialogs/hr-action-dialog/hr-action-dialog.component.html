@@ -1,0 +1,35 @@
+<div class="p-2">
+  <div>
+    <button mat-raised-button color="primary" (click)="setVal(10)" class="w-100 mt-1">"10"</button>
+  </div>
+  <div>
+    <button mat-raised-button color="primary" (click)="setVal(8)" class="w-100 mt-1">"8"</button>
+  </div>
+  <div>
+    <button mat-raised-button color="primary" (click)="setVal(0)" class="w-100 mt-1">Обнулить</button>
+  </div>
+  <div>
+    <button mat-raised-button color="primary" (click)="double()" class="w-100 mt-1">Удвоить</button>
+  </div>
+<div>
+  <button mat-raised-button color="primary" (click)="div2()" class="w-100 mt-1">Уменьшить</button>
+</div>
+  <div>
+    <button mat-raised-button color="primary" (click)="setVacation()" class="w-100 mt-1" >"Отпуск"</button>
+  </div>
+  <div  class="w-100 mt-1"  style="height: 80px">
+    <button mat-icon-button color="primary" (click)="setVal(inp.value)"><mat-icon>input</mat-icon></button>
+    <mat-form-field>
+      <mat-label>Значение</mat-label>
+      <input matInput type="number" (keyup.enter)="setVal(inp.value)"  #inp>
+
+    </mat-form-field>
+  </div>
+  <div>
+    <button mat-raised-button color="primary" (click)="close()" class="w-100 mt-2">Отмена</button>
+  </div>
+
+
+
+</div>
+
