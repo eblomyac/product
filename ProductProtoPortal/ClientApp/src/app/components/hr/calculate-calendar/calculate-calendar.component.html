@@ -1,0 +1,52 @@
+<div class="p-3">
+  <div *ngIf="isFilled; else fill">
+    <table>
+      <tr class="order-stat-table-header">
+        <th>#</th>
+        <th class="text-center">Участок CRP</th>
+        <th class="text-center">План ориентир</th>
+        <th class="text-center">Коэф. эффективности</th>
+        <th class="text-center">Коэф. доп. работ</th>
+        <th class="text-center">Коэф. исп. персонала</th>
+        <th class="text-center">Необходимый ресурс</th>
+        <th class="text-center">Текущий ресурс</th>
+        <th class="text-center">Отклонения</th>
+      </tr>
+      <tr *ngFor="let p of this.data.plans; let i = index">
+        <td>{{i+1}}</td>
+        <td> {{p.crpCenterDescription}} ({{p.crpCenter}})</td>
+        <td class="text-end">{{p.targetMinutes | number}}</td>
+        <td class="text-end" style="padding-right: 20px"><input type="number" style="width: 60px" [min]="0.5" [max]="2" step="0.01" (ngModelChange)="rationChange(p)" [(ngModel)]="p.effectiveRatio"></td>
+        <td class="text-end" style="padding-right: 20px"><input type="number" style="width: 60px" [min]="0.5" [max]="2" step="0.01" (ngModelChange)="rationChange(p)" [(ngModel)]="p.additionalRatio"></td>
+        <td class="text-end" style="padding-right: 20px"><input type="number" style="width: 60px" [min]="0.5" [max]="2" step="0.01" (ngModelChange)="rationChange(p)" [(ngModel)]="p.directorRatio"></td>
+        <td class="text-end" >{{p.ratioMinutes | number: '1.0-0'}}</td>
+        <td class="text-end">
+          <div *ngIf="this.data.sumData[p.postId] && this.data.sumData[p.postId].data[p.crpCenter]; else empty">
+            {{this.data.sumData[p.postId].data[p.crpCenter].minutes | number: '1.0-0'}}
+          </div>
+          <ng-template #empty>
+            <div>0</div>
+          </ng-template>
+        </td>
+        <td class="text-end" style="padding-left: 10px">
+          <div [ngClass]="{'negative': (this.data.sumData[p.postId].data[p.crpCenter].minutes - p.ratioMinutes)<0}" *ngIf="this.data.sumData[p.postId] && this.data.sumData[p.postId].data[p.crpCenter]; else empty">
+            {{(this.data.sumData[p.postId].data[p.crpCenter].minutes - p.ratioMinutes) | number: '1.0-0'}}
+          </div>
+          <ng-template #empty>
+            <div>{{0-p.ratioMinutes}}</div>
+          </ng-template>
+        </td>
+
+      </tr>
+    </table>
+  </div>
+  <ng-template #fill>
+    <div >
+      <textarea placeholder="Скопируйте в это поле таблицу из excel [Участок CRP][План]" matInput rows="6" cols="100" [(ngModel)]="areaText" (ngModelChange)="input($event)"></textarea>
+
+    </div>
+  </ng-template>
+
+
+
+</div>

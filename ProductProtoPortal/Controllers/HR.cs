@@ -76,6 +76,22 @@ public class HR:Controller
         List<ProductWorker> lines  = JsonConvert.DeserializeObject<List<ProductWorker>>(toParse);
         return new OkObjectResult(new ApiAnswer(hrm.SaveWorkerList(lines)).ToString());
     }
+    
+       
+    [HttpPost]
+    [Route("[action]")]
+    public async Task<IActionResult> SavePlanList()
+    {
+        var user = AuthHelper.GetADUser(this.HttpContext);
+        string toParse = "";
+        using (StreamReader st = new StreamReader(this.Request.Body))
+        {
+            toParse= await st.ReadToEndAsync();
+        }
+        HrManager hrm = new HrManager(user.SAM);
+        List<ProductionPlan> lines  = JsonConvert.DeserializeObject<List<ProductionPlan>>(toParse);
+        return new OkObjectResult(new ApiAnswer(hrm.SaveProductionPlanList(lines)).ToString());
+    }
 
     [HttpGet]
     [Route("[action]")]
@@ -96,5 +112,13 @@ public class HR:Controller
         
         return new OkObjectResult(new ApiAnswer(r).ToString());
     }
-   
+
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult PlanList(int month, int year)
+    {
+        var user = AuthHelper.GetADUser(this.HttpContext);
+        HrManager hrm = new HrManager(user.SAM);
+        return new OkObjectResult(new ApiAnswer(hrm.PlanList(year,month)).ToString()); 
+    }
 }

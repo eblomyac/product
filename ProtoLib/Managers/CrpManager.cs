@@ -32,7 +32,7 @@ namespace ProtoLib.Managers
             public string TargetName {
                 get
                 {
-                    return $"{TargetCrpCenter}-{TargetCrpPost}-{TargetCrpPostDescription}";
+                    return $"{TargetCrpCenter} {TargetCrpPost} {TargetCrpPostDescription}".Trim();
                 }}
     
            
@@ -50,7 +50,9 @@ namespace ProtoLib.Managers
         {
             Dictionary<string, List<CrpTarget>> result = new();
             string q =string.Join(',', keys.Select(x => "'" + x + "'"));
-            string query = $"SELECT Center_Name as cn, Post_Name as pn, Center_Description as cd, Post_Description as pd FROM tbl_Centers left join tbl_Posts on tbl_Centers.IDC = tbl_Posts.IDC  where Center_Name in ({q}) order by tbl_Centers.SortNum";
+            string query = $"SELECT Center_Name as cn, Post_Name as pn, Center_Description as cd, Post_Description as pd " +
+                           $"FROM tbl_Centers left join tbl_Posts on tbl_Centers.IDC = tbl_Posts.IDC  where Center_Name in ({q}) order by tbl_Centers.SortNum";
+            
             using (SqlConnection sql =
                    new SqlConnection(Constants.Database.CrpConnectionString))
             {
@@ -77,7 +79,30 @@ namespace ProtoLib.Managers
                 return result;
             }
         }
-        
+
+        public List<CrpTarget> AllCenters()
+        {
+            string query = $"SELECT Center_Name as cn,Center_Description as cd " +
+                           $"FROM tbl_Centers ";
+            List<CrpTarget> result = new List<CrpTarget>();
+            using (SqlConnection sql =
+                   new SqlConnection(Constants.Database.CrpConnectionString))
+            {
+                SqlDataAdapter sda = new SqlDataAdapter(query, sql);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                foreach (DataRow row in dt.Rows)
+                {
+                    result.Add(new CrpTarget()
+                    {
+                        TargetCrpCenter = row["cn"].ToString(),
+                        TargetCrpCenterDescription = row["cd"].ToString(),
+                        TargetCrpPostDescription = "", TargetCrpPost = ""
+                    });
+                }
+                return result;
+            }
+        }
         public List<string> CrpPosts()
         {
             if (post_list.Count == 0)
@@ -87,6 +112,7 @@ namespace ProtoLib.Managers
 
             return this.post_list;
         }
+        
 
         public List<string> CrpArticles()
         {

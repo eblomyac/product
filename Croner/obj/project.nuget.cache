@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "dQznvuQoOkx1EvmW9u1iN2xtWn+av1ojKc9fCz0uvrd1RnumO4GavQd3ziszzEUvFc2lK2HK6dcWSZDgSF9xHw==",
+  "dgSpecHash": "GPbtdvsHntA=",
   "success": true,
   "projectFilePath": "D:\\Programming\\c-diez\\ProductNew\\product\\Croner\\Croner.csproj",
   "expectedPackageFiles": [
@@ -146,12 +146,5 @@
     "C:\\Users\\yande\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\yande\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1803",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "You are running the 'restore' operation with an 'HTTP' source, 'http://nuget.kck2.ksk.ru/v3/index.json'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."
-    }
-  ]
+  "logs": []
 }

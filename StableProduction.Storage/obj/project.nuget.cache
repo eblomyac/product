@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "AqTrY5GCaRngK+VTQzA64UYY8y445Dtqyi+am9Xt6LmrOGt2di0oVEavCF4UocOxeTTTQ/qB4OBVPnHEycBg8A==",
+  "dgSpecHash": "Zx9PLEGwXZw=",
   "success": true,
   "projectFilePath": "D:\\Programming\\c-diez\\ProductNew\\product\\StableProduction.Storage\\StableProduction.Storage.csproj",
   "expectedPackageFiles": [
@@ -19,12 +19,5 @@
     "C:\\Users\\yande\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.1\\system.diagnostics.diagnosticsource.6.0.1.nupkg.sha512",
     "C:\\Users\\yande\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1803",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "You are running the 'restore' operation with an 'HTTP' source, 'http://nuget.kck2.ksk.ru/v3/index.json'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."
-    }
-  ]
+  "logs": []
 }

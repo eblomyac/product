@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
-import {ProductTarget, ProductWorker} from "../../model/Hr";
+import {ProductPlan, ProductTarget, ProductWorker} from "../../model/Hr";
 import {IPost} from "../../model/Post";
 
 @Component({
@@ -32,6 +32,7 @@ export class HrComponent implements OnInit {
     this.loadPosts();
 
   }
+
   loadPosts(){
 
 

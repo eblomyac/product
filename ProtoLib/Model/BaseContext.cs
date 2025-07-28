@@ -83,6 +83,8 @@ namespace ProtoLib.Model
         public DbSet<ProductWorker> ProductWorkers { get; set; }
         public DbSet<ProductTarget> ProductTargets { get; set; }
         public DbSet<ProductCalendarRecord> ProductCalendarRecords { get; set; }
+        
+        public DbSet<ProductionPlan>    ProductionPlans { get; set; }
      
         public BaseContext()
         {

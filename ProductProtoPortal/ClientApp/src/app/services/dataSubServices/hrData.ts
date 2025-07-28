@@ -6,7 +6,7 @@ import {IWork} from "../../model/Work";
 import {DataService} from "../data.service";
 import {OTKAvailableOperation, OTKTargetValue, OTKWorker} from "../../model/OTKAvailableOperation";
 import {OTKCheck} from "../../model/OTKCheck";
-import {ProductCalendarRecord, ProductTarget, ProductWorker} from "../../model/Hr";
+import {ProductCalendarRecord, ProductPlan, ProductTarget, ProductWorker} from "../../model/Hr";
 
 export class HrData {
 
@@ -48,6 +48,26 @@ export class HrData {
       if(x!=null && x!='not ended'){
         if(x.isSuccess){
           return (x.result.result);
+        }
+      }
+      return null;
+    }));
+  }
+  public PlanList(year:number,month:number):Observable<Array<ProductPlan>> {
+    return this.transportService.Get('/hr/PlanList', new HttpParams().append('month', month).append('year',year)).pipe(map<ApiAnswer|null|'not ended',Array<ProductPlan>>(x=>{
+      if(x!=null && x!='not ended'){
+        if(x.isSuccess){
+          return (x.result);
+        }
+      }
+      return null;
+    }));
+  }
+  public SavePlanList(data:ProductPlan[]):Observable<ProductPlan[]> {
+    return this.transportService.Post('/hr/SavePlanList', new HttpParams(),data).pipe(map<ApiAnswer|null|'not ended',ProductPlan[]>(x=>{
+      if(x!=null && x!='not ended'){
+        if(x.isSuccess){
+          return (x.result);
         }
       }
       return null;

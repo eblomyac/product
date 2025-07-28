@@ -727,6 +727,51 @@ namespace ProtoLib.Migrations
                     b.ToTable("ProductionLines");
                 });
 
+            modelBuilder.Entity("ProtoLib.Model.ProductionPlan", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<decimal>("AdditionalRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CrpCenter")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("CrpCenterDescription")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<decimal>("DirectorRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("EffectiveRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TargetMinutes")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductionPlans");
+                });
+
             modelBuilder.Entity("ProtoLib.Model.ProductTarget", b =>
                 {
                     b.Property<long>("Id")

@@ -100,6 +100,7 @@ import {HrComponent} from "./components/hr/hr.component";
 import {ProductWorkersComponent} from "./components/hr/product-workers/product-workers.component";
 import {HrSettingsComponent} from "./components/hr/hr-settings/hr-settings.component";
 import {HrActionDialogComponent} from "./dialogs/hr-action-dialog/hr-action-dialog.component";
+import {CalculateCalendarComponent} from "./components/hr/calculate-calendar/calculate-calendar.component";
 
 
 registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
@@ -128,7 +129,7 @@ registerLocaleData(localeRu, 'ru-RU', localeRuExtra);
         OrderTimeLineComponent, ReportComponent,
         CardViewComponent, PriorityListComponent,
         CardfinderComponent, OperatorUtilityComponent,
-        ImageSetViewComponent, TotalOrderStatisticComponent, HrActionDialogComponent
+        ImageSetViewComponent, TotalOrderStatisticComponent, HrActionDialogComponent, CalculateCalendarComponent
     ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

@@ -2,67 +2,158 @@
   <div class="row  align-items-baseline mt-2">
     <div class="col-1 d-flex justify-content-between align-items-center">
       <button mat-icon-button color="primary" (click)="changeMonth(-1)" [disabled]="isLoading"><</button>
-      {{selectedDate|date:'MM.yyyy'}}
-      <button mat-icon-button  color="primary" (click)="changeMonth(1)" [disabled]="isLoading"> > </button>
+      {{ selectedDate|date:'MM.yyyy' }}
+      <button mat-icon-button color="primary" (click)="changeMonth(1)" [disabled]="isLoading"> ></button>
     </div>
     <div class=" col-2">
       <mat-form-field class="w-100">
-        <mat-label>Участок</mat-label>
-        <mat-select [(ngModel)]="filterPost" multiple [disabled]="isLoading">
+        <mat-label>Участок ДП</mat-label>
+        <mat-select [(ngModel)]="filterPost" (ngModelChange)="buildData()" multiple [disabled]="isLoading">
 
-          <mat-option *ngFor="let p of this.Posts" [value]="p">{{p}}</mat-option>
+          <mat-option *ngFor="let p of this.Posts" [value]="p">{{ p }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
     <div class=" col-2">
-      <mat-form-field class="w-100" >
-        <mat-label>ФИО</mat-label>
-        <input type="text"  [disabled]="isLoading" [(ngModel)]="filterName" (ngModelChange)="buildData()" matInput>
+      <mat-form-field class="w-100">
+        <mat-label>Участок CRP</mat-label>
+        <input type="text" matInput [(ngModel)]="filterCrpPost" (ngModelChange)="buildData()">
       </mat-form-field>
     </div>
-    <div class="col-1">
+    <div class=" col-2">
+      <mat-form-field class="w-100">
+        <mat-label>ФИО</mat-label>
+        <input type="text" [disabled]="isLoading" [(ngModel)]="filterName" (ngModelChange)="buildData()" matInput>
+      </mat-form-field>
+    </div>
+
+    <div class="col-1 offset-3">
+
+      <button mat-raised-button color="primary" [disabled]="isLoading" (click)="showCalculate()"><b style="color:#afa200" *ngIf="!filledPlan">(!) </b>ПЛАН</button>
+    </div>
+    <div class="col-1 ">
       <button mat-raised-button color="primary" [disabled]="isLoading" (click)="saveData()">Сохранить</button>
     </div>
+
   </div>
   <div class="row">
     <table (contextmenu)="mouseClick($event,null,null)">
       <tr class="order-stat-table-header">
-        <th>
+        <th style="width: 15%">
           #
         </th>
-        <th *ngFor="let d of days; let i = index" style="width: 2%" class="text-center" [ngClass]="{'weekend':d.isWeekend}" >
-          <div>{{d.num}}</div>
-          <div>{{d.name}}</div>
+        <th style="width: 10%">
+
         </th>
-        <th class="text-center">Коэф.</th>
-        <th class="text-center">Сумма</th>
+        <th *ngFor="let d of days; let i = index" style="width: 2%" class="text-center"
+            [ngClass]="{'weekend':d.isWeekend}">
+          <div>{{ d.num }}</div>
+          <div>{{ d.name }}</div>
+        </th>
+        <th class="text-center" style="width: 6%">Коэф.</th>
+        <th class="text-center" style="width: 6%">Сумма</th>
       </tr>
-      <ng-container *ngFor="let p of this.filterPost">
+      <ng-container *ngFor="let p of objectKeys(this.data)">
         <tr class="order-stat-table-row" style="background: rgba(187,98,248,0.25)">
-          <td [colSpan]="2+dayCount">
-            {{p}}
+          <td [colSpan]="dayCount-1">
+            {{ p }}
           </td>
-          <td>
-            {{sumPostData[p]?.minutes}}
+          <td [colSpan]="4">
+            <!--
+            <div>
+              План: {{this.planData[p].minutes | number:'1.0-0'}}
+            </div>
+            <div >
+              Δ: {{(this.sumData[p].minutes - this.planData[p].minutes) | number:'1.0-0'}}
+            </div>
+            -->
+          </td>
+
+          <td class="text-end">
+            <ng-container *ngIf="this.sumData[p]">
+              {{ this.sumData[p].minutes|number }}
+            </ng-container>
+
           </td>
         </tr>
-        <ng-container *ngFor="let w of workerData[p]">
-          <tr *ngFor="let r of this.targetData[p][w]" class="order-stat-table-row">
-            <td>{{w}} : {{r}}</td>
-            <td class="text-center prevent-select" (click)="mouseClick($event,this.calendarData[p][w][r][d.num].data,this.calendarData[p][w][r][d.num].meta)" (contextmenu)="mouseClick($event,this.calendarData[p][w][r][d.num].data,this.calendarData[p][w][r][d.num].meta)" (mousemove)="mouse($event,this.calendarData[p][w][r][d.num].data,this.calendarData[p][w][r][d.num].meta)" *ngFor="let d of days; let i = index" [ngClass]="{'weekend':d.isWeekend,'selected':this.calendarData[p][w][r][d.num].meta.selected}" >
-              <div>{{this.calendarData[p][w][r][d.num].data.planningHours}}</div>
-            </td>
-            <td class="text-center">
-              <mat-form-field style="height: 70px;width: 90px" class="mt-3">
-                <input [disabled]="isLoading" type = "number" max="2" min="0" step="0.25" [(ngModel)]="this.calendarData[p][w][r][1].data.planToWorkConst" (ngModelChange)="setEfficiency($event,p,w,r)" matInput>
-              </mat-form-field>
-            </td>
-            <td>
-              {{this.sumWorkerData[p][w][r].minutes}}
-            </td>
-          </tr>
-        </ng-container>
+        <ng-container *ngIf="this.sumData[p]">
+          <ng-container *ngFor="let crpPost of objectKeys(data[p])">
+            <tr style="background: rgba(127,63,255,0.22)">
+              <td [colSpan]="dayCount">{{ crpPost }}</td>
+              <td [colSpan]="3" class="text-end">
+                <div>План: {{this.planData[p].data[crpPost].minutes | number:'1.0-0'}}</div>
+                <div [ngClass]="{'negative':(this.sumData[p].data[crpPost].minutes-this.planData[p].data[crpPost].minutes)<0,'positive':(this.sumData[p].data[crpPost].minutes-this.planData[p].data[crpPost].minutes)>0}">
+                  Δ: {{(this.sumData[p].data[crpPost].minutes-this.planData[p].data[crpPost].minutes)| number:'1.0-0'}}</div>
+              </td>
+              <td class="text-end">
+                <ng-container *ngIf="this.sumData[p] && this.sumData[p].data[crpPost]">
+                  {{ this.sumData[p].data[crpPost].minutes|number }}
+                </ng-container>
+              </td>
+            </tr>
+            <ng-container *ngFor="let workerName of objectKeys(data[p][crpPost])">
 
+              <ng-container *ngFor="let targetName of objectKeys(data[p][crpPost][workerName])">
+                <tr class="row-hover" style="height: 40px">
+                  <td>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>{{ workerName }}</div>
+                      <div><button mat-icon-button color="primary" [matMenuTriggerFor]="works"><mat-icon>more_vert</mat-icon></button>
+
+                        <mat-menu #works="matMenu">
+
+                          <button mat-menu-item [matMenuTriggerFor]="fiveDays">5 дней</button>
+                          <button mat-menu-item [matMenuTriggerFor]="sixDays">6 дней</button>
+                          <button mat-menu-item [matMenuTriggerFor]="sevenDays">7 дней</button>
+                          <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,0,0,0)">Очистить</button>
+                        </mat-menu>
+                        <mat-menu #fiveDays="matMenu">
+                          <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,8,0,0)">40 часов 5х8</button>
+                          <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,10,0,0)">50 часов 5х10</button>
+
+                        </mat-menu></div>
+
+                    </div>
+                  </td>
+                  <mat-menu  #sixDays="matMenu">
+                    <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,8,8,0)">48 часов 6х8</button>
+                    <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,10,8,0)">58 часов 5х10 1х8</button>
+                    <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,10,10,0)">60 часов 6х10</button>
+
+                  </mat-menu>
+                  <mat-menu #sevenDays>
+                    <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,8,8,8)">56 часов 7х8</button>
+                    <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,10,8,8)">66 часов 5х10 2х8</button>
+                    <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,10,10,8)">68 часов 6х10 1х8</button>
+                    <button mat-menu-item (click)="setWorkWeek(p,crpPost,workerName,targetName,10,10,10)">70 часов 7х10</button>
+                  </mat-menu>
+
+                  <td>{{ targetName }}</td>
+
+                  <td class="text-center prevent-select"
+                      (click)="mouseClick($event,this.data[p][crpPost][workerName][targetName][d.num].data,this.data[p][crpPost][workerName][targetName][d.num].meta)"
+                      (contextmenu)="mouseClick($event,this.data[p][crpPost][workerName][targetName][d.num].data,this.data[p][crpPost][workerName][targetName][d.num].meta)"
+                      (mousemove)="mouse($event,this.data[p][crpPost][workerName][targetName][d.num].data,this.data[p][crpPost][workerName][targetName][d.num].meta)"
+                      *ngFor="let d of days; let i = index"
+                      [ngClass]="{'weekend':d.isWeekend,'selected':this.data[p][crpPost][workerName][targetName][d.num].meta.selected}">
+                    <div>{{ this.data[p][crpPost][workerName][targetName][d.num].data.planningHours }}</div>
+                  </td>
+                  <td class="text-center"><input class="text-end" type="number" step="0.25" min="0" max="2"
+                                                 [(ngModel)]="this.data[p][crpPost][workerName][targetName][1].data.planToWorkConst"
+                                                 (ngModelChange)="setEfficiency($event,p,crpPost,workerName,targetName)">
+                  </td>
+                  <td class="text-end">
+                    <ng-container *ngIf="this.sumData[p] && this.sumData[p].data[crpPost]">
+                      {{ this.sumData[p].data[crpPost].data[workerName].data[targetName].minutes|number }}
+                    </ng-container>
+
+                  </td>
+                </tr>
+
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
       </ng-container>
 
     </table>

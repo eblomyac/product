@@ -1,8 +1,10 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {ProductCalendarRecord, ProductWorker} from "../../../model/Hr";
+import {ProductCalendarRecord, ProductPlan, ProductWorker} from "../../../model/Hr";
 import {DataService} from "../../../services/data.service";
 import {DialogHandlerService} from "../../../services/dialog-handler.service";
 import {HrActionDialogComponent} from "../../../dialogs/hr-action-dialog/hr-action-dialog.component";
+import {CalculateCalendarComponent} from "../calculate-calendar/calculate-calendar.component";
+
 
 @Component({
   selector: 'app-calendar',
@@ -17,52 +19,117 @@ export class CalendarComponent implements OnChanges, OnInit {
   @Input()isActive:boolean = false;
   isLoading:boolean = false;
   @Output()Saving:EventEmitter<boolean> = new EventEmitter();
+  onlyNegative:boolean = false;
   selectedDate=new Date();
-
+  plans: ProductPlan[] = [];
   calendarRecords:ProductCalendarRecord[]=[];
 
   filterName:string='';
   filterPost:string[]=[];
+  filterCrpPost:string='';
+
 
   dayCount = 0;
   days:Array<{num:number,name:string, isWeekend:boolean}>=[];
   objectKeys = Object.keys;
-  workerData:{[post:string]:string[]}={};
-  targetData:{[post:string]:{
-      [worker:string]:string[]
-    } } = {};
-  calendarData:{
-    [post:string]:{
+
+  data:{[post:string]:{
+    [crpPost:string]:{
       [worker:string]:{
         [target:string]:{
-          [day:number]:
-            {data:ProductCalendarRecord, meta:{ selected:boolean }}
+          [day:number]:{data:ProductCalendarRecord, meta:{ selected:boolean }
+        }
         }
       }
     }
+    }}={};
+  filteredData:{[post:string]:{
+      [crpPost:string]:{
+        [worker:string]:{
+          [target:string]:{
+            [day:number]:{data:ProductCalendarRecord, meta:{ selected:boolean }
+            }
+          }
+        }
+      }
+    }}={};
+  sumData:{
+    [post:string]:{
+      minutes:number;
+      data:{
+        [crpPost:string]:{
+            minutes:number,
+            data:{
+              [worker:string]:{
+                minutes:number,
+                data:{
+                  [target:string]:{
+                    minutes:number
+                  }
+                }
+
+              }
+          }
+        }
+      };
+    }
   }={};
 
-  sumWorkerData:{[post:string]:{
-    [worker:string]:{
-      [target:string]:{
-        hours:number;
-        minutes:number;
-      }
-    }
-    }
-  } = {};
-  sumPostData:{[post:string]:{hours:number, minutes:number}}={};
+  filledPlan:boolean = false;
+  planData:{[post:string]:{
+      minutes:number;
+      data:{
+        [crpPost:string]:{
+          minutes:number}}}}={};
 
+  loadPlans(){
+    this.plans=[];
+    this.dataService.HR.PlanList(this.selectedDate.getFullYear(), this.selectedDate.getMonth()+1).subscribe(x=>{
+      if(x!=null){
+        this.plans=x;
+        this.buildPlanData();
+      }
+    })
+  }
+  buildPlanData(){
+    this.filledPlan=this.plans.filter(z=>z.targetMinutes>0).length >0 ;
+    this.plans.forEach(plan=>{
+      if(!this.planData[plan.postId]){
+        this.planData[plan.postId]={data:{},minutes:0};
+      }
+      if(!this.planData[plan.postId].data[plan.crpCenter]){
+        this.planData[plan.postId].data[plan.crpCenter]= {minutes:0};
+      }
+      this.planData[plan.postId].minutes += plan.ratioMinutes;
+      this.planData[plan.postId].data[plan.crpCenter].minutes = plan.ratioMinutes;
+
+    });
+  }
+  showCalculate(){
+    console.log(this.plans);
+    this.dialogService.ask(CalculateCalendarComponent, {data:{plans:this.plans, records:this.calendarRecords, sumData:this.sumData}}).then(result=>{
+      this.buildPlanData();
+    });
+  }
   ngOnInit() {
   //  this.loadCalendarRecords();
   }
   saveData(){
-    this.dataService.HR.SaveCalendarRecords(this.allDatas()).subscribe(x=>{
+    this.dataService.HR.SaveCalendarRecords(this.calendarRecords).subscribe(x=>{
       if(x!=null){
         this.calendarRecords = x;
-        this.buildData();
       }
-    })
+
+
+    }, error => {}, ()=>{
+      this.dataService.HR.SavePlanList(this.plans).subscribe(x=>
+      {
+        if (x != null) {
+          this.plans = x;
+        }
+        this.buildData();
+      })});
+
   }
   loadCalendarRecords(){
     this.calendarRecords=[];
@@ -79,9 +146,7 @@ export class CalendarComponent implements OnChanges, OnInit {
     }
     if(changes['Posts']){
       this.filterPost = this.Posts;
-      this.Posts.forEach(x=>{
-        this.sumPostData[x]={minutes:0, hours:0};
-      })
+
     }
   }
 
@@ -115,6 +180,7 @@ export class CalendarComponent implements OnChanges, OnInit {
       this.days.push(d);
     }
     this.loadCalendarRecords();
+    this.loadPlans();
 
   }
 
@@ -123,131 +189,147 @@ export class CalendarComponent implements OnChanges, OnInit {
     return new Date(year, month, 0).getDate();
   }
 
-
   buildData(){
-    this.workerData = {};
-    this.targetData = {};
-
-
-
+    this.data={};
+    this.filteredData = {};
     this.Workers.forEach(worker=>{
+
       if(this.filterName.length>0){
-        if(!worker.name.toLowerCase().includes(this.filterName.toLowerCase())){
-          return;
+        if(!(worker.name.toLowerCase().includes(this.filterName.toLowerCase()))){
+          return
         }
       }
+
+
       worker.targets.forEach(target=>{
 
-        if (!this.workerData[target.postId]) {
-          this.workerData[target.postId] = [];
+        if(!this.filterPost.includes(target.postId)){
+          return
         }
-        let exist = this.workerData[target.postId].find(z=>z == worker.name);
-        if(!exist){
-          this.workerData[target.postId].push(worker.name);
+        if(this.filterCrpPost.length>0) {
+          if (!target.targetCrpCenter.toLowerCase().includes(this.filterCrpPost.toLowerCase())) {
+            return
+          }
+        }
+
+        if (!this.data[target.postId]) {
+          this.data[target.postId] = {};
         }
 
 
-        if(!this.targetData[target.postId]){
-          this.targetData[target.postId] = {};
+        if(!this.data[target.postId][target.targetCrpCenter]){
+          this.data[target.postId][target.targetCrpCenter] = {}
         }
-        if(!this.targetData[target.postId][worker.name]){
-          this.targetData[target.postId][worker.name] = [];
-        }
-        this.targetData[target.postId][worker.name].push(target.targetName);
 
 
-        if(!this.calendarData[target.postId]){
-          this.calendarData[target.postId]={};
+        if(!this.data[target.postId][target.targetCrpCenter][worker.name]){
+          this.data[target.postId][target.targetCrpCenter][worker.name] = {};
         }
-        if(!this.calendarData[target.postId][worker.name]){
-          this.calendarData[target.postId][worker.name]={};
+
+
+        if(!this.data[target.postId][target.targetCrpCenter][worker.name][target.targetName]){
+          this.data[target.postId][target.targetCrpCenter][worker.name][target.targetName]={};
         }
-        if(!this.calendarData[target.postId][worker.name][target.targetName]){
-          this.calendarData[target.postId][worker.name][target.targetName] = {};
-        }
-        for (let step = 1; step <= this.dayCount; step++) {
-          let exist = this.calendarRecords.find(z=>z.day == step && z.month == this.selectedDate.getMonth()+1 && z.year == this.selectedDate.getFullYear()
+
+
+        this.days.forEach(x=>{
+          let exist = this.calendarRecords.find(z=>z.day == x.num &&
+            z.month == this.selectedDate.getMonth()+1 && z.year == this.selectedDate.getFullYear()
             && z.productWorkerName == worker.name && z.postId == target.postId && z.targetName == target.targetName);
-
           if(exist){
-            this.calendarData[target.postId][worker.name][target.targetName][step] = {data:exist,meta:{selected:false}};
-
+            this.data[target.postId][target.targetCrpCenter][worker.name][target.targetName][x.num] = {data:exist,meta:{selected:false}};
           }
 
-
-
-
-        }
-
-
+        });
       })
     })
-    this.buildSums();
 
+    this.buildSum();
   }
-  buildSums(){
-    /*
+  setWorkWeek(postId:string,targetCrpCenter:string,workerName:string,targetName:string,workDay:number, saturday:number, sunday:number){
+    this.days.forEach(d=>{
+      if(d.isWeekend){
+        if(d.name=='сб'){
+          this.data[postId][targetCrpCenter][workerName][targetName][d.num].data.planningHours=saturday;
+        }else{
+          this.data[postId][targetCrpCenter][workerName][targetName][d.num].data.planningHours=sunday;
+        }
 
+      }else{
+        this.data[postId][targetCrpCenter][workerName][targetName][d.num].data.planningHours = workDay;
+      }
 
-    this.sumPostData[post].hours+=entry.data.planningHours * entry.data.planToWorkConst;
-    this.sumPostData[post].minutes+=this.sumPostData[post].hours*60;
-    */
-    this.sumWorkerData = {};
-    this.sumPostData = {};
-    for (const post in this.calendarData) {
-      const workers = this.calendarData[post];
-      for (const worker in workers) {
-        const targets = workers[worker];
-        for (const target in targets) {
-          const days = targets[target];
+    })
+    this.buildSum();
+  }
 
+  buildSum(){
+    this.sumData={};
+    for(const post in this.data){
+      const crpPosts = this.data[post];
+      for(const crpPost in crpPosts){
+        const workers = crpPosts[crpPost];
+        for(const workerName in workers){
+          const targets = workers[workerName];
+          for(const targetName in targets){
+            const days = targets[targetName];
+            for(const day in days){
+              if(!this.sumData[post]){
+                this.sumData[post]= {data:{},minutes:0};
+              }
+              if(!this.sumData[post].data[crpPost]) {
+                this.sumData[post].data[crpPost] = {data:{},minutes:0};
 
-          for (const dayStr in days) {
-            const day = +dayStr;
-            const entry = days[day];
-
-            if(!this.sumWorkerData[post]){
-              this.sumWorkerData[post]={};
+              }
+              if(!this.sumData[post].data[crpPost].data[workerName]) {
+                this.sumData[post].data[crpPost].data[workerName] = {data:{},minutes:0};
+              }
+              if(!this.sumData[post].data[crpPost].data[workerName].data[targetName]){
+                this.sumData[post].data[crpPost].data[workerName].data[targetName]={minutes:0};
+              }
+              let minutes = this.data[post][crpPost][workerName][targetName][day].data.planToWorkConst*this.data[post][crpPost][workerName][targetName][day].data.planningHours*60;
+              this.sumData[post].minutes+=minutes;
+              this.sumData[post].data[crpPost].minutes+=minutes;
+              this.sumData[post].data[crpPost].data[workerName].minutes+=minutes;
+              this.sumData[post].data[crpPost].data[workerName].data[targetName].minutes+=minutes;
             }
-
-            if(!this.sumWorkerData[post][worker]){
-              this.sumWorkerData[post][worker] = {};
-            }
-            if(!this.sumWorkerData[post][worker][target]){
-              this.sumWorkerData[post][worker][target] = {hours:0, minutes:0};
-            }
-            this.sumWorkerData[post][worker][target].hours+=entry.data.planningHours * entry.data.planToWorkConst;
-            this.sumWorkerData[post][worker][target].minutes = this.sumWorkerData[post][worker][target].hours*60;
-
           }
         }
       }
     }
-
-    let allData= this.allDatas();
-    this.Posts.forEach(post=>{
-      let hours = allData.filter(x=>x.postId == post).reduce((accumulator, item) => {
-        return accumulator + item.planningHours * item.planToWorkConst;
-      }, 0);
-      if(!this.sumPostData[post]){
-        this.sumPostData[post] = {minutes:0,hours:0};
-      }
-      this.sumPostData[post].hours = hours;
-      this.sumPostData[post].minutes = hours * 60;
-    })
-
-    console.log(this.sumWorkerData);
-    console.log(this.sumPostData);
+    console.log(this.sumData);
   }
-
-  key(event:KeyboardEvent, record:ProductCalendarRecord){
-    console.log(record);
-    console.log(event);
-    let n = Number(event.key);
-    if(n!= Number.NaN){
-      record.planningHours = n;
+  setEfficiency(value:number, postId:string, crpPost:string, workerName:string, targetName:string){
+    for(let cd in this.data[postId][crpPost][workerName][targetName]){
+      this.data[postId][crpPost][workerName][targetName][cd].data.planToWorkConst=value;
     }
+    this.buildSum();
   }
+  selectedDatas():Array<{data:ProductCalendarRecord,meta:{selected:boolean}}>{
+
+    let selectedItems:Array<{data:ProductCalendarRecord,meta:{selected:boolean}}>= [];
+    for (const post in this.data) {
+      const crpPosts = this.data[post];
+      for (const crpPost in crpPosts) {
+        const workers = crpPosts[crpPost];
+        for (const worker in workers) {
+          const targets = workers[worker];
+          for (const target in targets) {
+            const days = targets[target];
+            for (const dayStr in days) {
+              const day = Number(dayStr);
+              const entry = days[day];
+              if (entry?.meta?.selected) {
+               selectedItems.push(entry)
+              }
+            }
+          }
+        }
+      }
+    }
+    return selectedItems;
+  }
+
   mouse(event:MouseEvent,  record:ProductCalendarRecord, meta:{selected:boolean}){
   if(event.buttons==1){
     meta.selected = false;
@@ -273,58 +355,12 @@ export class CalendarComponent implements OnChanges, OnInit {
     if(selectedItems.length>0){
       this.dialogService.ask(HrActionDialogComponent, {data:{calendarRecords:selectedItems}}).then((result)=>{
         selectedItems.forEach(z=>z.meta.selected=false)
-        this.buildSums();
+        this.buildSum();
       })
     }
 
   }
-  allDatas():Array<ProductCalendarRecord> {
-    let selectedItems:Array<ProductCalendarRecord>= [];
-    for (const post in this.calendarData) {
-      const workers = this.calendarData[post];
-      for (const worker in workers) {
-        const targets = workers[worker];
-        for (const target in targets) {
-          const days = targets[target];
-          for (const dayStr in days) {
-            const day = +dayStr;
-            const entry = days[day];
 
-              selectedItems.push(entry.data);
 
-          }
-        }
-      }
-    }
-
-    return selectedItems;
-  }
-  selectedDatas():Array<{data:ProductCalendarRecord,meta:{selected:boolean}}> {
-    let selectedItems:Array<{data:ProductCalendarRecord,meta:{selected:boolean}}>= [];
-    for (const post in this.calendarData) {
-      const workers = this.calendarData[post];
-      for (const worker in workers) {
-        const targets = workers[worker];
-        for (const target in targets) {
-          const days = targets[target];
-          for (const dayStr in days) {
-            const day = +dayStr;
-            const entry = days[day];
-            if (entry.meta?.selected) {
-             selectedItems.push(entry);
-            }
-          }
-        }
-      }
-    }
-
-    return selectedItems;
-  }
-  setEfficiency(value:number, postId:string, workerName:string, targetName:string){
-    for(let cd in this.calendarData[postId][workerName][targetName]){
-      this.calendarData[postId][workerName][targetName][cd].data.planToWorkConst=value;
-    }
-    this.buildSums();
-  }
 
 }

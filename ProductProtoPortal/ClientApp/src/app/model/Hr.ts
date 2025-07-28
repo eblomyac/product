@@ -40,3 +40,16 @@ export interface ProductCalendarRecord{
   effectiveHours: number;
   planToWorkConst: number;
 }
+export interface ProductPlan {
+  id: number;
+  crpCenter: string;
+  crpCenterDescription: string;
+  year:number;
+  month:number;
+  targetMinutes:number;
+  effectiveRatio :number;
+  additionalRatio :number;
+  directorRatio :number;
+  ratioMinutes:number;
+  postId:string;
+}

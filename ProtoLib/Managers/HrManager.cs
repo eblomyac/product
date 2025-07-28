@@ -102,7 +102,12 @@ public class HrManager
                }
            }
        }
-      c.Data = c.Data.OrderBy(x=>x.PostId).ThenBy(x=>x.ProductWorkerName).ThenBy(x=>x.TargetName).ToList();
+
+       var postOrder = bc.Posts.OrderBy(x => x.ProductOrder).Select(z=>z.Name).ToList();
+      c.Data = c.Data.OrderBy(x=>postOrder.IndexOf(x.PostId))
+          .ThenBy(x=>x.TargetCrpCenter)
+          .ThenBy(x=>x.ProductWorkerName)
+          .ThenBy(x=>x.TargetName).ToList();
       c.Workers = new List<ProductWorker>();
       var workerNameList = c.Data.Select(x=>x.ProductWorkerName).Distinct().ToList();
       foreach (var worker in workerNameList)
@@ -132,6 +137,7 @@ public class HrManager
               }
           }
       }
+      
       return c;
     }
 
@@ -249,6 +255,86 @@ public class HrManager
 
         bc.SaveChanges();
         return WorkerList();
+    }
+
+    public List<ProductionPlan> PlanList(int year, int month)
+    {
+
+        var keys = bc.PostKeys.ToList();
+        var existPlans = bc.ProductionPlans.Where(x => x.Month == month && x.Year == year).ToList();
+        CrpManager cm = new CrpManager();
+        var crpPosts = cm.AllCenters();
+        foreach (var crpPost in crpPosts)
+        {
+            var existPlan = existPlans.FirstOrDefault(z => z.CrpCenter == crpPost.TargetCrpCenter);
+            if (existPlan == null)
+            {
+                existPlan = new();
+                existPlan.CrpCenter = crpPost.TargetCrpCenter;
+                existPlan.CrpCenterDescription = crpPost.TargetCrpCenterDescription;
+                existPlan.Month = month;
+                existPlan.Year = year;
+                existPlan.TargetMinutes = 0;
+                existPlan.EffectiveRatio = 1;
+                existPlan.AdditionalRatio = 1;
+                existPlan.DirectorRatio = 1;
+                var existKey = keys.FirstOrDefault(z => z.Key == crpPost.TargetCrpCenter);
+                if (existKey != null)
+                {
+                    existPlan.PostId = existKey.PostId;
+                }
+                else
+                {
+                    existPlan.PostId = "";
+                }
+                existPlans.Add(existPlan);
+            }
+        }
+
+        return existPlans;
+    }
+
+    public List<ProductionPlan> SaveProductionPlanList(List<ProductionPlan> list)
+    {
+        
+        var existRecords = list.Where(x=>x.Id!=0).ToList();
+        var existRecordIds = existRecords.Select(x=>x.Id).ToList();
+        var toEdit = bc.ProductionPlans.Where(x => existRecordIds.Contains(x.Id)).ToList();
+        List<ProductionPlan> result = new List<ProductionPlan>();
+        foreach (var existRecord in toEdit)
+        {
+            var newRecord= existRecords.FirstOrDefault(z => z.Id == existRecord.Id);
+            if (newRecord != null)
+            {
+                existRecord.AdditionalRatio = newRecord.AdditionalRatio;
+                existRecord.DirectorRatio = newRecord.DirectorRatio;
+                existRecord.TargetMinutes = newRecord.TargetMinutes;
+                existRecord.EffectiveRatio = newRecord.EffectiveRatio;
+            }
+            result.Add(existRecord);
+        }
+        bc.SaveChanges();
+        foreach (var newRecord in list.Where(x=>x.Id==0))
+        {
+            var newRecordEF = new ProductionPlan();
+            newRecordEF.PostId = newRecord.PostId;
+            newRecordEF.Month = newRecord.Month;
+            newRecordEF.Year = newRecord.Year;
+            newRecordEF.TargetMinutes = newRecord.TargetMinutes;
+            newRecordEF.AdditionalRatio = newRecord.AdditionalRatio;
+            newRecordEF.DirectorRatio = newRecord.DirectorRatio;
+            newRecordEF.EffectiveRatio = newRecord.EffectiveRatio;
+            newRecordEF.CrpCenter = newRecord.CrpCenter;
+            newRecordEF.CrpCenterDescription = newRecord.CrpCenterDescription;
+            
+           
+            bc.ProductionPlans.Add(newRecordEF);
+            result.Add(newRecordEF);
+        }
+
+        bc.SaveChanges();
+        return result;
+        
     }
 
  
