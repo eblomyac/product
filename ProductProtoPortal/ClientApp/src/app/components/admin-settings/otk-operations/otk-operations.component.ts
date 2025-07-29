@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../../../services/data.service";
 import {OTKAvailableOperation, OTKTargetValue, OTKWorker} from "../../../model/OTKAvailableOperation";
+import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 
 @Component({
   selector: 'app-otk-operations',
@@ -14,7 +15,7 @@ export class OtkOperationsComponent implements OnInit {
   workers:OTKWorker[]=[];
   operations: OTKAvailableOperation[] = [];
   targetValues: OTKTargetValue[] =[];
-  newOperation: OTKAvailableOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[], targetValue:''};
+  newOperation: OTKAvailableOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[], targetValue:'', values:[],availableValues:'', availableTargetValues:'',targetValues:[]};
   constructor(private dataService:DataService){
 
   }
@@ -70,6 +71,10 @@ export class OtkOperationsComponent implements OnInit {
   }
   saveOperations(){
     this.loading = true;
+    this.operations.forEach(z=>{
+      z.availableValues = z.values.join(';');
+      z.availableTargetValues = z.targetValues.join(';');
+    })
     this.dataService.OTK.SaveOperations(this.operations).subscribe(x=>{
       this.operations = x;
       this.loading=false;
@@ -81,7 +86,38 @@ export class OtkOperationsComponent implements OnInit {
 
     this.newOperation.productLine = this.newOperation.productLines.join(', ');
     this.operations.push(this.newOperation);
-    this.newOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[], targetValue:''};
+    this.newOperation = {id:0, shortName:'',fullName:'', productLine: '', productLines:[], targetValue:'', values:[], availableValues:'', availableTargetValues:'', targetValues:[]};
   }
+  addValue(operation:OTKAvailableOperation, val:string, menu:MatMenuTrigger, inputText:any){
+    if(operation.values == null){
+      operation.values = [];
+    }
+    let exist = operation.values.find(z=>z == val);
+    if(!exist){
+      operation.values.push(val);
+    }
+   // menu.closeMenu();
+    inputText.value = '';
+
+  }
+  addTargetValue(operation:OTKAvailableOperation, val:string, menu:MatMenuTrigger, inputText:any){
+    if(operation.targetValues == null){
+      operation.targetValues = [];
+    }
+    let exist = operation.targetValues.find(z=>z == val);
+    if(!exist){
+      operation.targetValues.push(val);
+    }
+    // menu.closeMenu();
+    inputText.value = '';
+  }
+  removeValue(operation:OTKAvailableOperation, index:number){
+        operation.values.splice(index,1);
+  }
+  removeTargetValue(operation:OTKAvailableOperation, index:number){
+    operation.targetValues.splice(index,1);
+  }
+
+
 
 }

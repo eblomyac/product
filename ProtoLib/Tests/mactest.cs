@@ -22,6 +22,13 @@ public class mactest
      int g = 0;
     }
 
+    [Test]
+    public void testOTK()
+    {
+        OTKManager om = new OTKManager("system");
+        var t =om.Template(71124);
+        Console.WriteLine(JsonConvert.SerializeObject(t));
+    }
   
     
     [Test]

@@ -33,14 +33,15 @@
           <mat-option value="Брак есть">Брак есть</mat-option>
         </mat-select>
       </mat-form-field>
-      <div class="col-2 offset-2 d-lg-flex justify-content-end align-items-center" style="column-gap: 10px">
-        <button mat-raised-button color="primary" (click)="this.filter.offset=0;clear();load();">
-          Сбросить
-        </button>
-        <button mat-raised-button color="primary" (click)="this.filter.offset=0;this.load()">
-          Поиск
-        </button>
-      </div>
+
+    </div>
+    <div class="col-2 offset-2 d-lg-flex justify-content-end align-items-center" style="column-gap: 10px">
+      <button mat-raised-button color="primary" (click)="this.filter.offset=0;clear();load();">
+        Сбросить
+      </button>
+      <button mat-raised-button color="primary" (click)="this.filter.offset=0;this.load()">
+        Поиск
+      </button>
     </div>
   </div>
   <div class="row" style="max-height: 70vh">

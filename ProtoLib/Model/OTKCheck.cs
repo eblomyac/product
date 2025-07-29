@@ -76,6 +76,13 @@ public class OTKCheckLine
     
     [MaxLength(256)]
     public string TargetValue { get; set; }
+    
+    [NotMapped]
+    public List<string> AvailableTargetValues { get; set; }
+    
+    [NotMapped]
+    public List<string> AvailableValues { get; set; }
+    
     [MaxLength(256)]
     public string MeasuredValue { get; set; }
     

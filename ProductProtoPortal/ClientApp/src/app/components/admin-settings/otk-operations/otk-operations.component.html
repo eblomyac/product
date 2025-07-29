@@ -25,7 +25,8 @@
   <table class="mt-4 w-100">
     <colgroup>
       <col span="1" style="width: 15%;">
-      <col span="1" style="width: 50%;">
+      <col span="1" style="width: 30%;">
+      <col span="1" style="width: 20%;">
       <col span="1" style="width: 20%;">
       <col span="1" style="width: 15%;">
     </colgroup>
@@ -33,18 +34,73 @@
       <th>Контролируемый параметр</th>
       <th>Описание</th>
       <th>Требуемое значение</th>
+      <th>Список значений</th>
       <th>Продукция</th>
       <th></th>
     </tr>
     <tr *ngFor="let o of this.operations">
       <td>{{o.shortName}}</td>
       <td>{{o.fullName}}</td>
-      <td>{{o.targetValue}}</td>
+      <td>
+        <div  class="d-flex align-items-center justify-content-between">
+          <div style="padding-left: 5px">
+            {{o.targetValue}}
+            <div *ngIf="o.targetValues && o.targetValues.length>0">
+              ({{o.targetValues.join(', ')}})
+            </div>
+          </div>
+          <div *ngIf="o.targetValue == 'Список'">
+            <button mat-icon-button color="primary" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="list"><mat-icon>menu</mat-icon></button>
+
+            <mat-menu #list="matMenu" >
+              <div  (click)="$event.stopPropagation()" class="d-flex align-items-center" style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <input matInput type="text" #newVal (keyup.enter)="addTargetValue(o, newVal.value, menuTrigger, newVal)" >
+                <button class="text-center"  mat-raised-button  color="primary" (click)="addTargetValue(o, newVal.value, menuTrigger, newVal)" style="width: 20px; padding: 3px">
+                  +
+                </button>
+              </div>
+              <mat-divider></mat-divider>
+              <div (click)="$event.stopPropagation()" *ngFor="let v of o.targetValues; let i = index" class="d-flex align-items-center justify-content-between mt-1"   style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <div class="ml-1">{{v}}</div>
+                <button mat-raised-button color="primary" style="width: 20px; padding: 3px" (click)="removeTargetValue(o,i)">-</button>
+              </div>
+            </mat-menu>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div  class="d-flex align-items-center justify-content-between">
+          <div style="padding-left: 5px">
+
+            <div *ngIf="o.values && o.values.length>0; else empty">
+              {{o.values.join(', ')}}
+            </div>
+            <ng-template #empty>...</ng-template>
+          </div>
+          <div>
+            <button mat-icon-button color="primary" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="list"><mat-icon>menu</mat-icon></button>
+            <mat-menu #list="matMenu" >
+              <div  (click)="$event.stopPropagation()" class="d-flex align-items-center" style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <input matInput type="text" #newVal (keyup.enter)="addValue(o, newVal.value, menuTrigger, newVal)" >
+                <button class="text-center"  mat-raised-button  color="primary" (click)="addValue(o, newVal.value, menuTrigger, newVal)" style="width: 20px; padding: 3px">
+                  +
+                </button>
+              </div>
+              <mat-divider></mat-divider>
+              <div (click)="$event.stopPropagation()" *ngFor="let v of o.values; let i = index" class="d-flex align-items-center justify-content-between mt-1"   style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <div class="ml-1">{{v}}</div>
+                <button mat-raised-button color="primary" style="width: 20px; padding: 3px" (click)="removeValue(o,i)">-</button>
+              </div>
+            </mat-menu>
+          </div>
+        </div>
+
+      </td>
       <td>{{o.productLine}}</td>
       <td><button mat-icon-button color="primary" (click)="remove(o)"><mat-icon>remove</mat-icon></button></td>
     </tr>
     <tr>
-      <td colspan="4" style="border-top: 2px #6d6d6d dashed">
+      <td colspan="6" style="border-top: 2px #6d6d6d dashed">
         <div  style="padding-top: 7px; padding-bottom: 3px">
           Создание
         </div>
@@ -64,12 +120,64 @@
         </mat-form-field>
       </td>
       <td>
-        <mat-form-field class="w-100">
-          <mat-label>Требуемое значение</mat-label>
-          <mat-select [(ngModel)]="newOperation.targetValue">
-            <mat-option [value]="tv.target" *ngFor="let tv of this.targetValues">{{tv.displayName}} ({{tv.source}})</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div class="w-100 d-flex align-items-center justify-content-between">
+          <div style="padding-left: 5px">
+          <mat-form-field class="w-100" >
+            <mat-label>Требуемое значение</mat-label>
+            <mat-select [(ngModel)]="newOperation.targetValue">
+              <mat-option [value]="tv.target" *ngFor="let tv of this.targetValues">{{tv.displayName}} ({{tv.source}})</mat-option>
+            </mat-select>
+          </mat-form-field>
+          </div>
+          <div *ngIf="newOperation.targetValue == 'Список'">
+            <button mat-icon-button color="primary" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="list"><mat-icon>menu</mat-icon></button>
+
+            <mat-menu #list="matMenu" >
+              <div  (click)="$event.stopPropagation()" class="d-flex align-items-center" style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <input matInput type="text" #newVal (keyup.enter)="addTargetValue(newOperation, newVal.value, menuTrigger, newVal)" >
+                <button class="text-center"  mat-raised-button  color="primary" (click)="addTargetValue(newOperation, newVal.value, menuTrigger, newVal)" style="width: 20px; padding: 3px">
+                  +
+                </button>
+              </div>
+              <mat-divider></mat-divider>
+              <div (click)="$event.stopPropagation()" *ngFor="let v of newOperation.targetValues; let i = index" class="d-flex align-items-center justify-content-between mt-1"   style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <div class="ml-1">{{v}}</div>
+                <button mat-raised-button color="primary" style="width: 20px; padding: 3px" (click)="removeValue(newOperation,i)">-</button>
+              </div>
+            </mat-menu>
+          </div>
+        </div>
+
+
+      </td>
+      <td>
+        <div class="w-100 d-flex align-items-center justify-content-between">
+          <div style="padding-left: 5px">
+
+            <div *ngIf="newOperation.values && newOperation.values.length>0; else empty">
+              {{newOperation.values.join(', ')}}
+            </div>
+            <ng-template #empty>...</ng-template>
+          </div>
+          <div>
+            <button mat-icon-button color="primary" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="list"><mat-icon>menu</mat-icon></button>
+
+            <mat-menu #list="matMenu" >
+              <div  (click)="$event.stopPropagation()" class="d-flex align-items-center" style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <input matInput type="text" #newVal (keyup.enter)="addValue(newOperation, newVal.value, menuTrigger, newVal)" >
+                <button class="text-center"  mat-raised-button  color="primary" (click)="addValue(newOperation, newVal.value, menuTrigger, newVal)" style="width: 20px; padding: 3px">
+                  +
+                </button>
+              </div>
+              <mat-divider></mat-divider>
+              <div (click)="$event.stopPropagation()" *ngFor="let v of newOperation.values; let i = index" class="d-flex align-items-center justify-content-between mt-1"   style="column-gap: 5px; padding-right: 5px; padding-left: 5px">
+                <div class="ml-1">{{v}}</div>
+                <button mat-raised-button color="primary" style="width: 20px; padding: 3px" (click)="removeValue(newOperation,i)">-</button>
+              </div>
+            </mat-menu>
+          </div>
+
+        </div>
       </td>
       <td>
         <mat-form-field>
@@ -82,7 +190,7 @@
       </td>
     </tr>
   <tr>
-    <td colspan="4" class="text-end" >
+    <td colspan="6" class="text-end" >
       <button mat-raised-button color="primary" (click)="add()"
               [disabled]="newOperation.fullName.length<1 || this.newOperation.shortName.length<1 || this.newOperation.productLines.length<1" >Создать</button>
     </td>

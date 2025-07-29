@@ -90,9 +90,17 @@ public class OTK:Controller
     [Route("[action]")]
     public IActionResult Template(long workId)
     {
-        var user = AuthHelper.GetADUser(this.HttpContext);
-        OTKManager manager = new OTKManager(user.SAM);
-        return new OkObjectResult(new ApiAnswer(manager.Template(workId), "", true));
+        try
+        {
+            var user = AuthHelper.GetADUser(this.HttpContext);
+            OTKManager manager = new OTKManager(user.SAM);
+            return new OkObjectResult(new ApiAnswer(manager.Template(workId), "", true).ToString());
+        }
+        catch (Exception e)
+        {
+            return new BadRequestObjectResult(new ApiAnswer(e, e.Message,false));
+        }
+        
     }
 
     [HttpPost]

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text.RegularExpressions;
+using HarmonyLib;
 using KSK_LIB.Maconomy;
 using Microsoft.EntityFrameworkCore;
 using ProtoLib.Model;
@@ -214,9 +215,24 @@ public class OTKManager
          otkCheckLine.Value = "";
          otkCheckLine.TargetValue = op.TargetValue;
          otkCheckLine.MeasuredValue = "";
+         otkCheckLine.AvailableValues = new List<string>();
+         otkCheckLine.AvailableValues = op.Values;
+         otkCheckLine.AvailableTargetValues = op.TargetValues;
 
          var matches = targetRegex.Matches(otkCheckLine.TargetValue);
-       
+
+         foreach (var v in op.Values)
+         {
+            var vMatches = targetRegex.Matches(v);
+            if (vMatches.Count > 0)
+            {
+               foreach (var vMatch in vMatches)
+               {
+                  matches.AddItem(vMatch);   
+               }
+               
+            }
+         }
          foreach (Match m in matches)
          {
             if (m.Groups.Count == 2)
@@ -272,8 +288,18 @@ public class OTKManager
          {
             if (line.TargetValue.Contains(r.Key))
             {
-               line.TargetValue = line.TargetValue.Replace(r.Key, r.Value);
+               line.TargetValue = line.TargetValue.Replace(r.Key, r.Value).Trim();
             }
+
+            for (int loop = 0; loop <= line.AvailableValues.Count - 1; loop++)
+            {
+               string av = line.AvailableValues[loop];
+               if (av.Contains(r.Key))
+               {
+                  line.AvailableValues[loop] = av.Replace(r.Key, r.Value).Trim();
+               }
+            }
+            
          }
       }
             
@@ -339,6 +365,10 @@ public class OTKManager
          exist.ShortName = toSave.ShortName;
          exist.ProductLine = toSave.ProductLine;
          exist.TargetValue = toSave.TargetValue;
+         exist.Values = toSave.Values;
+         exist.TargetValues = toSave.TargetValues;
+      
+         
 
          bc.SaveChanges();
       }

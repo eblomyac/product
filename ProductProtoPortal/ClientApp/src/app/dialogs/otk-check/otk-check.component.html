@@ -64,7 +64,7 @@
         </colgroup>
         <tr>
           <th class="text-center">Операции проверки</th>
-          <th class="text-center">Контрольное значение</th>
+          <th class="text-center">Требуемое значение</th>
           <th class="text-center">Фактическое значение</th>
           <th class="text-center">Отметка</th>
           <th class="text-end">Комментарий</th>
@@ -85,13 +85,48 @@
 
           </td>
           <td class="text-center">
-            <div>{{line.targetValue}}</div>
+            <div *ngIf="line.availableTargetValues!=null&& line.availableTargetValues.length>0; else empty">
+              <div class="d-flex justify-content-between align-items-center">
+                <mat-form-field>
+                  <mat-label></mat-label>
+                  <input matInput type="text" [(ngModel)]="line.targetValue">
+                </mat-form-field>
+                <div >
+                  <button [disabled]="line.availableTargetValues.length==0 || isLoading" mat-icon-button color="primary"
+                          #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="list"><mat-icon>menu</mat-icon></button>
+                  <mat-menu #list="matMenu" >
+                    <div style="width: 160px">
+                      <button mat-raised-button   class="mt-1 w-100" color="primary" *ngFor="let v of line.availableTargetValues" (click)="setTargetVal(line,v)">{{v}}</button>
+                    </div>
+
+                  </mat-menu>
+                </div>
+              </div>
+            </div>
+            <ng-template #empty>
+              {{line.targetValue}}
+            </ng-template>
           </td>
           <td>
-            <mat-form-field class="w-100" *ngIf="line.targetValue.length>0">
-              <mat-label></mat-label>
-              <input matInput type="text"  [disabled]="isLoading || this.data.onlyView" [(ngModel)]="line.measuredValue" (ngModelChange)="valueInputed(line,$event)">
-            </mat-form-field>
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <mat-form-field class="w-100" *ngIf="line.targetValue.length>0">
+                  <mat-label></mat-label>
+                  <input matInput type="text"  [disabled]="isLoading || this.data.onlyView" [(ngModel)]="line.measuredValue" (ngModelChange)="valueInputed(line,$event)">
+                </mat-form-field>
+              </div>
+              <div *ngIf="line.targetValue.length>0 && line.availableValues">
+                <button [disabled]="line.availableValues.length==0 || isLoading" mat-icon-button color="primary"
+                        #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="list"><mat-icon>menu</mat-icon></button>
+                <mat-menu #list="matMenu" >
+                  <div style="width: 160px">
+                    <button mat-raised-button   class="mt-1 w-100" color="primary" *ngFor="let v of line.availableValues" (click)="setVal(line,v)">{{v}}</button>
+                  </div>
+
+                </mat-menu>
+              </div>
+            </div>
+
           </td>
           <td class="text-center">
             <mat-form-field class="w-100">

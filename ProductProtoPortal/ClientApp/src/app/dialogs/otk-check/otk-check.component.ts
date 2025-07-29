@@ -31,10 +31,26 @@ export class OtkCheckComponent {
 
     });
   }
+  setTargetVal(line:OTKCheckLine,v:string){
+    line.targetValue = v;
+
+  }
+  setVal(line:OTKCheckLine, v:string){
+    line.measuredValue = v;
+
+    this.valueInputed(line,v);
+  }
   valueSelected(line:OTKCheckLine,value:string){
     this.allSelected = this.data.template.lines.length == this.data.template.lines.filter(x=>x.value.length>1).length;
   }
   valueInputed(line:OTKCheckLine,value:string){
+    if(value == line.targetValue){
+      line.value='Брака нет';
+      this.valueSelected(line,'Брака нет')
+    }else{
+      line.value='Брак есть';
+      this.valueSelected(line,'Брак есть')
+    }
     this.allValues = this.data.template.lines.filter(x=>x.targetValue.length>0).length == this.data.template.lines.filter(x=>x.measuredValue.length>0).length;
   }
 

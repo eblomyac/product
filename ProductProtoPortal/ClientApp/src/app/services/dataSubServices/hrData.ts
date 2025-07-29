@@ -2,10 +2,9 @@
 import {map, Observable} from "rxjs";
 import {HttpParams} from "@angular/common/http";
 import {ApiAnswer} from "../../model/ApiAnswer";
-import {IWork} from "../../model/Work";
+
 import {DataService} from "../data.service";
-import {OTKAvailableOperation, OTKTargetValue, OTKWorker} from "../../model/OTKAvailableOperation";
-import {OTKCheck} from "../../model/OTKCheck";
+
 import {ProductCalendarRecord, ProductPlan, ProductTarget, ProductWorker} from "../../model/Hr";
 
 export class HrData {

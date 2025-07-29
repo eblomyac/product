@@ -6,6 +6,10 @@ export interface OTKAvailableOperation{
    productLine:string;
    targetValue:string;
    productLines:string[];
+   values:string[];
+   targetValues:string[];
+   availableValues:string;
+   availableTargetValues:string;
 }
 export interface OTKWorker{
   id:number;
@@ -16,4 +20,5 @@ export interface OTKTargetValue{
   displayName:string;
   source:string;
   target:string;
+  values:string;
 }

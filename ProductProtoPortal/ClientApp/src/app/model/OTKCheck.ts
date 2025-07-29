@@ -24,4 +24,6 @@ export interface OTKCheckLine {
   description?: string;
   targetValue: string;
   measuredValue: string;
+  availableValues: string[];
+  availableTargetValues: string[];
 }
