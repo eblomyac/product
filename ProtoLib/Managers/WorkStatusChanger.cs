@@ -55,7 +55,7 @@ namespace ProtoLib.Managers
                 }
             }
 
-            if (newStatus == WorkStatus.sended && oldStatus == WorkStatus.running && !string.IsNullOrWhiteSpace(w.MovedTo))
+            if (newStatus == WorkStatus.sended && oldStatus == WorkStatus.running && w.OrderNumber==100)
             {
                 // возвращенная работа: сразу в статус завершено и разрешить события
             
@@ -63,15 +63,39 @@ namespace ProtoLib.Managers
 
                 BaseContext c = _c ?? new BaseContext(accName);
                 {
-                   var nextPostIssue= c.Issues.AsNoTracking().FirstOrDefault(x => x.Work.Article == w.Article 
-                       && x.Work.OrderNumber == w.OrderNumber
-                       && x.ReturnBackPostId == w.PostId 
-                       && x.Work.PostId == w.MovedTo);
-                   if (nextPostIssue != null)
-                   {
-                       IssueManager im = new IssueManager();
-                       im.ResolveIssue(nextPostIssue.Id, accName);
-                   }
+                    
+                    string s = w.Description;
+                    if (s.Contains("Заказ: ") && s.Contains("Артикул: "))
+                    {
+                        s = s.Replace("Заказ: ", "");
+                        s = s.Replace(" Артикул: ", "");
+
+                        string[] sp = s.Split(",");
+
+                        string art = sp[1];    
+                        string order = sp[0];
+
+                        string[] sp2 = sp[1].Split(" x ");
+                        string realArt = sp2[0];
+                        string count = sp2[1];
+                       
+                        long orderLong = long.Parse(order);
+                        decimal countDecimal = decimal.Parse(count);
+                        
+                        var nextPostIssue= c.Issues.Include(x=>x.Work).AsNoTracking().FirstOrDefault(x => x.Work.Article == realArt
+                            && x.Work.OrderNumber == orderLong && x.Work.Count == countDecimal
+                            && x.ReturnBackPostId == w.PostId);
+                        if (nextPostIssue != null)
+                        {
+                            IssueManager im = new IssueManager();
+                            im.ResolveIssue(nextPostIssue.Id, accName);
+                        }
+                    }
+                    
+                    
+                    
+                    
+                 
                 }
                 if (_c == null)
                 {
